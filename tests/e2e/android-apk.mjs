@@ -358,10 +358,6 @@ try {
       writeFile("test-results/android/failure-native.png", bytes),
     )
     .catch(() => {});
-  /*await writeFile(
-    "test-results/android/failure-native.png",
-    await device.screenshot(),
-  ).catch(() => {});*/
   if (page)
     await page
       .screenshot({
@@ -369,10 +365,6 @@ try {
         fullPage: true,
       })
       .catch(() => {});
-  await writeFile(
-    "test-results/android/emulator-results.json",
-    JSON.stringify({ ...results, error: String(error) }, null, 2),
-  );
   throw error;
 } finally {
   await device.close();
