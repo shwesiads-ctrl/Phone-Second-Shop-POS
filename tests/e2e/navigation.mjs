@@ -1,5 +1,7 @@
 import { expect } from "@playwright/test";
 export async function openNavigation(page) {
+  // Login resolves before React mounts navigation; wait before checking its trigger.
+  await page.locator("nav").waitFor({ state: "attached" });
   const toggle = page.getByTestId("menu-toggle");
   if (
     (await toggle.isVisible()) &&
