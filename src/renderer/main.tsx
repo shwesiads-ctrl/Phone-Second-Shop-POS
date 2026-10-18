@@ -17,6 +17,25 @@ import {
 } from "../shared/contracts";
 import { convertMinor } from "../shared/exchange";
 import { translate, type Language } from "./i18n";
+function FixerMark() {
+  return (
+    <svg
+      viewBox="0 0 108 108"
+      width="100%"
+      height="100%"
+      role="img"
+      aria-label="Fixer Tools icon"
+    >
+      <rect width="108" height="108" rx="22" fill="#102B46" />
+      <path
+        fill="white"
+        d="M72 24C60 19 47 29 48 41L27 62C22 67 22 75 27 80C32 85 40 85 45 80L66 59C78 60 89 48 84 36L75 45L64 34Z"
+      />
+      <circle cx="34" cy="71" r="5" fill="#102B46" />
+      <path fill="#FFCA55" d="M75 60L66 74H74L70 85L86 69H78L83 60Z" />
+    </svg>
+  );
+}
 type Field = {
   key: string;
   label?: string;
@@ -908,7 +927,7 @@ function App() {
         timeFormat: s.timeFormat || "24",
         firstDay: s.firstDay || 1,
         digits: s.digits || "latn",
-        store: s.store || "Phone Second Shop POS",
+        store: s.store || "Fixer Tools",
         phone: s.phone || "",
         address: s.address || "",
         footer: s.footer || "",
@@ -933,7 +952,7 @@ function App() {
       <main className="auth">
         <div className="auth-card">
           <div className="logo">
-            P<span>2</span>
+            <FixerMark />
           </div>
           <h1>{t("app")}</h1>
           <p>{t("offline")}</p>
@@ -1067,10 +1086,10 @@ function App() {
       <aside>
         <div className="brand">
           <div className="logo small">
-            P<span>2</span>
+            <FixerMark />
           </div>
           <div>
-            <strong>Phone Second Shop</strong>
+            <strong>Fixer Tools</strong>
             <small>
               {status?.ownerOnly ? t("freeOwner") : "POINT OF SALE"}
             </small>
@@ -2817,7 +2836,7 @@ function App() {
                               currency,
                               region: "MM",
                               digits: "latn",
-                              store: "Phone Second Shop POS",
+                              store: "Fixer Tools",
                               phone: "",
                               address: "",
                               footer: "",
@@ -2844,8 +2863,7 @@ function App() {
                             dateFormat: "medium",
                             timeFormat: "24",
                             firstDay: 1,
-                            store:
-                              data.settings.store || "Phone Second Shop POS",
+                            store: data.settings.store || "Fixer Tools",
                             phone: data.settings.phone || "",
                             address: data.settings.address || "",
                             footer: data.settings.footer || "",
@@ -2889,9 +2907,9 @@ function App() {
           {page === "about" && (
             <section className="panel about">
               <div className="logo">
-                P<span>2</span>
+                <FixerMark />
               </div>
-              <h2>Phone Second Shop POS</h2>
+              <h2>Fixer Tools</h2>
               <p>
                 {t("version")}: {status.version} · {t("platform")}:{" "}
                 {status.platform}
@@ -3012,7 +3030,7 @@ function App() {
               )}
               <h3>{t("preview")}</h3>
               <pre>
-                {`Phone Second Shop POS ${status.version}\n${status.platform}\n\n` +
+                {`Fixer Tools ${status.version}\n${status.platform}\n\n` +
                   Object.entries(report)
                     .filter(([k]) => !["screenshot", "diagnostics"].includes(k))
                     .map(([k, v]) => `${t(k)}:\n${v}`)
@@ -3031,7 +3049,7 @@ function App() {
                         throw new Error("INVALID_INPUT");
                       await call("copy", {
                         text:
-                          `Phone Second Shop POS ${status.version}\n${status.platform}\n` +
+                          `Fixer Tools ${status.version}\n${status.platform}\n` +
                           Object.entries(report)
                             .filter(
                               ([k]) =>

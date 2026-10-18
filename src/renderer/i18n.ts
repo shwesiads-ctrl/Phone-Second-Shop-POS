@@ -196,11 +196,7 @@ const words: Record<string, [string, string, string]> = {
   about: ["About & support", "အကြောင်းနှင့်ပံ့ပိုးမှု", "เกี่ยวกับและสนับสนุน"],
   bug: ["Bug report", "ပြဿနာတင်ပြရန်", "รายงานปัญหา"],
   users: ["Users", "အသုံးပြုသူများ", "ผู้ใช้"],
-  app: [
-    "Phone Second Shop POS",
-    "တစ်ပတ်ရစ်ဖုန်းဆိုင် POS",
-    "ระบบขายโทรศัพท์มือสอง",
-  ],
+  app: ["Fixer Tools", "Fixer Tools", "Fixer Tools"],
   offline: [
     "Offline POS • Local database",
     "အင်တာနက်မလို • စက်တွင်းဒေတာဘေ့စ်",

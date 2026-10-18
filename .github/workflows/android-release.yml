@@ -68,6 +68,7 @@ jobs:
             test-results/android/*.log
             test-results/android/*.json
             test-results/android/*.png
+            test-results/android/*.jpg
       - name: Upload verified APK
         uses: actions/upload-artifact@v4
         with:
@@ -75,6 +76,7 @@ jobs:
           path: |
             release/*.apk
             release/*.apk.sha256
+            release/Fixer-Tools-Sample-Receipt-JPEG.jpg
             test-results/android/apk-verification.json
           if-no-files-found: error
   publish:
@@ -97,9 +99,9 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          mapfile -d '' assets < <(find artifacts -type f \( -name '*.apk' -o -name '*.sha256' -o -name 'apk-verification.json' \) -print0)
-          test "${#assets[@]}" -eq 3
-          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title 'Phone Second Shop POS — Free Owner Android test APK' --notes-file docs/ANDROID_RELEASE.md
+          mapfile -d '' assets < <(find artifacts -type f \( -name '*.apk' -o -name '*.sha256' -o -name 'apk-verification.json' -o -name 'Fixer-Tools-Sample-Receipt-JPEG.jpg' \) -print0)
+          test "${#assets[@]}" -eq 4
+          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title 'Fixer Tools — Free Owner Android test APK' --notes-file docs/ANDROID_RELEASE.md
   diagnostics:
     needs: build-test
     if: failure()

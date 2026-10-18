@@ -1,4 +1,9 @@
-# Phone Second Shop POS — Android test APK
+# Fixer Tools — Android test APK
+
+## Fixer Tools · Android 0.2.0-android.5
+
+Renames the Android app and icon to Fixer Tools and adds native receipt Save JPEG / Share JPEG. See [JPEG export, privacy, bounds and verification](FIXER_TOOLS_JPEG.md). The app ID/database path remain unchanged. Existing Owner security, barcodes, Back confirmation and Bluetooth flow remain available. New setup defaults the shop name to Fixer Tools; existing settings/invoice snapshots are preserved. The sample JPEG attached to this release contains only synthetic emulator test data. This remains a debug-signed test APK; stable signing and physical-device/printer acceptance are pending.
+
 
 ## Android additions · 0.2.0-android.4
 
@@ -37,7 +42,7 @@ Regression checks exercise actual rendered header/control bounds and page overfl
 **Updating an existing test install:** CI debug signing keys can differ between builds. First export and verify an external backup. If Android rejects the update due to a signing mismatch, preserve the installed app and its data; do not uninstall until backup/restore has been verified. Same-APK reinstall tests do not prove upgrades from a differently signed older APK.
 
 
-Download `Phone-Second-Shop-POS-Android-0.2.0-test.apk` from the release Assets. Android 10 or later with a current Android System WebView is required. This is an offline Android app using the existing POS business rules, not a connection to your Windows database.
+Download `Fixer-Tools-Android-0.2.0-test.apk` from the release Assets. Android 10 or later with a current Android System WebView is required. This is an offline Android app using the existing POS business rules, not a connection to your Windows database.
 
 Android APK ကို Assets ထဲက `.apk` ဖိုင်မှ download ဆွဲပါ။ Android 10 နှင့်အထက် လိုအပ်ပါသည်။ စမ်းသပ်ဗားရှင်း ဖြစ်ပါသည်။
 

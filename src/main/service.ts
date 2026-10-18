@@ -313,6 +313,11 @@ export class ShopService {
           this.session.id,
         )!.password;
         this.expires = Date.now() + 30 * 60 * 1000;
+        if (this.ownerOnly)
+          this.run(
+            "INSERT OR IGNORE INTO settings(key,value) VALUES('store',?)",
+            JSON.stringify("Fixer Tools"),
+          );
         this.audit("owner.setup", String(result.lastInsertRowid));
         return this.user;
       });

@@ -25,6 +25,10 @@ const results = {
   firstRunSetup: false,
   ownerRecovery: false,
   mobileAdditions: false,
+  fixerBranding: false,
+  receiptJpegSave: false,
+  receiptJpegShareChooser: false,
+  externalShareDelivery: "PENDING: chooser only, no external message sent",
   backExitConfirmation: false,
   automaticBarcode: false,
   bluetoothHardware: "PENDING: no physical printer",
@@ -64,8 +68,10 @@ async function nativeDialogButton(prefix) {
     adb("shell", "uiautomator", "dump", "/sdcard/pos-ui.xml");
     const xml = adb("shell", "cat", "/sdcard/pos-ui.xml");
     const nodes = xml.match(/<node\s[^>]+>/g) || [];
-    const node = nodes.find((n) =>
-      n.toLowerCase().includes(`text="${prefix.toLowerCase()}`),
+    const node = nodes.find(
+      (n) =>
+        n.toLowerCase().includes(`text="${prefix.toLowerCase()}`) &&
+        n.includes('enabled="true"'),
     );
     const bounds = node?.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
     if (bounds) {
@@ -94,6 +100,9 @@ async function call(op, input = {}) {
 try {
   page = await connect();
   results.apkInstalled = true;
+  await expect(
+    page.getByRole("heading", { name: "Fixer Tools", exact: true }),
+  ).toBeVisible();
   await page.getByRole("combobox").first().selectOption("en-US");
   await page.getByLabel("Username", { exact: true }).fill("apk-owner");
   await page
@@ -110,6 +119,11 @@ try {
   await verifyMobileAdditions(page, false);
   results.mobileAdditions = true;
   results.ownerRecovery = true;
+  await expect(page.locator(".brand strong")).toHaveText("Fixer Tools");
+  await expect(
+    page.locator(".brand svg[aria-label='Fixer Tools icon']"),
+  ).toBeVisible();
+  results.fixerBranding = true;
   results.firstRunSetup = true;
   await call("rate", {
     from: "USD",
@@ -183,6 +197,52 @@ try {
   const screen = await device.screenshot();
   await writeFile("test-results/android/receipt-native.png", screen);
   results.nativeReceiptPreview = true;
+  await nativeDialogButton("Save JPEG");
+  let savedName;
+  for (let attempt = 0; attempt < 30; attempt++) {
+    try {
+      savedName = adb("shell", "ls", "/sdcard/Pictures/FixerTools")
+        .split(/\r?\n/)
+        .find((n) => /^FixerTools-Receipt-\d+-[a-f0-9]{8}\.jpg$/.test(n));
+    } catch {}
+    if (savedName) break;
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  expect(savedName).toBeTruthy();
+  const savedJpeg = execFileSync(
+    "adb",
+    ["exec-out", "cat", "/sdcard/Pictures/FixerTools/" + savedName],
+    { maxBuffer: 20 * 1024 * 1024 },
+  );
+  expect(savedJpeg.subarray(0, 2).toString("hex")).toBe("ffd8");
+  expect(savedJpeg.subarray(-2).toString("hex")).toBe("ffd9");
+  await writeFile("test-results/android/receipt-export.jpg", savedJpeg);
+  results.receiptJpegSave = true;
+  await nativeDialogButton("Share JPEG");
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const resumed = adb("shell", "dumpsys", "activity", "activities")
+      .split("\n")
+      .filter((s) => /topResumedActivity|mResumedActivity/.test(s))
+      .join("\n");
+    if (/ChooserActivity|ResolverActivity/.test(resumed)) break;
+    if (attempt === 29) throw new Error("JPEG share chooser did not open");
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  const sharedName = adb("shell", "run-as", pkg, "ls", "cache/receipt-images")
+    .split(/\r?\n/)
+    .find((n) => /^FixerTools-Receipt-\d+-[a-f0-9]{8}\.jpg$/.test(n));
+  expect(sharedName).toBeTruthy();
+  const sharedJpeg = execFileSync(
+    "adb",
+    ["exec-out", "run-as", pkg, "cat", "cache/receipt-images/" + sharedName],
+    { maxBuffer: 20 * 1024 * 1024 },
+  );
+  expect(sharedJpeg.subarray(0, 2).toString("hex")).toBe("ffd8");
+  expect(sharedJpeg.subarray(-2).toString("hex")).toBe("ffd9");
+  results.receiptJpegShareChooser = true;
+  adb("shell", "input", "keyevent", "4");
+  await new Promise((r) => setTimeout(r, 500));
+
   adb("shell", "input", "keyevent", "4");
   await new Promise((r) => setTimeout(r, 500));
   await page
