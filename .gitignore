@@ -9,3 +9,9 @@ coverage/
 test-results/
 .npm-cache/
 build/uninstall-files.nsh
+dist-android/
+android/.gradle/
+android/**/build/
+android/local.properties
+*.keystore
+*.jks

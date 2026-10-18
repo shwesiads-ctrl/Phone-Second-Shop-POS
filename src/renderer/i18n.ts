@@ -31,6 +31,11 @@ const words: Record<string, [string, string, string]> = {
     "လက်ကားဈေး မသတ်မှတ်ရသေးပါ။",
     "ยังไม่ได้กำหนดราคาขายส่ง",
   ],
+  STORAGE_FAILED: [
+    "Could not save. The transaction was reverted; sign in again.",
+    "သိမ်းဆည်း၍ မရပါ။ လုပ်ဆောင်ချက်ကို ပြန်ဖျက်ထားသည်။ ပြန်ဝင်ပါ။",
+    "บันทึกไม่สำเร็จ ย้อนกลับรายการแล้ว โปรดเข้าสู่ระบบอีกครั้ง",
+  ],
   dashboard: ["Dashboard", "အနှစ်ချုပ်", "ภาพรวม"],
   inventory: ["Phone inventory", "ဖုန်းလက်ကျန်", "คลังโทรศัพท์"],
   accessories: ["Accessories", "ဆက်စပ်ပစ္စည်း", "อุปกรณ์เสริม"],
@@ -61,9 +66,9 @@ const words: Record<string, [string, string, string]> = {
     "ระบบขายโทรศัพท์มือสอง",
   ],
   offline: [
-    "Offline desktop • Local database",
+    "Offline POS • Local database",
     "အင်တာနက်မလို • စက်တွင်းဒေတာဘေ့စ်",
-    "เดสก์ท็อปออฟไลน์ • ฐานข้อมูลในเครื่อง",
+    "POS ออฟไลน์ • ฐานข้อมูลในเครื่อง",
   ],
   login: ["Log in", "အကောင့်ဝင်ရန်", "เข้าสู่ระบบ"],
   setup: [

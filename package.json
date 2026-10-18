@@ -18,7 +18,10 @@
     "dist:win": "npm test && npm run test:desktop && electron-builder --win nsis --x64 --publish never",
     "pack:linux": "npm test && npm run build && electron-builder --linux dir --x64",
     "test:desktop": "npm run build && node tests/e2e/desktop.mjs",
-    "test:print": "npm run build && node tests/e2e/currency-print.mjs"
+    "test:print": "npm run build && node tests/e2e/currency-print.mjs",
+    "build:android:web": "vite build --config vite.android.config.ts && node scripts/android-assets.mjs",
+    "android:sync": "npm run build:android:web && cap sync android",
+    "test:android:web": "node tests/e2e/android-web.mjs"
   },
   "dependencies": {
     "@fontsource/noto-sans-myanmar": "5.3.0",
@@ -29,14 +32,21 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/cli": "8.5.3",
+    "@capacitor/core": "8.5.3",
+    "@noble/hashes": "2.4.0",
     "@playwright/test": "1.64.1",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/sql.js": "1.4.11",
+    "buffer": "6.0.3",
     "electron": "44.9.0",
     "electron-builder": "26.15.3",
     "esbuild": "0.28.2",
     "prettier": "3.9.10",
+    "sql.js": "1.15.0",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vite": "8.3.4"

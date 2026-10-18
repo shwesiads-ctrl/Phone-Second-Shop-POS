@@ -374,7 +374,10 @@ function App() {
       uiLanguage: language,
     });
     if (!reply.ok) {
-      if (reply.error === "UNAUTHENTICATED") {
+      if (
+        reply.error === "UNAUTHENTICATED" ||
+        reply.error === "STORAGE_FAILED"
+      ) {
         setUser(null);
         setData(null);
       }

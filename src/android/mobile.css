@@ -1,0 +1,107 @@
+/* Shared desktop workflows, adapted for touch and narrow screens. */
+@media (max-width: 760px) {
+  .shell {
+    display: block !important;
+  }
+  .auth {
+    padding: 16px;
+    min-height: 100dvh;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+  }
+  body {
+    font-size: 14px;
+  }
+  aside {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    inset: auto !important;
+  }
+  .workspace {
+    margin-left: 0 !important;
+  }
+  nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    padding: 8px;
+  }
+  nav button {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 44px;
+    white-space: nowrap;
+  }
+  .brand {
+    padding: 12px;
+  }
+  .sidebar-footer {
+    display: none;
+  }
+  header {
+    position: relative;
+    padding: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .header-actions {
+    flex-wrap: wrap;
+  }
+  .header-actions label {
+    min-width: 120px;
+  }
+  .content {
+    padding: 12px;
+  }
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pos-grid,
+  .form-grid,
+  .about-grid,
+  .repair-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .dialog {
+    width: calc(100vw - 20px) !important;
+    max-width: none;
+    max-height: 92dvh;
+    padding: 16px;
+  }
+  .overlay {
+    padding: 10px;
+  }
+  input,
+  select,
+  textarea,
+  button {
+    min-height: 44px;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .table-wrap {
+    overflow: auto;
+    max-width: 100%;
+  }
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tender {
+    flex-wrap: wrap;
+  }
+  .section-heading {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}

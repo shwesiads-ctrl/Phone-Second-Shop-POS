@@ -1,0 +1,133 @@
+name: Android APK test release
+on:
+  push:
+    tags: ["android-v*"]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Install and validate shared code
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          npm run typecheck
+          npm test
+      - name: Build Android web assets and sync native app
+        run: npm run android:sync
+      - name: Compile debug-signed APK
+        run: |
+          set -euo pipefail
+          mkdir -p test-results/android
+          cd android
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug 2>&1 | tee ../test-results/android/build.log
+      - name: Enable emulator KVM access
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install and exercise the real APK
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: bash -o pipefail -c 'node tests/e2e/android-apk.mjs 2>&1 | tee test-results/android/emulator.log'
+      - name: Verify emulator database and APK metadata
+        run: |
+          node scripts/verify-android.mjs
+      - name: Preserve test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-evidence
+          if-no-files-found: ignore
+          path: |
+            test-results/android/*.log
+            test-results/android/*.json
+            test-results/android/*.png
+      - name: Upload verified APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-release
+          path: |
+            release/*.apk
+            release/*.apk.sha256
+            test-results/android/apk-verification.json
+          if-no-files-found: error
+  publish:
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-test-release
+          path: artifacts
+      - name: Publish tested APK prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          mapfile -d '' assets < <(find artifacts -type f \( -name '*.apk' -o -name '*.sha256' -o -name 'apk-verification.json' \) -print0)
+          test "${#assets[@]}" -eq 3
+          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title 'Phone Second Shop POS — Android test APK' --notes-file docs/ANDROID_RELEASE.md
+  diagnostics:
+    needs: build-test
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-test-evidence
+          path: downloaded-evidence
+      - name: Save bounded synthetic test diagnostics
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
+          mkdirSync('ci-evidence',{recursive:true});
+          let text='';
+          for(const file of ['build.log','emulator.log','emulator-results.json'])if(existsSync('downloaded-evidence/'+file))text+='\n'+file+'\n'+readFileSync('downloaded-evidence/'+file,'utf8').split(/\r?\n/).slice(-120).join('\n');
+          text=text.replace(/gh[pousr]_[A-Za-z0-9]+|github_pat_[A-Za-z0-9_]+/g,'[REDACTED]').replace(/(Bearer\s+)[^\s]+/gi,'$1[REDACTED]').replace(/((?:password|token|secret)\s*[:=]\s*)[^\s]+/gi,'$1[REDACTED]');
+          writeFileSync('ci-evidence/android-failure.txt',text+'\n');
+          NODE
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ci-evidence/android-failure.txt
+          git commit -m "Record Android test diagnostics for run $RUN_ID"
+          git push origin "HEAD:refs/heads/android-evidence-$RUN_ID"
