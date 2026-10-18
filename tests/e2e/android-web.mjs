@@ -1,3 +1,4 @@
+import { verifyThemePreference, verifySearchIcon } from "./theme-search.mjs";
 import { verifyDemoRefresh } from "./demo-refresh.mjs";
 import { verifyMobileAdditions } from "./mobile-additions.mjs";
 import { verifyOwnerRecovery } from "./owner-recovery.mjs";
@@ -44,6 +45,7 @@ try {
   page.on("pageerror", (e) => errors.push(e.message));
   await page.waitForFunction(() => !!window.pos);
   await page.getByRole("combobox").first().selectOption("en-US");
+  await verifyThemePreference(page);
   await page.getByLabel("Username", { exact: true }).fill("android-owner");
   await page
     .getByLabel("Password (10+ characters)", { exact: true })
@@ -56,6 +58,7 @@ try {
   ).toBeVisible();
   for (const width of [360, 420, 760]) {
     await page.setViewportSize({ width, height: 900 });
+    await verifySearchIcon(page);
     await verifyMobileLayout(
       page,
       width === 360 ? "test-results/mobile-layout" : null,

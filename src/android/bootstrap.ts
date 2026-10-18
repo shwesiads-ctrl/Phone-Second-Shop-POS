@@ -1,3 +1,4 @@
+import "../renderer/theme";
 import { Buffer } from "buffer";
 import { initializeSQLite } from "./sqlite";
 import wasm from "sql.js/dist/sql-wasm.wasm?url";

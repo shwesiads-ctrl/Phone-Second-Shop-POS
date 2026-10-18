@@ -1,3 +1,4 @@
+import { verifyThemePreference, verifySearchIcon } from "./theme-search.mjs";
 import { verifyDemoRefresh } from "./demo-refresh.mjs";
 import { navigateTo, openNavigation, closeNavigation } from "./navigation.mjs";
 import { verifyMobileAdditions } from "./mobile-additions.mjs";
@@ -122,6 +123,8 @@ try {
     page.getByRole("heading", { name: "Fixer Tools", exact: true }),
   ).toBeVisible();
   await page.getByRole("combobox").first().selectOption("en-US");
+  await verifyThemePreference(page);
+  results.themePreference = true;
   await page.getByLabel("Username", { exact: true }).fill("apk-owner");
   await page
     .getByLabel("Password (10+ characters)", { exact: true })
@@ -134,6 +137,8 @@ try {
   ).toBeVisible();
   // Repeated full-page CDP captures can detach the Android WebView. Geometry
   // assertions still cover every page/language; capture the real display once.
+  await verifySearchIcon(page);
+  results.searchIcon = true;
   await verifyMobileLayout(page, null);
   await writeFile(
     "test-results/android/layout-native.png",

@@ -1,5 +1,7 @@
 export type Language = "my-MM" | "th-TH" | "en-US";
 const words: Record<string, [string, string, string]> = {
+  dayMode: ["Day mode", "နေ့ဘက်ပုံစံ", "โหมดกลางวัน"],
+  nightMode: ["Night mode", "ညဘက်ပုံစံ", "โหมดกลางคืน"],
   pullRefresh: [
     "Pull down to refresh",
     "အောက်ကိုဆွဲချ၍ ပြန်ဖွင့်ရန်",

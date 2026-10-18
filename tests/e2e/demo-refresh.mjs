@@ -2,10 +2,15 @@ import { expect } from "@playwright/test";
 import { navigateTo } from "./navigation.mjs";
 export async function verifyDemoRefresh(page, nativeBack) {
   await navigateTo(page, "Settings");
+  await page.getByTestId("theme-toggle").click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   const action = async (name) => {
     await page.getByRole("button", { name, exact: true }).click();
     const modal = page.getByRole("dialog", { name, exact: true });
     await expect(modal).toBeVisible();
+    expect(
+      await modal.evaluate((el) => getComputedStyle(el).backgroundColor),
+    ).toBe("rgb(27, 38, 53)");
     await modal.getByRole("button", { name, exact: true }).click();
     await expect(modal).toHaveCount(0);
   };
@@ -73,6 +78,8 @@ export async function verifyDemoRefresh(page, nativeBack) {
   });
 
   await expect(page.getByText(/\[DEMO\]/)).toHaveCount(0);
+  await page.getByTestId("theme-toggle").click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await navigateTo(page, 0);
   console.log(
     "PASS: real demo dialog cancel/confirm (no native-dialog mock), 100 items automatically visible despite old filters, demo count, removal and pull refresh. Physical swipe pending.",

@@ -1,3 +1,4 @@
+import { applyTheme, readTheme, type Theme } from "./theme";
 import { barcodeCandidate } from "../shared/barcode";
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -20,6 +21,48 @@ import {
 } from "../shared/contracts";
 import { convertMinor } from "../shared/exchange";
 import { translate, type Language } from "./i18n";
+function SearchIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m16 16 4.5 4.5" />
+    </svg>
+  );
+}
+function ThemeIcon({ night }: { night: boolean }) {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {night ? (
+        <>
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
+        </>
+      ) : (
+        <path d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z" />
+      )}
+    </svg>
+  );
+}
 function FixerMark() {
   return (
     <svg
@@ -403,6 +446,13 @@ function DemoConfirmation({
   );
 }
 function App() {
+  const [theme, setTheme] = useState<Theme>(readTheme);
+  useEffect(() => {
+    applyTheme(theme);
+    try {
+      localStorage.setItem("pos.theme", theme);
+    } catch {}
+  }, [theme]);
   const [language, setLanguage] = useState<Language>(
     (localStorage.getItem("pos.language") as Language) || "my-MM",
   );
@@ -1097,6 +1147,19 @@ function App() {
       <option value="en-US">English</option>
     </select>
   );
+  const themeToggle = (
+    <button
+      type="button"
+      className="secondary icon-button theme-toggle"
+      data-testid="theme-toggle"
+      title={t(theme === "dark" ? "dayMode" : "nightMode")}
+      aria-label={t(theme === "dark" ? "dayMode" : "nightMode")}
+      aria-pressed={theme === "dark"}
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+    >
+      <ThemeIcon night={theme === "dark"} />
+    </button>
+  );
   if (!user)
     return (
       <main className="auth">
@@ -1108,7 +1171,10 @@ function App() {
           <p>{t("offline")}</p>
           {status?.ownerOnly && <p>{t("freeOwner")}</p>}
           {recovered && <p role="status">{t("recoverySuccess")}</p>}
-          {languageSelector}
+          <div className="auth-preferences">
+            {languageSelector}
+            {themeToggle}
+          </div>
           <h2>
             {t(
               recoveryMode
@@ -1432,6 +1498,7 @@ function App() {
           </div>
           <div className="header-actions">
             {languageSelector}
+            {themeToggle}
             <span className="user-badge">
               {user.username}
               <small>{t(user.role)}</small>
@@ -1474,7 +1541,14 @@ function App() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <button className="secondary">⌕</button>
+              <button
+                type="submit"
+                className="secondary icon-button"
+                aria-label={t("search")}
+                title={t("search")}
+              >
+                <SearchIcon />
+              </button>
             </form>
             <label>
               {t("from")}
