@@ -33,6 +33,18 @@ export async function verifyMobileAdditions(page, mocked = false) {
   await page
     .getByRole("button", { name: "Printer status", exact: true })
     .click();
+  const printerPanel = page
+    .locator("section")
+    .filter({
+      has: page.getByRole("heading", {
+        name: "Bluetooth POS printer",
+        exact: true,
+      }),
+    });
+  await expect(printerPanel.getByRole("status")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Printer status", exact: true }),
+  ).toBeEnabled();
   const test = page.getByRole("button", {
     name: "Test print preview",
     exact: true,
