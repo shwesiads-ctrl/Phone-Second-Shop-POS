@@ -18,7 +18,7 @@ adb("shell", "svc", "data", "disable");
 adb("shell", "am", "start", "-n", `${pkg}/.MainActivity`);
 const devices = await android.devices({ omitDriverInstall: true });
 expect(devices.length).toBeGreaterThan(0);
-const device = devices[0];
+let device = devices[0];
 const results = {
   platform: "Android emulator API 35 x86_64",
   apkInstalled: false,
@@ -239,6 +239,12 @@ try {
       .filter((s) => /topResumedActivity|mResumedActivity/.test(s))
       .join("\n"),
   ).not.toContain(pkg);
+  // Android keeps the process alive after finishAndRemoveTask. Playwright caches
+  // the old WebView page by the same process socket; create a fresh device/CDP
+  // connection instead of reusing that closed target. Do not force-stop the app.
+  await device.close();
+  device = (await android.devices({ omitDriverInstall: true }))[0];
+  expect(device).toBeTruthy();
   adb("shell", "am", "start", "-n", `${pkg}/.MainActivity`);
   page = await connect();
   await page.getByLabel("Username", { exact: true }).fill("apk-owner");
