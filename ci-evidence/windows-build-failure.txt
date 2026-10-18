@@ -1,0 +1,140 @@
+
+> phone-second-shop-pos@0.2.0 dist:win
+> npm test && npm run test:desktop && electron-builder --win nsis --x64 --publish never
+
+
+> phone-second-shop-pos@0.2.0 test
+> tsx --test tests/*.test.ts
+
+✔ first-run owner, password hashing, login delay, session and RBAC (226.2988ms)
+✔ IMEI checksum, cross-slot uniqueness and explicit alternative approval (82.5671ms)
+✔ purchase idempotency, capitalized cost, rollback and payment balance (91.9235ms)
+✔ partial payment keeps receivable separate, duplicate sale is idempotent and sold phone cannot be sold twice (65.4814ms)
+✔ sale rollback on a late stock error and minimum price after invoice discount (58.6641ms)
+✔ full returns refund collections, quarantine phones, preserve history and require inspection (63.4767ms)
+✔ purchase reversals retain identifiers and compensate cash (42.1052ms)
+✔ accessory sale quantities, adjustments, negative stock prevention (57.443ms)
+✔ repair approval, paid delivery, transition control and real repair revenue (51.7035ms)
+✔ warranty checks use original sale dates (62.2713ms)
+✔ cash reconciliation uses collections, purchases and expenses without credit revenue (58.033ms)
+✔ currency precision, safe arithmetic, mismatch rejection and stable historical currency (257.8038ms)
+✔ backup and migrations reopen persistent database with business records intact (562.8686ms)
+✔ receipt escapes untrusted values and includes original invoice and currency (52.6437ms)
+✔ all localized dictionaries contain the same keys (1.138ms)
+✔ trade-in posts purchase, sale credit and stock atomically and reverses linked stock (45.5217ms)
+✔ invalid trade-in rolls back entire sale and outgoing stock (40.0378ms)
+✔ repair parts and replenishments preserve stock, cost basis, cash and idempotency (58.3012ms)
+✔ owner permission overrides are enforced by backend and cannot grant owner actions (122.5783ms)
+✔ held carts belong to users, do not reserve stock and are removed when resumed (52.8617ms)
+✔ partial returns reduce credit first, refund excess collections, allocate discounts exactly and never over-restock (49.3978ms)
+✔ period reports post refunds at return date instead of rewriting original sales period (43.1079ms)
+✔ repair cancellation refunds deposits, closing is immutable and reopening creates a linked new ticket (40.2337ms)
+✔ repair warranty claims require an unexpired delivered ticket and manager resolutions are audited (39.5643ms)
+✔ structured phone inspection is persisted and historical receipts preserve original store/warranty terms (41.7937ms)
+✔ cash in/out entries reconcile the drawer without affecting profit and repeat requests are idempotent (40.7009ms)
+✔ purchase shortfall reversals recognize a loss once and purchase/repair receipts use their own ledger (41.8864ms)
+✔ all six currency directions use major-unit rational rates and explicit precision (1.3953ms)
+✔ invalid rates and overflow fail, rate creation requires owner/admin, stored rates are immutable (176.4641ms)
+✔ partial foreign payment stores original tender and immutable rate while ledger stays in invoice units (78.4904ms)
+✔ missing/wrong pairs and conversions rounding to zero cannot silently accept money (104.3261ms)
+✔ mixed-currency cart freezes per-unit original prices/costs and profit in invoice currency (79.8766ms)
+✔ fractional foreign refunds carry rounding and return every original minor unit at full return (55.6384ms)
+✔ return reduces debt first, refunds original split tenders and never uses a newer rate (55.1089ms)
+✔ cross-currency purchase, supplier payment and reversal restore original cash and count refurbishment once (62.0226ms)
+✔ foreign-valued trade-in keeps native acquisition and reverses both original noncash legs (60.5372ms)
+✔ repair foreign deposit and cancellation refund preserve source units (59.7676ms)
+✔ changing default preferences never revalues posted invoices; converted report saves original totals and applied rates (63.3582ms)
+✔ cash received and change preserve source precision without double-counting physical cash (42.4419ms)
+✔ atomic exchange rolls back the return when replacement stock fails, then links both legs idempotently (47.7655ms)
+✔ custom methods are authorized and validated; deactivation preserves historical payments (148.7157ms)
+✔ configured wholesale pricing preserves COGS and owner permission overrides (175.0799ms)
+✔ foreign repair parts freeze converted unit cost and retain native cost evidence (56.5258ms)
+✔ historical receivables retain debt before later returns and payments (56.0353ms)
+✔ structured inspection corrections are audited and blocked after a phone is sold (40.4859ms)
+✔ supplier balances and purchase reversals are reported as of their own posting dates (47.956ms)
+Generated Windows uninstall manifest: C:\Users\RUNNER~1\AppData\Local\Temp\pos-installer-FF70rs\build\uninstall-files.nsh (2 packaged files)
+✔ uninstall manifest removes only packaged files and empty directories, preserving user files (6.2364ms)
+✔ genuine v0.1.0 schema7 paid/partially-returned fixture upgrades without changing history or re-refunding old tender units (2033.9661ms)
+✔ restore preflight upgrades a copy, preserves the legacy backup bytes and rejects future schemas (1709.1215ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4621.273
+
+> phone-second-shop-pos@0.2.0 test:desktop
+> npm run build && node tests/e2e/desktop.mjs
+
+
+> phone-second-shop-pos@0.2.0 build
+> npm run typecheck && vite build && node scripts/build.mjs
+
+
+> phone-second-shop-pos@0.2.0 typecheck
+> tsc --noEmit
+
+[36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 21 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                      0.70 kB │ gzip:  0.41 kB
+dist/assets/noto-sans-thai-latin-ext-400-normal-nBP59pVw.woff2       6.08 kB
+dist/assets/noto-sans-myanmar-latin-ext-400-normal-Bh89aKMz.woff2    6.56 kB
+dist/assets/noto-sans-myanmar-latin-ext-600-normal-CHsBsS8r.woff2    6.64 kB
+dist/assets/noto-sans-thai-latin-ext-400-normal-B-1H0YkH.woff        7.92 kB
+dist/assets/noto-sans-myanmar-latin-ext-400-normal-DRGWNQyd.woff     8.62 kB
+dist/assets/noto-sans-myanmar-latin-ext-600-normal-Ul_FWO-3.woff     8.64 kB
+dist/assets/noto-sans-thai-thai-400-normal-BEOmKAI1.woff2            9.11 kB
+dist/assets/noto-sans-thai-latin-400-normal-BaWBrqFP.woff2          10.26 kB
+dist/assets/noto-sans-myanmar-latin-400-normal-Dt7kQkP-.woff2       10.44 kB
+dist/assets/noto-sans-myanmar-latin-600-normal-zzKSSZfK.woff2       10.60 kB
+dist/assets/noto-sans-thai-thai-400-normal-Dxb_unuU.woff            11.31 kB
+dist/assets/noto-sans-thai-latin-400-normal-Dh_FJjOB.woff           13.14 kB
+dist/assets/noto-sans-myanmar-latin-400-normal-wRn4g6YM.woff        13.38 kB
+dist/assets/noto-sans-myanmar-latin-600-normal-ZOQIvjx5.woff        13.45 kB
+dist/assets/noto-sans-myanmar-myanmar-400-normal-C_Ri2PLj.woff2     47.14 kB
+dist/assets/noto-sans-myanmar-myanmar-600-normal-Cju0GbT9.woff2     49.99 kB
+dist/assets/noto-sans-myanmar-myanmar-400-normal-Di6U4opH.woff      65.99 kB
+dist/assets/noto-sans-myanmar-myanmar-600-normal-DDwfN3_5.woff      68.88 kB
+dist/assets/index-Bf6NJBlV.css                                      11.49 kB │ gzip:  3.21 kB
+dist/assets/index-BR7Puz15.js                                      315.41 kB │ gzip: 94.42 kB
+
+[32m✓ built in 133ms[39m
+PASS: Electron owner setup → supplier → phone purchase → paid sale → receipt preview; Myanmar/Thai switching; bundled Unicode fonts; barcode/QR; backup/restore; redacted bug export; language persistence; isolated preload.
+  • electron-builder  version=26.15.3 os=10.0.20348
+  • loaded configuration  file=package.json ("build" field)
+  • executing @electron/rebuild  electronVersion=44.9.0 arch=x64 buildFromSource=false workspaceRoot=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS projectDir=./ appDir=./
+  • installing native dependencies  arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=44.9.0 appOutDir=release\win-unpacked
+  • downloaded      label=electron progress=100%
+  • downloaded electron zip extracted successfully  output=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\release\win-unpacked
+  • searching for node modules  pm=npm searchDir=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS
+  • updating asar integrity executable resource  executablePath=release\win-unpacked\Phone Second Shop POS.exe
+Generated Windows uninstall manifest: D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build\uninstall-files.nsh (73 packaged files)
+  • signing with signtool.exe  path=release\win-unpacked\Phone Second Shop POS.exe
+  • building        target=nsis file=release\Phone Second Shop POS Setup 0.2.0.exe archs=x64 oneClick=false perMachine=false
+  • downloaded      label=7zip-win-x64.tar.gz progress=100%
+  • downloaded      label=nsis-resources-3.4.1.7z progress=100%
+  • uninstaller is not signed by electron-builder  reason=custom NSIS script is used
+  • downloaded      label=nsis-3.0.4.1.7z progress=100%
+  • signing with signtool.exe  path=release\Phone Second Shop POS Setup 0.2.0.exe
+  • building block map  blockMapFile=release\Phone Second Shop POS Setup 0.2.0.exe.blockmap
+D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\node_modules\@electron\asar\lib\filesystem.js:187
+            throw new Error(`"${p}" was not found in this archive`);
+                  ^
+
+Error: "dist/assets/index-Bf6NJBlV.css" was not found in this archive
+    at Filesystem.getFile (D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\node_modules\@electron\asar\lib\filesystem.js:187:19)
+    at extractFile (D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\node_modules\@electron\asar\lib\asar.js:256:33)
+    at file:///D:/a/Phone-Second-Shop-POS/Phone-Second-Shop-POS/scripts/verify-windows.mjs:58:12
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.21.0
+
