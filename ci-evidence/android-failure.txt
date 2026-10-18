@@ -1,0 +1,174 @@
+
+build.log
+> Task :capacitor-cordova-android-plugins:generateDebugResources
+> Task :capacitor-cordova-android-plugins:packageDebugResources
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:mergeDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :capacitor-android:extractDeepLinksDebug
+> Task :capacitor-cordova-android-plugins:extractDeepLinksDebug
+> Task :capacitor-android:compileDebugLibraryResources
+> Task :app:parseDebugLocalResources
+> Task :capacitor-android:processDebugManifest
+> Task :capacitor-cordova-android-plugins:compileDebugLibraryResources
+> Task :capacitor-cordova-android-plugins:processDebugManifest
+> Task :capacitor-android:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :capacitor-android:javaPreCompileDebug
+> Task :capacitor-cordova-android-plugins:javaPreCompileDebug
+> Task :capacitor-cordova-android-plugins:parseDebugLocalResources
+> Task :capacitor-android:generateDebugRFile
+> Task :app:mergeDebugShaders
+> Task :capacitor-cordova-android-plugins:generateDebugRFile
+
+> Task :capacitor-android:compileDebugJavaWithJavac
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugShaders
+> Task :capacitor-android:bundleLibCompileToJarDebug
+> Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugAssets
+> Task :capacitor-cordova-android-plugins:mergeDebugShaders
+> Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+> Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:mergeDebugAssets
+> Task :app:mergeDebugAssets
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug
+> Task :capacitor-android:bundleLibRuntimeToJarDebug
+> Task :app:compressDebugAssets
+> Task :app:desugarDebugFileDependencies
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-android:processDebugJavaRes NO-SOURCE
+> Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+> Task :app:processDebugResources
+> Task :app:mergeDebugJavaResource
+
+> Task :app:compileDebugJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :app:dexBuilderDebug
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToDirDebug
+> Task :app:mergeDebugJniLibFolders
+> Task :capacitor-android:mergeDebugJniLibFolders
+> Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+> Task :app:checkDebugDuplicateClasses
+> Task :capacitor-android:copyDebugJniLibsProjectOnly
+> Task :capacitor-android:bundleLibRuntimeToDirDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
+> Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeLibDexDebug
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:mergeExtDexDebug
+> Task :capacitor-android:checkDebugAarMetadata
+> Task :capacitor-android:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectAndLocalJars
+> Task :capacitor-android:extractDebugAnnotations
+> Task :capacitor-android:extractDeepLinksForAarDebug
+> Task :capacitor-android:mergeDebugGeneratedProguardFiles
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+> Task :capacitor-android:mergeDebugConsumerProguardFiles
+> Task :capacitor-android:prepareDebugArtProfile
+> Task :capacitor-android:prepareLintJarForPublish
+> Task :capacitor-android:mergeDebugJavaResource
+> Task :capacitor-cordova-android-plugins:checkDebugAarMetadata
+> Task :capacitor-android:syncDebugLibJars
+> Task :capacitor-android:bundleDebugAar
+> Task :capacitor-android:assembleDebug
+> Task :capacitor-cordova-android-plugins:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectAndLocalJars
+> Task :capacitor-cordova-android-plugins:extractDebugAnnotations
+> Task :capacitor-cordova-android-plugins:extractDeepLinksForAarDebug
+> Task :capacitor-cordova-android-plugins:mergeDebugGeneratedProguardFiles
+> Task :capacitor-cordova-android-plugins:mergeDebugConsumerProguardFiles
+> Task :capacitor-cordova-android-plugins:prepareDebugArtProfile
+> Task :capacitor-cordova-android-plugins:prepareLintJarForPublish
+> Task :capacitor-cordova-android-plugins:mergeDebugJavaResource
+> Task :capacitor-cordova-android-plugins:syncDebugLibJars
+> Task :capacitor-cordova-android-plugins:bundleDebugAar
+> Task :capacitor-cordova-android-plugins:assembleDebug
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1792320269765.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/Phone-Second-Shop-POS/Phone-Second-Shop-POS/android/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 1m 26s
+94 actionable tasks: 94 executed
+
+emulator.log
+Layout language en-US 412
+Layout language my-MM 412
+Layout language th-TH 412
+PASS: Free Owner UI, blocked staff creation, password-authorized key generation, hide key, logged-out recovery, login with replacement password and consumed-key rejection.
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+ExpectError: expect(received).toBe(expected) // Object.is equality
+
+Expected: "PRINTER_NOT_CONNECTED"
+Received: "BUSY"
+    at captureRawStack (/home/runner/work/Phone-Second-Shop-POS/Phone-Second-Shop-POS/node_modules/playwright-core/lib/coreBundle.js:9282:17)
+    at callMatcherAsStep (/home/runner/work/Phone-Second-Shop-POS/Phone-Second-Shop-POS/node_modules/playwright/lib/matchers/expect.js:13316:57)
+    at Object.toBe (/home/runner/work/Phone-Second-Shop-POS/Phone-Second-Shop-POS/node_modules/playwright/lib/matchers/expect.js:13308:23)
+    at verifyMobileAdditions (/home/runner/work/Phone-Second-Shop-POS/Phone-Second-Shop-POS/tests/e2e/mobile-additions.mjs:44:30)
+    at async file:///home/runner/work/Phone-Second-Shop-POS/Phone-Second-Shop-POS/tests/e2e/android-apk.mjs:110:3 {
+  matcherResult: {
+    actual: 'BUSY',
+    expected: 'PRINTER_NOT_CONNECTED',
+    message: 'expect(received).toBe(expected) // Object.is equality\n' +
+      '\n' +
+      'Expected: "PRINTER_NOT_CONNECTED"\n' +
+      'Received: "BUSY"',
+    name: 'toBe',
+    pass: false
+  }
+}
+
+Node.js v24.21.0
+
+emulator-results.json
+{
+  "platform": "Android emulator API 35 x86_64",
+  "apkInstalled": true,
+  "firstRunSetup": false,
+  "ownerRecovery": false,
+  "mobileAdditions": false,
+  "backExitConfirmation": false,
+  "automaticBarcode": false,
+  "bluetoothHardware": "PENDING: no physical printer",
+  "offlineSale": false,
+  "originalTender": false,
+  "privatePersistence": false,
+  "sameApkReinstall": false,
+  "nativeReceiptPreview": false,
+  "physicalPrinting": "PENDING",
+  "physicalArmDevice": "PENDING",
+  "signing": "Android debug test certificate; not production signing",
+  "error": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"PRINTER_NOT_CONNECTED\"\nReceived: \"BUSY\""
+}
