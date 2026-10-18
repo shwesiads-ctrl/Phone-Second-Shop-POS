@@ -152,10 +152,13 @@ try {
   await expect(
     page.getByRole("heading", { name: "အရောင်းမှတ်တမ်း", exact: true }).first(),
   ).toBeVisible();
-  await page.screenshot({
-    path: "test-results/android/myanmar.png",
-    fullPage: true,
-  });
+  // After the native receipt Activity, CDP full-page capture can stall on the
+  // resumed WebView compositor. Capture the actual Android display instead;
+  // the DOM Unicode assertion above remains mandatory.
+  await writeFile(
+    "test-results/android/myanmar.png",
+    await device.screenshot(),
+  );
   await page
     .getByRole("combobox", { name: "ဘာသာစကား", exact: true })
     .selectOption("th-TH");

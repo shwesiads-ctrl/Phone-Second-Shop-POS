@@ -2,6 +2,8 @@
 
 ## Free Owner edition · 0.2.0-android.3
 
+Initial native run 39113103978 built the APK and passed Owner recovery, offline sale and native receipt preview, but timed out taking a CDP full-page screenshot after returning from the native receipt Activity. Persistence/reinstall checks were not reached and no release was published from that run. The test now uses native Android display capture at that point, retaining the Unicode DOM assertions and all subsequent functional checks.
+
 Android now offers the free, single-Owner workflow: no staff-role screen, staff login or user/permission creation. Historical user records and transactions are retained. Owner settings include password-authorized recovery-key creation/rotation and a logged-out one-use password reset. Database schema 9 adds only recovery hashes and persistent authentication throttling. Session credentials/active roles are rechecked and logged-out shop settings are withheld. See [Owner security, recovery instructions and limits](OWNER_SECURITY.md).
 
 Local checks: 57 shared/security/migration tests passed, TypeScript passed, and the desktop Electron workflow passed. The Android-browser workflow also passed all 27 responsive layout combinations and the real settings → key generation → logged-out recovery → replacement-password login → consumed-key rejection UI flow (native dialogs/storage substituted). Native APK results are reported separately by the release workflow and verification JSON. This release remains a debug-signed test APK; stable production signing, physical ARM devices, native document-picker acceptance and printers remain pending.
