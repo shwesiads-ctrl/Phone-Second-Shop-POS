@@ -1,3 +1,4 @@
+import { verifyMobileLayout } from "./mobile-layout.mjs";
 // Actual installed debug APK, Android WebView and private native storage; no mock bridge.
 import { _android as android } from "playwright";
 import { expect } from "@playwright/test";
@@ -73,6 +74,7 @@ try {
   await expect(
     page.getByRole("heading", { name: "Dashboard", exact: true }).first(),
   ).toBeVisible();
+  await verifyMobileLayout(page, "test-results/android/layout");
   results.firstRunSetup = true;
   await call("rate", {
     from: "USD",

@@ -1,3 +1,4 @@
+import { verifyMobileLayout } from "./mobile-layout.mjs";
 import { _electron as electron, expect } from "@playwright/test";
 import { spawn } from "node:child_process";
 import { mkdtemp, rm, writeFile, mkdir, readFile } from "node:fs/promises";
@@ -50,6 +51,14 @@ try {
   await expect(
     page.getByRole("heading", { name: "Dashboard", exact: true }).first(),
   ).toBeVisible();
+  for (const width of [360, 420, 760]) {
+    await page.setViewportSize({ width, height: 900 });
+    await verifyMobileLayout(
+      page,
+      width === 360 ? "test-results/mobile-layout" : null,
+    );
+  }
+  await page.setViewportSize({ width: 420, height: 900 });
   const call = async (op, input = {}) => {
     const reply = await page.evaluate(
       ({ op, input }) => window.pos.call(op, input),

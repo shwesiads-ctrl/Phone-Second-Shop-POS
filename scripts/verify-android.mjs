@@ -68,7 +68,7 @@ writeFileSync(
   "test-results/android/apk-verification.json",
   JSON.stringify(
     {
-      version: "0.2.0-android.1",
+      version: "0.2.0-android.2",
       bytes: bytes.length,
       sha256,
       signing:

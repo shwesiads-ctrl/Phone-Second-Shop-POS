@@ -1,5 +1,16 @@
 # Phone Second Shop POS — Android test APK
 
+## Android UI correction (0.2.0-android.2)
+
+The mobile header now grows with its title and account controls, preventing the language/logout row from overlapping search and date filters. Search occupies a full row, dates use two equal columns, and refresh moves below them. Tables remain horizontally scrollable inside their panels. Touch table text is enlarged. No database migration is required.
+
+Local validation: 49 shared tests passed, typecheck and Android asset sync passed, and the Android-browser workflow passed including all 27 language/page/width layout combinations. Native APK verification for this correction is gated by the release workflow.
+
+Regression checks exercise actual rendered header/control bounds and page overflow on Dashboard, Checkout and Inventory in Burmese, Thai and English. The browser suite covers 360, 420 and 760 CSS pixels; the release pipeline also runs these checks in the installed Android WebView before publishing. The attached verification and workflow determine whether the new APK passed.
+
+**Updating an existing test install:** CI debug signing keys can differ between builds. First export and verify an external backup. If Android rejects the update due to a signing mismatch, preserve the installed app and its data; do not uninstall until backup/restore has been verified. Same-APK reinstall tests do not prove upgrades from a differently signed older APK.
+
+
 Download `Phone-Second-Shop-POS-Android-0.2.0-test.apk` from the release Assets. Android 10 or later with a current Android System WebView is required. This is an offline Android app using the existing POS business rules, not a connection to your Windows database.
 
 Android APK ကို Assets ထဲက `.apk` ဖိုင်မှ download ဆွဲပါ။ Android 10 နှင့်အထက် လိုအပ်ပါသည်။ စမ်းသပ်ဗားရှင်း ဖြစ်ပါသည်။
