@@ -14,7 +14,9 @@ The GitHub Windows build/test/package verification passed. This does not establi
 
 ## Android APK download
 
-[Download Free Owner Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.5/Phone-Second-Shop-POS-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.5)
+[Download Free Owner Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.8/Phone-Second-Shop-POS-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.8)
+
+Android additions: Back/Exit confirmation, customization contact via Telegram @kominit, automatic barcodes, and Classic Bluetooth SPP / ESC-POS search/connect/test-preview/raster printing. **Physical printer acceptance is pending.** See [printer setup and limits](docs/ANDROID_PRINTER_FEATURES.md).
 
 Free Owner edition: only the primary Owner can log in; staff/role management is disabled. Recovery keys can be generated in Owner security settings and used once from Forgot password. See [recovery instructions and security limits](docs/OWNER_SECURITY.md). Keep a verified external backup before upgrading; schema-9 backups require updated software.
 

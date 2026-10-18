@@ -2,6 +2,12 @@
 
 ## Android additions · 0.2.0-android.4
 
+**Verified published APK:** [android-v0.2.0-test.8](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.8), artifact source `742663a`; [Actions 39120557672](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39120557672) passed. The installed API35 emulator passed Owner recovery, new barcode UI/persistence, customization-link UI, real native Bluetooth status and disconnected-print refusal, Back/Stay/Exit, reopening after Exit with retained data, offline currency sale/change, native receipt preview, force-stop/reinstall persistence, and SQLite/package verification. **No physical printer/radio connection or paper output was tested.**
+
+Full public APK download returned HTTP 200, **10,716,610 bytes**; SHA256 **`99c653c3359777e348434e989ead115193bd8e6525f1079534cc45ffdebd32c7`** matched the attached checksum and verification JSON. All 62 shared tests, typecheck, desktop workflow, 27 browser layout combinations and full Android-browser workflow passed. Mock-transport search/connect/disconnect/test-preview and support routing passed. A subsequent test-only status-completion wait (`09d51e2`) passed a targeted browser rerun; product source is unchanged from the published APK.
+
+Earlier native run 39120110235 reached all feature/persistence assertions but reused a closed automation WebView after task Exit; run 39120403059 hit the intentional BUSY guard because automation requested printing before the native status call completed. They did not publish APK releases. The final run uses a fresh public Android-device connection after Exit (without force-stopping the app), and the test helper now awaits status completion. Functional checks were retained.
+
 Adds native Back/Exit confirmation, Owner customization link to Telegram @kominit, Classic Bluetooth SPP discovery/paired connection/disconnect, 58/80mm Unicode ESC-POS raster printing through receipt/test preview, and automatic internal accessory barcodes. See [setup, supported protocols and pending hardware acceptance](ANDROID_PRINTER_FEATURES.md). No database migration or dependency changes. All 62 shared tests and TypeScript passed, and the desktop workflow passed. Browser/native APK results are gated separately. Hardware printing is explicitly pending; a socket/send is not paper confirmation. The APK remains debug-signed and may not upgrade an older differently signed build. Preserve an external backup before changing installs.
 
 
