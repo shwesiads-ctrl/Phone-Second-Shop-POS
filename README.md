@@ -1,4 +1,4 @@
-# Phone Second Shop POS
+# Fixer Tools / Phone Second Shop POS
 
 Offline Electron + React + TypeScript desktop POS for a second-hand phone shop. SQLite stays in Electron's application user-data folder. Default UI: မြန်မာ; other languages: ไทย and English. Developer: Myominaung · [Telegram @kominit](https://t.me/kominit).
 
@@ -14,7 +14,9 @@ The GitHub Windows build/test/package verification passed. This does not establi
 
 ## Android APK download
 
-[Download Free Owner Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.8/Phone-Second-Shop-POS-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.8)
+[Download Fixer Tools Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.9/Fixer-Tools-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.9)
+
+Android app name/icon: **Fixer Tools** (0.2.0-android.5). Receipt preview includes **Save JPEG** to Pictures/FixerTools and **Share JPEG** via the Android chooser. See [JPEG details and verified sample](docs/FIXER_TOOLS_JPEG.md).
 
 Android additions: Back/Exit confirmation, customization contact via Telegram @kominit, automatic barcodes, and Classic Bluetooth SPP / ESC-POS search/connect/test-preview/raster printing. **Physical printer acceptance is pending.** See [printer setup and limits](docs/ANDROID_PRINTER_FEATURES.md).
 

@@ -2,6 +2,8 @@
 
 ## Fixer Tools · Android 0.2.0-android.5
 
+**Verified published APK:** [android-v0.2.0-test.9](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.9), source `6888779`, [successful native workflow 39122033913](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39122033913). Actual API35 APK passed Fixer Tools launcher/UI branding, native receipt Gallery JPEG save and share chooser, plus all existing workflow/persistence checks. All 62 shared tests, typecheck, desktop and Android-browser checks passed. The full downloaded APK returned HTTP 200, 10,727,914 bytes; SHA256 `6f4b8ecdfe2b2aa2a944cabb0702df09eba965c8016fc5a09f4d0cf502640ae1` matched both attached checksum and verification JSON. The 720×2384 exported synthetic JPEG was downloaded/hash-checked and visually inspected: Unicode, invoice details and payment/change are visible. External receiving-app delivery and physical hardware remain pending; see the linked JPEG validation details.
+
 Renames the Android app and icon to Fixer Tools and adds native receipt Save JPEG / Share JPEG. See [JPEG export, privacy, bounds and verification](FIXER_TOOLS_JPEG.md). The app ID/database path remain unchanged. Existing Owner security, barcodes, Back confirmation and Bluetooth flow remain available. New setup defaults the shop name to Fixer Tools; existing settings/invoice snapshots are preserved. The sample JPEG attached to this release contains only synthetic emulator test data. This remains a debug-signed test APK; stable signing and physical-device/printer acceptance are pending.
 
 
