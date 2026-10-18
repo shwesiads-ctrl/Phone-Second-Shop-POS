@@ -98,7 +98,7 @@ jobs:
           set -euo pipefail
           mapfile -d '' assets < <(find artifacts -type f \( -name '*.exe' -o -name '*.sha256' -o -name 'windows-artifact.json' \) -print0)
           test "${#assets[@]}" -ge 3
-          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title "Phone Second Shop POS $RELEASE_TAG — unsigned test build" --notes-file docs/RELEASE_NOTES_0.2.0.md
+          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title "Fixer Tools Windows x64 $RELEASE_TAG — unsigned test build" --notes-file docs/RELEASE_NOTES_0.2.0.md
 
   diagnostics:
     needs: build

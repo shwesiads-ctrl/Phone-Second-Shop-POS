@@ -14,7 +14,7 @@ import { execFileSync } from "node:child_process";
 import { extractFile, listPackage } from "@electron/asar";
 const seven = process.argv[2] || "7zz";
 const version = JSON.parse(readFileSync("package.json", "utf8")).version;
-const installer = resolve(`release/Phone Second Shop POS Setup ${version}.exe`);
+const installer = resolve(`release/Fixer-Tools-Windows-Setup-${version}.exe`);
 const scratch = mkdtempSync(join(tmpdir(), "pos-windows-verify-"));
 const hash = (b) => createHash("sha256").update(b).digest("hex");
 function pe(path) {
@@ -79,11 +79,12 @@ try {
     archiveIntegrity: "PASS",
     packagedFilesCompared: expected.length,
     productionContents: "PASS",
-    nativeWindowsExecution: "PENDING",
+    sourceAppWindowsWorkflow: process.platform === "win32" ? "PASS: preceding source-app Electron workflow" : "NOT RUN HERE",
+    nativeWindowsExecution: "PENDING: packaged executable",
     cleanInstall: "PENDING",
     upgrade: "PENDING",
     uninstall: "PENDING",
-    smartScreen: "NOT OBSERVED: Windows unavailable",
+    smartScreen: "NOT OBSERVED: interactive downloaded-installer check pending",
   };
   assert.equal(result.applicationPE.machine, "8664");
   writeFileSync(
