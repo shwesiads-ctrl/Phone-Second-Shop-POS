@@ -18,13 +18,13 @@ public class BluetoothPrinterPlugin extends Plugin {
  @PluginMethod public void execute(PluginCall call){
   String action=call.getString("action","");
   if(!Arrays.asList("status","search","connect","disconnect","settings").contains(action)){call.reject("INVALID_INPUT");return;}
-  if(action.equals("settings")){getActivity().startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));call.resolve();return;}
+  if(action.equals("settings")){try{getActivity().startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));call.resolve();}catch(Exception e){call.reject("PRINTER_UNSUPPORTED");}return;}
   if(action.equals("disconnect")){BluetoothPrinter.disconnect();call.resolve(state());return;}
   if(action.equals("status")||adapter()==null){call.resolve(state());return;}
   if(getPermissionState(alias())!=PermissionState.GRANTED){requestPermissionForAlias(alias(),call,"permissionResult");return;}
-  try{perform(call);}catch(SecurityException e){call.reject("PRINTER_PERMISSION");}
+  try{perform(call);}catch(SecurityException e){call.reject("PRINTER_PERMISSION");}catch(Exception e){call.reject("PRINTER_CONNECT_FAILED");}
  }
- @PermissionCallback private void permissionResult(PluginCall call){if(getPermissionState(alias())!=PermissionState.GRANTED){call.reject("PRINTER_PERMISSION");return;}try{perform(call);}catch(SecurityException e){call.reject("PRINTER_PERMISSION");}}
+ @PermissionCallback private void permissionResult(PluginCall call){if(getPermissionState(alias())!=PermissionState.GRANTED){call.reject("PRINTER_PERMISSION");return;}try{perform(call);}catch(SecurityException e){call.reject("PRINTER_PERMISSION");}catch(Exception e){call.reject("PRINTER_CONNECT_FAILED");}}
  private JSObject state(){JSObject s=new JSObject();BluetoothAdapter a=adapter();s.put("supported",a!=null);s.put("permission",getPermissionState(alias())==PermissionState.GRANTED);boolean enabled=false;try{enabled=a!=null&&a.isEnabled();}catch(SecurityException ignored){}s.put("enabled",enabled);s.put("connected",BluetoothPrinter.connected());s.put("address",BluetoothPrinter.address);s.put("devices",new JSArray(new ArrayList<>(devices.values())));return s;}
  private void add(BluetoothDevice d){if(d==null||devices.size()>=50)return;JSObject v=new JSObject();v.put("address",d.getAddress());v.put("name",d.getName()==null?"Bluetooth device":d.getName());v.put("paired",d.getBondState()==BluetoothDevice.BOND_BONDED);devices.put(d.getAddress(),v);}
  private void finishScan(){PluginCall call=scanning;scanning=null;if(receiver!=null){try{getContext().unregisterReceiver(receiver);}catch(Exception ignored){}receiver=null;}try{if(adapter()!=null)adapter().cancelDiscovery();}catch(SecurityException ignored){}if(call!=null)call.resolve(state());}

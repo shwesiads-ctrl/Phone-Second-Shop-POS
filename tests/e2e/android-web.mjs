@@ -146,9 +146,30 @@ try {
       )
     ).error,
   ).toBe("LOGIN_DELAY");
+  async function savedAuthGuard() {
+    const encoded = await page.evaluate(() =>
+      localStorage.getItem("test.database"),
+    );
+    const path = join(directory, "auth-guard.sqlite");
+    await writeFile(path, Buffer.from(encoded, "base64"));
+    const saved = new DatabaseSync(path, { readOnly: true });
+    try {
+      return saved
+        .prepare("SELECT attempts,retry_at FROM auth_guard WHERE id=1")
+        .get();
+    } finally {
+      saved.close();
+    }
+  }
+  const beforeRestart = await savedAuthGuard();
+  expect(beforeRestart.attempts).toBeGreaterThan(0);
   await page.reload();
   await page.waitForFunction(() => !!window.pos);
-  await new Promise((r) => setTimeout(r, 1100));
+  const afterRestart = await savedAuthGuard();
+  expect(afterRestart).toEqual(beforeRestart);
+  await new Promise((r) =>
+    setTimeout(r, Math.max(0, afterRestart.retry_at - Date.now()) + 100),
+  );
   await call("login", {
     username: "android-owner",
     password: "android test password",

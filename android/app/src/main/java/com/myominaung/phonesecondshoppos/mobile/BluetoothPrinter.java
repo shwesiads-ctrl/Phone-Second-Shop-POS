@@ -11,7 +11,7 @@ final class BluetoothPrinter {
  static volatile long epoch=0;
  static final ExecutorService worker=Executors.newSingleThreadExecutor();
  static final ScheduledExecutorService timer=Executors.newSingleThreadScheduledExecutor();
- static boolean connected(){return socket!=null&&socket.isConnected();}
+ static boolean connected(){BluetoothSocket current=socket;return current!=null&&current.isConnected();}
  static synchronized void disconnect(){epoch++;BluetoothSocket old=socket;socket=null;address="";if(old!=null)try{old.close();}catch(IOException ignored){}}
  static void connect(BluetoothDevice device,long expected) throws IOException {
   if(device.getBondState()!=BluetoothDevice.BOND_BONDED)throw new IOException("PRINTER_PAIR_FIRST");
