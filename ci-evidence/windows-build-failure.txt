@@ -1,0 +1,200 @@
+✔ IMEI checksum, cross-slot uniqueness and explicit alternative approval (75.6044ms)
+✔ purchase idempotency, capitalized cost, rollback and payment balance (61.7898ms)
+✔ partial payment keeps receivable separate, duplicate sale is idempotent and sold phone cannot be sold twice (58.2056ms)
+✔ sale rollback on a late stock error and minimum price after invoice discount (56.3121ms)
+✔ full returns refund collections, quarantine phones, preserve history and require inspection (76.9975ms)
+✔ purchase reversals retain identifiers and compensate cash (49.9273ms)
+✔ accessory sale quantities, adjustments, negative stock prevention (55.3935ms)
+✔ repair approval, paid delivery, transition control and real repair revenue (58.9348ms)
+✔ warranty checks use original sale dates (50.5553ms)
+✔ cash reconciliation uses collections, purchases and expenses without credit revenue (49.8213ms)
+✔ currency precision, safe arithmetic, mismatch rejection and stable historical currency (231.7736ms)
+✔ backup and migrations reopen persistent database with business records intact (266.4131ms)
+✔ receipt escapes untrusted values and includes original invoice and currency (59.5784ms)
+✔ all localized dictionaries contain the same keys (1.7305ms)
+✔ trade-in posts purchase, sale credit and stock atomically and reverses linked stock (70.1412ms)
+✔ invalid trade-in rolls back entire sale and outgoing stock (66.5561ms)
+✔ repair parts and replenishments preserve stock, cost basis, cash and idempotency (56.6518ms)
+✔ owner permission overrides are enforced by backend and cannot grant owner actions (124.9428ms)
+✔ held carts belong to users, do not reserve stock and are removed when resumed (52.4152ms)
+✔ partial returns reduce credit first, refund excess collections, allocate discounts exactly and never over-restock (56.0583ms)
+✔ period reports post refunds at return date instead of rewriting original sales period (53.3183ms)
+✔ repair cancellation refunds deposits, closing is immutable and reopening creates a linked new ticket (48.4044ms)
+✔ repair warranty claims require an unexpired delivered ticket and manager resolutions are audited (47.3752ms)
+✔ structured phone inspection is persisted and historical receipts preserve original store/warranty terms (60.7333ms)
+✔ cash in/out entries reconcile the drawer without affecting profit and repeat requests are idempotent (54.1193ms)
+✔ purchase shortfall reversals recognize a loss once and purchase/repair receipts use their own ledger (53.5989ms)
+✔ all six currency directions use major-unit rational rates and explicit precision (2.2025ms)
+✔ invalid rates and overflow fail, rate creation requires owner/admin, stored rates are immutable (197.4385ms)
+✔ partial foreign payment stores original tender and immutable rate while ledger stays in invoice units (91.9906ms)
+✔ missing/wrong pairs and conversions rounding to zero cannot silently accept money (61.3098ms)
+✔ mixed-currency cart freezes per-unit original prices/costs and profit in invoice currency (63.8557ms)
+✔ fractional foreign refunds carry rounding and return every original minor unit at full return (64.3761ms)
+✔ return reduces debt first, refunds original split tenders and never uses a newer rate (71.6315ms)
+✔ cross-currency purchase, supplier payment and reversal restore original cash and count refurbishment once (79.1002ms)
+✔ foreign-valued trade-in keeps native acquisition and reverses both original noncash legs (64.5559ms)
+✔ repair foreign deposit and cancellation refund preserve source units (56.8809ms)
+✔ changing default preferences never revalues posted invoices; converted report saves original totals and applied rates (79.5472ms)
+✔ cash received and change preserve source precision without double-counting physical cash (52.0136ms)
+✔ atomic exchange rolls back the return when replacement stock fails, then links both legs idempotently (57.3988ms)
+✔ custom methods are authorized and validated; deactivation preserves historical payments (136.0648ms)
+✔ configured wholesale pricing preserves COGS and owner permission overrides (191.4645ms)
+✔ foreign repair parts freeze converted unit cost and retain native cost evidence (73.561ms)
+✔ historical receivables retain debt before later returns and payments (54.6834ms)
+✔ structured inspection corrections are audited and blocked after a phone is sold (59.8417ms)
+✔ supplier balances and purchase reversals are reported as of their own posting dates (71.3265ms)
+✔ uninstall manifest removes only packaged files and empty directories, preserving user files (7.028ms)
+✔ genuine v0.1.0 schema7 paid/partially-returned fixture upgrades without changing history or re-refunding old tender units (901.2307ms)
+✔ restore preflight upgrades a copy, preserves the legacy backup bytes and rejects future schemas (886.1038ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2738.2376
+
+> phone-second-shop-pos@0.2.0 test:desktop
+> npm run build && node tests/e2e/desktop.mjs
+
+
+> phone-second-shop-pos@0.2.0 build
+> npm run typecheck && vite build && node scripts/build.mjs
+
+
+> phone-second-shop-pos@0.2.0 typecheck
+> tsc --noEmit
+
+[36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 21 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                      0.70 kB │ gzip:  0.41 kB
+dist/assets/noto-sans-thai-latin-ext-400-normal-nBP59pVw.woff2       6.08 kB
+dist/assets/noto-sans-myanmar-latin-ext-400-normal-Bh89aKMz.woff2    6.56 kB
+dist/assets/noto-sans-myanmar-latin-ext-600-normal-CHsBsS8r.woff2    6.64 kB
+dist/assets/noto-sans-thai-latin-ext-400-normal-B-1H0YkH.woff        7.92 kB
+dist/assets/noto-sans-myanmar-latin-ext-400-normal-DRGWNQyd.woff     8.62 kB
+dist/assets/noto-sans-myanmar-latin-ext-600-normal-Ul_FWO-3.woff     8.64 kB
+dist/assets/noto-sans-thai-thai-400-normal-BEOmKAI1.woff2            9.11 kB
+dist/assets/noto-sans-thai-latin-400-normal-BaWBrqFP.woff2          10.26 kB
+dist/assets/noto-sans-myanmar-latin-400-normal-Dt7kQkP-.woff2       10.44 kB
+dist/assets/noto-sans-myanmar-latin-600-normal-zzKSSZfK.woff2       10.60 kB
+dist/assets/noto-sans-thai-thai-400-normal-Dxb_unuU.woff            11.31 kB
+dist/assets/noto-sans-thai-latin-400-normal-Dh_FJjOB.woff           13.14 kB
+dist/assets/noto-sans-myanmar-latin-400-normal-wRn4g6YM.woff        13.38 kB
+dist/assets/noto-sans-myanmar-latin-600-normal-ZOQIvjx5.woff        13.45 kB
+dist/assets/noto-sans-myanmar-myanmar-400-normal-C_Ri2PLj.woff2     47.14 kB
+dist/assets/noto-sans-myanmar-myanmar-600-normal-Cju0GbT9.woff2     49.99 kB
+dist/assets/noto-sans-myanmar-myanmar-400-normal-Di6U4opH.woff      65.99 kB
+dist/assets/noto-sans-myanmar-myanmar-600-normal-DDwfN3_5.woff      68.88 kB
+dist/assets/index-Bf6NJBlV.css                                      11.49 kB │ gzip:  3.21 kB
+dist/assets/index-BR7Puz15.js                                      315.41 kB │ gzip: 94.42 kB
+
+[32m✓ built in 175ms[39m
+PASS: Electron owner setup → supplier → phone purchase → paid sale → receipt preview; Myanmar/Thai switching; bundled Unicode fonts; barcode/QR; backup/restore; redacted bug export; language persistence; isolated preload.
+  • electron-builder  version=26.15.3 os=10.0.20348
+  • Implicit publishing triggered by git tag. This behavior will be disabled in electron-builder v27. Please use --publish explicitly.  tag=v0.2.0-ci.1
+  • loaded configuration  file=package.json ("build" field)
+  • executing @electron/rebuild  electronVersion=44.9.0 arch=x64 buildFromSource=false workspaceRoot=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS projectDir=./ appDir=./
+  • installing native dependencies  arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=44.9.0 appOutDir=release\win-unpacked
+  • downloaded      label=electron progress=100%
+  • downloaded electron zip extracted successfully  output=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\release\win-unpacked
+  • searching for node modules  pm=npm searchDir=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS
+  • updating asar integrity executable resource  executablePath=release\win-unpacked\Phone Second Shop POS.exe
+  • signing with signtool.exe  path=release\win-unpacked\Phone Second Shop POS.exe
+  • building        target=nsis file=release\Phone Second Shop POS Setup 0.2.0.exe archs=x64 oneClick=false perMachine=false
+  • downloaded      label=7zip-win-x64.tar.gz progress=100%
+  • downloaded      label=nsis-resources-3.4.1.7z progress=100%
+  • uninstaller is not signed by electron-builder  reason=custom NSIS script is used
+  • downloaded      label=nsis-3.0.4.1.7z progress=100%
+  ⨯ C:\Users\runneradmin\AppData\Local\electron-builder\Cache\nsis-3.0.4.1\nsis-3.0.4.1-1mx3n\Bin\makensis.exe process failed ERR_ELECTRON_BUILDER_CANNOT_EXECUTE
+Exit code:
+1
+Output:
+Command line defined: "APP_ID=com.myominaung.phonesecondshoppos"
+Command line defined: "APP_GUID=a86b0d2e-0543-57bd-b88c-da35a442c76f"
+Command line defined: "UNINSTALL_APP_KEY=a86b0d2e-0543-57bd-b88c-da35a442c76f"
+Command line defined: "PRODUCT_NAME=Phone Second Shop POS"
+Command line defined: "PRODUCT_FILENAME=Phone Second Shop POS"
+Command line defined: "APP_FILENAME=Phone Second Shop POS"
+Command line defined: "APP_DESCRIPTION=Offline desktop POS for second-hand phone shops"
+Command line defined: "VERSION=0.2.0"
+Command line defined: "PROJECT_DIR=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS"
+Command line defined: "BUILD_RESOURCES_DIR=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build"
+Command line defined: "APP_PACKAGE_NAME=phone-second-shop-pos"
+Command line defined: "MUI_ICON=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build\icon.ico"
+Command line defined: "MUI_UNICON=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build\icon.ico"
+Command line defined: "APP_64=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\release\phone-second-shop-pos-0.2.0-x64.nsis.7z"
+Command line defined: "APP_64_NAME=phone-second-shop-pos-0.2.0-x64.nsis.7z"
+Command line defined: "APP_64_HASH=31F5F67E58D75F5731A319E43DD95D644228BF8777C42CC98DA1AA5087F1F4DA879BDF4F699104913809E3FD69D901168611FBF9CB86BB02DA3AFA5F97706F40"
+Command line defined: "APP_64_UNPACKED_SIZE=407025"
+Command line defined: "COMPANY_NAME=Myominaung"
+Command line defined: "APP_INSTALLER_STORE_FILE=phone-second-shop-pos-updater\installer.exe"
+Command line defined: "COMPRESSION_METHOD=7z"
+Command line defined: "MULTIUSER_INSTALLMODE_ALLOW_ELEVATION"
+Command line defined: "INSTALL_MODE_PER_ALL_USERS_REQUIRED"
+Command line defined: "allowToChangeInstallationDirectory"
+Command line defined: "SHORTCUT_NAME=Phone Second Shop POS"
+Command line defined: "UNINSTALL_DISPLAY_NAME=Phone Second Shop POS 0.2.0"
+Command line defined: "MUI_WELCOMEFINISHPAGE_BITMAP=${NSISDIR}\Contrib\Graphics\Wizard\nsis3-metro.bmp"
+Command line defined: "MUI_UNWELCOMEFINISHPAGE_BITMAP=${NSISDIR}\Contrib\Graphics\Wizard\nsis3-metro.bmp"
+Command line defined: "ESTIMATED_SIZE=407024"
+Command line defined: "COMPRESS=auto"
+Command line defined: "UNINSTALLER_OUT_FILE"
+Processing config: C:\Users\runneradmin\AppData\Local\electron-builder\Cache\nsis-3.0.4.1\nsis-3.0.4.1-1mx3n\nsisconf.nsh
+Processing script file: "<stdin>" (UTF8)
+
+Error output:
+!include: could not find: "D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build/uninstall-files.nsh"
+Error in script "<stdin>" on line 165 -- aborting creation process
+  failedTask=build stackTrace=Error: C:\Users\runneradmin\AppData\Local\electron-builder\Cache\nsis-3.0.4.1\nsis-3.0.4.1-1mx3n\Bin\makensis.exe process failed ERR_ELECTRON_BUILDER_CANNOT_EXECUTE
+Exit code:
+1
+Output:
+Command line defined: "APP_ID=com.myominaung.phonesecondshoppos"
+Command line defined: "APP_GUID=a86b0d2e-0543-57bd-b88c-da35a442c76f"
+Command line defined: "UNINSTALL_APP_KEY=a86b0d2e-0543-57bd-b88c-da35a442c76f"
+Command line defined: "PRODUCT_NAME=Phone Second Shop POS"
+Command line defined: "PRODUCT_FILENAME=Phone Second Shop POS"
+Command line defined: "APP_FILENAME=Phone Second Shop POS"
+Command line defined: "APP_DESCRIPTION=Offline desktop POS for second-hand phone shops"
+Command line defined: "VERSION=0.2.0"
+Command line defined: "PROJECT_DIR=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS"
+Command line defined: "BUILD_RESOURCES_DIR=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build"
+Command line defined: "APP_PACKAGE_NAME=phone-second-shop-pos"
+Command line defined: "MUI_ICON=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build\icon.ico"
+Command line defined: "MUI_UNICON=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build\icon.ico"
+Command line defined: "APP_64=D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\release\phone-second-shop-pos-0.2.0-x64.nsis.7z"
+Command line defined: "APP_64_NAME=phone-second-shop-pos-0.2.0-x64.nsis.7z"
+Command line defined: "APP_64_HASH=31F5F67E58D75F5731A319E43DD95D644228BF8777C42CC98DA1AA5087F1F4DA879BDF4F699104913809E3FD69D901168611FBF9CB86BB02DA3AFA5F97706F40"
+Command line defined: "APP_64_UNPACKED_SIZE=407025"
+Command line defined: "COMPANY_NAME=Myominaung"
+Command line defined: "APP_INSTALLER_STORE_FILE=phone-second-shop-pos-updater\installer.exe"
+Command line defined: "COMPRESSION_METHOD=7z"
+Command line defined: "MULTIUSER_INSTALLMODE_ALLOW_ELEVATION"
+Command line defined: "INSTALL_MODE_PER_ALL_USERS_REQUIRED"
+Command line defined: "allowToChangeInstallationDirectory"
+Command line defined: "SHORTCUT_NAME=Phone Second Shop POS"
+Command line defined: "UNINSTALL_DISPLAY_NAME=Phone Second Shop POS 0.2.0"
+Command line defined: "MUI_WELCOMEFINISHPAGE_BITMAP=${NSISDIR}\Contrib\Graphics\Wizard\nsis3-metro.bmp"
+Command line defined: "MUI_UNWELCOMEFINISHPAGE_BITMAP=${NSISDIR}\Contrib\Graphics\Wizard\nsis3-metro.bmp"
+Command line defined: "ESTIMATED_SIZE=407024"
+Command line defined: "COMPRESS=auto"
+Command line defined: "UNINSTALLER_OUT_FILE"
+Processing config: C:\Users\runneradmin\AppData\Local\electron-builder\Cache\nsis-3.0.4.1\nsis-3.0.4.1-1mx3n\nsisconf.nsh
+Processing script file: "<stdin>" (UTF8)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Error output:
+!include: could not find: "D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\build/uninstall-files.nsh"
+Error in script "<stdin>" on line 165 -- aborting creation process
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                at ChildProcess.<anonymous> (D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\node_modules\builder-util\src\util.ts:313:16)
+    at ChildProcess.wrapper (node:events:639:12)
+    at ChildProcess.emit (node:events:514:28)
+    at ChildProcess.cp.emit (D:\a\Phone-Second-Shop-POS\Phone-Second-Shop-POS\node_modules\cross-spawn\lib\enoent.js:34:29)
+    at maybeClose (node:internal/child_process:1141:16)
+    at Process.ChildProcess._handle.onexit (node:internal/child_process:306:5)
+
