@@ -388,6 +388,7 @@ function Form({
 }
 
 function DemoConfirmation({
+  preset,
   action,
   busy,
   error,
@@ -395,6 +396,7 @@ function DemoConfirmation({
   onCancel,
   onConfirm,
 }: {
+  preset: "standard" | "named10";
   action: "add" | "remove" | "enter" | "leave";
   busy: boolean;
   error: string;
@@ -408,10 +410,18 @@ function DemoConfirmation({
       : action === "leave"
         ? "sampleLeave"
         : action === "add"
-          ? "demoAdd"
-          : "demoRemove";
+          ? preset === "named10"
+            ? "namedDemoAdd"
+            : "demoAdd"
+          : preset === "named10"
+            ? "namedDemoRemove"
+            : "demoRemove";
   const noticeKey =
-    action === "enter" || action === "leave" ? "sampleNotice" : "demoNotice";
+    action === "enter" || action === "leave"
+      ? "sampleNotice"
+      : preset === "named10"
+        ? "namedDemoNotice"
+        : "demoNotice";
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const node = dialog.current!;
@@ -466,6 +476,9 @@ function App() {
   );
   const t = (key: string) => translate(language, key);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [demoPreset, setDemoPreset] = useState<"standard" | "named10">(
+    "standard",
+  );
   const [demoAction, setDemoAction] = useState<
     "add" | "remove" | "enter" | "leave" | null
   >(null);
@@ -685,7 +698,7 @@ function App() {
       return;
     }
     const result = await run(async () => {
-      await call("demoInventory", { action });
+      await call("demoInventory", { action, preset: demoPreset });
       if (action === "add") {
         // Show the actual destination with a clean first page, even if old filters hid it.
         const snapshot = await call("snapshot", { search: "", page: 0 });
@@ -702,7 +715,15 @@ function App() {
       return true;
     }, false);
     if (result === true)
-      setMessage(action === "add" ? "demoReady" : "demoRemoved");
+      setMessage(
+        demoPreset === "named10"
+          ? action === "add"
+            ? "namedDemoReady"
+            : "namedDemoRemoved"
+          : action === "add"
+            ? "demoReady"
+            : "demoRemoved",
+      );
   }
   async function printerAction(action: string, address?: string) {
     await run(async () => {
@@ -3031,10 +3052,12 @@ function App() {
                   <p className="info">{t("demoNotice")}</p>
                   <div className="export-actions">
                     {btn("demoAdd", () => {
+                      setDemoPreset("standard");
                       setError("");
                       setDemoAction("add");
                     })}
                     {btn("demoRemove", () => {
+                      setDemoPreset("standard");
                       if (
                         cart.some(
                           (item) =>
@@ -3048,6 +3071,43 @@ function App() {
                         return;
                       }
                       setError("");
+                      setDemoAction("remove");
+                    })}
+                  </div>
+                </section>
+              )}
+
+              {user.role === "Owner" && (
+                <section className="panel" data-testid="named-demo-settings">
+                  <h2>{t("namedDemoTitle")}</h2>
+                  <p className="info">{t("namedDemoNotice")}</p>
+                  <p>
+                    {t("accessories")}:{" "}
+                    {data.settings.namedDemoInventory?.length || 0} ·{" "}
+                    {t("customers")}:{" "}
+                    {data.settings.namedDemoCustomers?.length || 0}
+                  </p>
+                  <div className="export-actions">
+                    {btn("namedDemoAdd", () => {
+                      setError("");
+                      setDemoPreset("named10");
+                      setDemoAction("add");
+                    })}
+                    {btn("namedDemoRemove", () => {
+                      if (
+                        cart.some(
+                          (item) =>
+                            item.kind === "accessory" &&
+                            data.settings.namedDemoInventory?.some(
+                              (demo: Row) => demo.id === item.id,
+                            ),
+                        )
+                      ) {
+                        setError("DEMO_IN_USE");
+                        return;
+                      }
+                      setError("");
+                      setDemoPreset("named10");
                       setDemoAction("remove");
                     })}
                   </div>
@@ -3574,6 +3634,7 @@ function App() {
       </div>
       {demoAction && (
         <DemoConfirmation
+          preset={demoPreset}
           action={demoAction}
           busy={busy}
           error={error}

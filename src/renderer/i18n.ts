@@ -54,6 +54,37 @@ const words: Record<string, [string, string, string]> = {
     "မသုံးရသေးသော Demo အပိုပစ္စည်းများ ဖယ်ပြီးပါပြီ။ ကိုယ်ပိုင်ပစ္စည်းများ မပျက်ပါ။",
     "ลบสินค้าทดลองที่ยังไม่ใช้แล้ว สินค้าของคุณยังคงอยู่",
   ],
+  customers: ["Customers", "ဝယ်သူများ", "ลูกค้า"],
+  namedDemoTitle: [
+    "Real-name demo · 10 products + 10 customers",
+    "အမည်ပါ Demo · ပစ္စည်း ၁၀ ခု + Customer ၁၀ ယောက်",
+    "ตัวอย่างชื่อสมจริง · สินค้า 10 รายการ + ลูกค้า 10 คน",
+  ],
+  namedDemoAdd: [
+    "Add 10 products + 10 customers",
+    "ပစ္စည်း ၁၀ ခု + Customer ၁၀ ယောက် ထည့်ရန်",
+    "เพิ่มสินค้า 10 รายการ + ลูกค้า 10 คน",
+  ],
+  namedDemoRemove: [
+    "Remove named demo data",
+    "အမည်ပါ Demo ဒေတာ ဖယ်ရန်",
+    "ลบข้อมูลตัวอย่างชื่อสมจริง",
+  ],
+  namedDemoNotice: [
+    "Adds 10 recognizable products and 10 fictional customers marked [DEMO] to this shop. Stock is included in totals; sales create real records. Remove only before use or edits. Your own products/customers are kept. No real customer phone numbers are included.",
+    "လက်ရှိဆိုင်တွင် အမည်ပါပစ္စည်း ၁၀ ခုနှင့် နမူနာ Customer ၁၀ ယောက်ကို [DEMO] ဖြင့် ထည့်ပါမည်။ လက်ကျန်စာရင်းတွင် ပါဝင်ပြီး ရောင်းလျှင် အမှန်တကယ် မှတ်တမ်းဝင်မည်။ မသုံး/မပြင်ရသေးမှ ဖယ်နိုင်သည်။ မူလပစ္စည်းနှင့် Customer မပျက်ပါ။ တကယ့် Customer ဖုန်းနံပါတ် မပါပါ။",
+    "เพิ่มสินค้า 10 รายการและลูกค้าสมมติ 10 คนที่มี [DEMO] ในร้านนี้ สต็อกรวมในยอดและการขายสร้างรายการจริง ลบได้ก่อนใช้งานหรือแก้ไขเท่านั้น ไม่ลบสินค้าหรือลูกค้าของคุณ ไม่มีเบอร์โทรจริง",
+  ],
+  namedDemoReady: [
+    "10 demo products and 10 customers are ready. Products are in Accessories; customers are in Customers & suppliers.",
+    "Demo ပစ္စည်း ၁၀ ခုနှင့် Customer ၁၀ ယောက် ထည့်ပြီးပါပြီ။ ပစ္စည်းများကို အပိုပစ္စည်းစာရင်း၊ Customer ကို ဆက်သွယ်ရန်စာရင်းတွင် ကြည့်ပါ။",
+    "เพิ่มสินค้า 10 รายการและลูกค้า 10 คนแล้ว ดูสินค้าในอุปกรณ์เสริมและลูกค้าในผู้ติดต่อ",
+  ],
+  namedDemoRemoved: [
+    "Unused named demo products and customers removed.",
+    "မသုံးရသေးသော အမည်ပါ Demo ပစ္စည်းနှင့် Customer များ ဖယ်ပြီးပါပြီ။",
+    "ลบสินค้าและลูกค้าตัวอย่างที่ยังไม่ได้ใช้แล้ว",
+  ],
   demoTitle: ["Demo inventory", "စမ်းသပ်ပစ္စည်းများ", "สินค้าทดลอง"],
   demoAdd: [
     "Add 100 demo items",
@@ -868,7 +899,11 @@ const words: Record<string, [string, string, string]> = {
     "စက်ဓာတ်ပုံသိမ်းရန်ခွင့်ပြုချက်ရှိကြောင်း အတည်ပြုပါ။ ဖောက်သည်ကိုယ်ရေးအချက်အလက်မပါစေပါနှင့်။",
     "ยืนยันว่ามีสิทธิ์เก็บภาพอุปกรณ์ หลีกเลี่ยงข้อมูลส่วนตัวลูกค้า",
   ],
-  label: ["Product barcode label", "ပစ္စည်း ဘားကုဒ် အညွှန်း", "ป้ายบาร์โค้ดสินค้า"],
+  label: [
+    "Product barcode label",
+    "ပစ္စည်း ဘားကုဒ် အညွှန်း",
+    "ป้ายบาร์โค้ดสินค้า",
+  ],
   screenshot: [
     "Optional screenshot (review contents; PNG/JPEG, max 5 MB)",
     "မဖြစ်မနေမဟုတ်သောမျက်နှာပြင်ပုံ (အချက်အလက်စစ်ပါ၊ PNG/JPEG၊ အများဆုံး 5 MB)",

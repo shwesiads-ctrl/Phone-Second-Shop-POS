@@ -880,8 +880,17 @@ export class ShopService {
     if (operation === "demoInventory")
       return transaction(this.db, () => {
         assert(this.user!.role === "Owner", "FORBIDDEN");
-        const tracked: { id: number; sku: string; barcode: string }[] =
-          this.settings().demoInventory || [];
+        const named = input.preset === "named10";
+        const key = named ? "namedDemoInventory" : "demoInventory";
+        const customers: any[] = named
+          ? this.settings().namedDemoCustomers || []
+          : [];
+        const tracked: {
+          id: number;
+          sku: string;
+          barcode: string;
+          original?: any;
+        }[] = this.settings()[key] || [];
         if (input.action === "add") {
           if (tracked.length) return { count: tracked.length };
           const batch = randomUUID();
@@ -893,8 +902,33 @@ export class ShopService {
             "Screen protector",
             "Headphones",
           ];
+          const realNames = [
+            "Apple USB-C Charge Cable",
+            "Samsung 25W USB-C Charger",
+            "Anker PowerCore 10000",
+            "SanDisk Ultra 64GB microSD",
+            "JBL Tune 510BT",
+            "Logitech M185 Mouse",
+            "Kingston DataTraveler 64GB",
+            "Apple EarPods USB-C",
+            "Samsung Galaxy A55 Case",
+            "iPhone 15 Screen Protector",
+          ];
+          const customerNames = [
+            "Aung Aung",
+            "Su Su",
+            "Kyaw Min",
+            "Hnin Ei",
+            "Thiri Aung",
+            "Min Khant",
+            "May Thu",
+            "Ko Ko",
+            "Ei Mon",
+            "Zaw Lin",
+          ];
           const items = [];
-          for (let i = 1; i <= 100; i++) {
+          const addedCustomers = [];
+          for (let i = 1; i <= (named ? 10 : 100); i++) {
             const sku = `DEMO-${batch}-${i}`;
             const barcode = this.newBarcode();
             const r = this.run(
@@ -902,7 +936,9 @@ export class ShopService {
               this.nextAccessoryId(),
               sku,
               barcode,
-              `[DEMO] ${names[(i - 1) % names.length]} ${String(i).padStart(3, "0")}`,
+              named
+                ? `[DEMO] ${realNames[i - 1]}`
+                : `[DEMO] ${names[(i - 1) % names.length]} ${String(i).padStart(3, "0")}`,
               "DEMO",
               0,
               currency === "MMK" ? 1000 + i * 100 : 100 + i * 10,
@@ -912,17 +948,75 @@ export class ShopService {
             );
             const id = Number(r.lastInsertRowid);
             this.movement("accessory", id, 10, "Demo opening stock", batch);
-            items.push({ id, sku, barcode });
+            items.push({
+              id,
+              sku,
+              barcode,
+              ...(named
+                ? {
+                    original: this.row(
+                      "SELECT * FROM accessories WHERE id=?",
+                      id,
+                    ),
+                  }
+                : {}),
+            });
+            if (named) {
+              const customer = this.run(
+                "INSERT INTO contacts(name,phone,address,kind) VALUES(?,?,?,?)",
+                `[DEMO] ${customerNames[i - 1]}`,
+                "",
+                "Fictional sample customer",
+                "customer",
+              );
+              addedCustomers.push(
+                this.row(
+                  "SELECT * FROM contacts WHERE id=?",
+                  Number(customer.lastInsertRowid),
+                ),
+              );
+            }
           }
           this.run(
-            "INSERT INTO settings(key,value) VALUES('demoInventory',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+            "INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+            key,
             JSON.stringify(items),
           );
-          this.audit("demo.add", batch, { count: 100 });
-          return { count: 100 };
+          if (named)
+            this.run(
+              "INSERT INTO settings(key,value) VALUES('namedDemoCustomers',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+              JSON.stringify(addedCustomers),
+            );
+          this.audit("demo.add", batch, {
+            count: items.length,
+            customers: addedCustomers.length,
+          });
+          return { count: items.length };
         }
         if (!tracked.length) return { count: 0 };
         assert(!this.row("SELECT id FROM held_carts LIMIT 1"), "DEMO_IN_USE");
+        for (const customer of customers) {
+          assert(
+            JSON.stringify(
+              this.row("SELECT * FROM contacts WHERE id=?", customer.id),
+            ) === JSON.stringify(customer),
+            "DEMO_IN_USE",
+          );
+          for (const table of [
+            "sales",
+            "purchases",
+            "repairs",
+            "replenishments",
+          ]) {
+            assert(
+              !this.row(
+                `SELECT id FROM ${table} WHERE contact_id=? LIMIT 1`,
+                customer.id,
+              ),
+              "DEMO_IN_USE",
+            );
+          }
+        }
         // Never erase sales, repairs, adjustments or any history created while testing.
         for (const item of tracked) {
           assert(
@@ -933,6 +1027,11 @@ export class ShopService {
             "DEMO_IN_USE",
           );
           const row = this.row("SELECT * FROM accessories WHERE id=?", item.id);
+          if (item.original)
+            assert(
+              JSON.stringify(row) === JSON.stringify(item.original),
+              "DEMO_IN_USE",
+            );
           assert(
             row &&
               row.sku === item.sku &&
@@ -984,7 +1083,11 @@ export class ShopService {
             item.barcode,
           );
         }
-        this.run("DELETE FROM settings WHERE key='demoInventory'");
+        for (const customer of customers)
+          this.run("DELETE FROM contacts WHERE id=?", customer.id);
+        if (named)
+          this.run("DELETE FROM settings WHERE key='namedDemoCustomers'");
+        this.run("DELETE FROM settings WHERE key=?", key);
         this.audit("demo.remove", "demoInventory", { items: tracked });
         return { count: tracked.length };
       });

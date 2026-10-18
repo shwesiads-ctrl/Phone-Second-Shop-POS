@@ -1,0 +1,9 @@
+# Settings: 10 named products and 10 customers
+
+Owner Settings → Real-name demo → Add 10 products + 10 customers. Products appear in Accessories and fictional customers in Customers & suppliers. Adding clears product search/date filters and opens Accessories. Counts appear in Settings. Confirmation explains that these are actual stock/contact rows in the current workspace; sales create normal business history. Product names identify familiar branded accessories; sample prices are not market quotes. Costs are zero, so do not use these samples for real profit reporting. Fictional customers have no real phone numbers and all rows are marked [DEMO].
+
+This batch is separate from Add 100 demo items and the temporary Full sample shop. Repeated Add is idempotent. It persists with the database in normal shop mode. Remove targets only tracked rows; custom products/customers and the 100-item batch remain. Removal is atomic and refused if products/customers changed, sales/repairs/purchases/replenishments reference customers, products have business history/photos, or held carts exist. The visible unsaved checkout cart is checked before removal. Full sample workspace continues to discard practice changes on exit/restart.
+
+No schema migration is required: ownership and original snapshots use existing settings storage. The default legacy demo API still creates 100 items; preset named10 selects the new batch.
+
+Shared automated tests: 80 passed, including idempotence, persisted tracking/reopen, positive selling prices, distinct barcodes, preservation of real contacts/stock/payments, atomic refusal after use or editing, and foreign-key integrity. Typecheck and desktop workflow passed. Android browser Settings add/remove and both list destinations are verified separately. Physical devices/printers and installed Windows acceptance remain pending.

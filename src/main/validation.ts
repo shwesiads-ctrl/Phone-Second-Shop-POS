@@ -38,6 +38,7 @@ export const schemas = {
     .strict(),
   demoInventory: z
     .object({
+      preset: z.enum(["standard", "named10"]).default("standard"),
       action: z.enum(["add", "remove"]),
       uiLanguage: z.enum(["my-MM", "th-TH", "en-US"]).optional(),
     })

@@ -141,3 +141,97 @@ test("removed demo IDs are never reassigned to real inventory or another demo ba
   assert.ok(s.settings().demoInventory.every((v: any) => v.id > id));
   s.db.close();
 });
+
+test("named demo adds ten products and fictional customers once, survives reopen and removes only its own rows", () => {
+  const s = shop();
+  const real = s.invoke("contact", {
+    name: "Existing Customer",
+    kind: "customer",
+  });
+  s.invoke("demoInventory", { action: "add" });
+  const before = s.rows("SELECT * FROM payments");
+  assert.equal(
+    s.invoke("demoInventory", { action: "add", preset: "named10" }).count,
+    10,
+  );
+  assert.equal(
+    s.invoke("demoInventory", { action: "add", preset: "named10" }).count,
+    10,
+  );
+  assert.equal(s.row("SELECT count(*) n FROM accessories")!.n, 110);
+  assert.equal(s.row("SELECT count(*) n FROM contacts")!.n, 11);
+  const namedRows = s
+    .settings()
+    .namedDemoInventory.map((i: { id: number }) =>
+      s.row("SELECT * FROM accessories WHERE id=?", i.id)!,
+    );
+  assert.equal(new Set(namedRows.map((i: any) => i.barcode)).size, 10);
+  assert.equal(new Set(namedRows.map((i: any) => i.name)).size, 10);
+  assert.ok(namedRows.every((i: any) => i.price > 0));
+  const names = s.rows("SELECT name,phone FROM contacts WHERE id<>?", real);
+  assert.ok(names.every((c) => c.name.startsWith("[DEMO] ") && c.phone === ""));
+  assert.ok(
+    s.row(
+      "SELECT id FROM accessories WHERE name='[DEMO] Samsung 25W USB-C Charger'",
+    ),
+  );
+  const reopened = new ShopService(s.db, true);
+  reopened.invoke("login", {
+    username: "owner",
+    password: "synthetic demo password",
+  });
+  assert.equal(
+    reopened.invoke("demoInventory", { action: "remove", preset: "named10" })
+      .count,
+    10,
+  );
+  assert.equal(s.row("SELECT count(*) n FROM accessories")!.n, 100);
+  assert.equal(s.row("SELECT count(*) n FROM contacts")!.n, 1);
+  assert.equal(
+    s.row("SELECT name FROM contacts WHERE id=?", real)!.name,
+    "Existing Customer",
+  );
+  assert.deepEqual(s.rows("SELECT * FROM payments"), before);
+  assert.equal(
+    reopened.invoke("demoInventory", { action: "remove", preset: "named10" })
+      .count,
+    0,
+  );
+  assert.equal(s.row("PRAGMA foreign_key_check"), undefined);
+  s.db.close();
+});
+
+test("named demo removal is atomic and refuses used customers or edited products", () => {
+  const s = shop();
+  s.invoke("demoInventory", { action: "add", preset: "named10" });
+  const item = s.settings().namedDemoInventory[0],
+    customer = s.settings().namedDemoCustomers[0];
+  s.invoke("sale", {
+    request: crypto.randomUUID(),
+    currency: "MMK",
+    contactId: customer.id,
+    items: [{ kind: "accessory", id: item.id, quantity: 1, price: 1100 }],
+    payments: [{ method: "Cash", amount: 1100 }],
+  });
+  assert.throws(
+    () => s.invoke("demoInventory", { action: "remove", preset: "named10" }),
+    /DEMO_IN_USE/,
+  );
+  assert.equal(s.row("SELECT count(*) n FROM contacts")!.n, 10);
+  assert.equal(s.row("SELECT count(*) n FROM accessories")!.n, 10);
+  s.db.close();
+  const other = shop();
+  other.invoke("demoInventory", { action: "add", preset: "named10" });
+  other.run(
+    "UPDATE accessories SET name=? WHERE id=?",
+    "Edited by owner",
+    other.settings().namedDemoInventory[0].id,
+  );
+  assert.throws(
+    () =>
+      other.invoke("demoInventory", { action: "remove", preset: "named10" }),
+    /DEMO_IN_USE/,
+  );
+  assert.equal(other.row("SELECT count(*) n FROM contacts")!.n, 10);
+  other.db.close();
+});

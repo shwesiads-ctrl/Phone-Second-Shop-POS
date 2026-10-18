@@ -1,3 +1,4 @@
+import { verifyNamedDemo } from "./named-demo.mjs";
 import { verifySampleShop } from "./sample-shop.mjs";
 import { verifyThemePreference, verifySearchIcon } from "./theme-search.mjs";
 import { verifyDemoRefresh } from "./demo-refresh.mjs";
@@ -69,6 +70,7 @@ try {
   await verifyOwnerRecovery(page, "android-owner", "android test password");
   await verifyMobileAdditions(page, true);
   await verifyDemoRefresh(page);
+  await verifyNamedDemo(page);
   await verifySampleShop(page, {
     username: "android-owner",
     password: "android test password",
