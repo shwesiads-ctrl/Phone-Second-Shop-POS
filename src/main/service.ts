@@ -32,6 +32,7 @@ const access: Partial<Record<Operation, Role[]>> = {
   label: [...stock, "Cashier"],
   barcodeGenerate: stock,
   demoInventory: ["Owner"],
+  demoDataset: ["Owner"],
   printer: ["Owner"],
   permission: ["Owner"],
   repairPart: technicians,

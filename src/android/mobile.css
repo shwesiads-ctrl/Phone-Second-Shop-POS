@@ -294,3 +294,34 @@ body {
     line-height: 1.85;
   }
 }
+
+@media (max-width: 760px) {
+  .dashboard-tables {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .dashboard-tables table,
+  .dashboard-repairs table {
+    table-layout: fixed;
+    white-space: normal;
+  }
+  .dashboard-tables th,
+  .dashboard-tables td,
+  .dashboard-repairs th,
+  .dashboard-repairs td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    max-width: none;
+    padding: 10px 8px;
+  }
+  .dashboard-repairs th:first-child,
+  .dashboard-repairs td:first-child {
+    width: 12%;
+  }
+  .stat strong {
+    font-size: clamp(16px, 4.7vw, 24px);
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+  }
+}

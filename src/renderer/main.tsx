@@ -395,13 +395,23 @@ function DemoConfirmation({
   onCancel,
   onConfirm,
 }: {
-  action: "add" | "remove";
+  action: "add" | "remove" | "enter" | "leave";
   busy: boolean;
   error: string;
   t: (key: string) => string;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
+  const titleKey =
+    action === "enter"
+      ? "sampleEnter"
+      : action === "leave"
+        ? "sampleLeave"
+        : action === "add"
+          ? "demoAdd"
+          : "demoRemove";
+  const noticeKey =
+    action === "enter" || action === "leave" ? "sampleNotice" : "demoNotice";
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const node = dialog.current!;
@@ -419,10 +429,8 @@ function DemoConfirmation({
         if (!busy) onCancel();
       }}
     >
-      <h2 id="demo-dialog-title">
-        {t(action === "add" ? "demoAdd" : "demoRemove")}
-      </h2>
-      <p id="demo-dialog-description">{t("demoNotice")}</p>
+      <h2 id="demo-dialog-title">{t(titleKey)}</h2>
+      <p id="demo-dialog-description">{t(noticeKey)}</p>
       {error && (
         <p className="error" role="alert">
           {t(error)}
@@ -439,7 +447,7 @@ function DemoConfirmation({
           {t("cancel")}
         </button>
         <button type="button" disabled={busy} onClick={onConfirm}>
-          {t(action === "add" ? "demoAdd" : "demoRemove")}
+          {t(titleKey)}
         </button>
       </div>
     </dialog>
@@ -458,7 +466,9 @@ function App() {
   );
   const t = (key: string) => translate(language, key);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [demoAction, setDemoAction] = useState<"add" | "remove" | null>(null);
+  const [demoAction, setDemoAction] = useState<
+    "add" | "remove" | "enter" | "leave" | null
+  >(null);
   const [pullDistance, setPullDistance] = useState(0);
   const pullStart = useRef<{ x: number; y: number } | null>(null);
   const [narrow, setNarrow] = useState(
@@ -649,6 +659,31 @@ function App() {
   async function applyDemo() {
     if (!demoAction) return;
     const action = demoAction;
+    if (action === "enter" || action === "leave") {
+      if (cart.length) {
+        setError("SAMPLE_CART");
+        return;
+      }
+      await run(async () => {
+        await call("demoDataset", { action });
+        const next = await call("status");
+        setStatus(next);
+        setUser(next.user);
+        setSearch("");
+        setQuery("");
+        setFrom("");
+        setTo("");
+        setPagination(0);
+        setPage("dashboard");
+        setData(
+          next.user ? await call("snapshot", { page: 0, search: "" }) : null,
+        );
+        setDemoAction(null);
+        window.scrollTo(0, 0);
+        return true;
+      }, false);
+      return;
+    }
     const result = await run(async () => {
       await call("demoInventory", { action });
       if (action === "add") {
@@ -735,7 +770,10 @@ function App() {
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + 1} className="empty">
+                <td
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className="empty"
+                >
                   {t("noData")}
                 </td>
               </tr>
@@ -1517,6 +1555,23 @@ function App() {
           </div>
         </header>
         <main className="content">
+          {data.demoMode && (
+            <section
+              className="sample-banner"
+              data-testid="sample-mode"
+              role="status"
+            >
+              <div>
+                <strong>{t("sampleActive")}</strong>
+                <p>{t("sampleBrief")}</p>
+              </div>
+              {btn("sampleLeave", () => {
+                setError("");
+                setDemoAction("leave");
+              })}
+            </section>
+          )}
+
           {error && (
             <div className="error" role="alert">
               {t(error)}
@@ -1576,6 +1631,16 @@ function App() {
           </div>
           {page === "dashboard" && (
             <>
+              {!data.demoMode && user.role === "Owner" && (
+                <section className="panel sample-intro">
+                  <h2>{t("sampleTitle")}</h2>
+                  <p>{t("sampleNotice")}</p>
+                  {btn("sampleEnter", () => {
+                    setError("");
+                    setDemoAction("enter");
+                  })}
+                </section>
+              )}
               <div className="section-heading">
                 <h2>{t("dashboard")}</h2>
                 <span className="pill">{currency}</span>
@@ -1606,7 +1671,7 @@ function App() {
                   </section>
                 ))}
               </div>
-              <div className="two-columns">
+              <div className="two-columns dashboard-tables">
                 <section className="panel">
                   <h2>{t("sales")}</h2>
                   <Table
@@ -1622,7 +1687,7 @@ function App() {
                   />
                 </section>
               </div>
-              <section className="panel">
+              <section className="panel dashboard-repairs">
                 <h2>{t("repairs")}</h2>
                 <Table
                   rows={data.repairs.slice(0, 6)}
@@ -2954,6 +3019,16 @@ function App() {
           )}
           {page === "settings" && (
             <>
+              {user.role === "Owner" && (
+                <section className="panel">
+                  <h2>{t("sampleTitle")}</h2>
+                  <p>{t("sampleNotice")}</p>
+                  {btn(data.demoMode ? "sampleLeave" : "sampleEnter", () => {
+                    setError("");
+                    setDemoAction(data.demoMode ? "leave" : "enter");
+                  })}
+                </section>
+              )}
               {user.role === "Owner" && (
                 <section className="panel">
                   <h2>

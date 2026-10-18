@@ -1,3 +1,4 @@
+import { DemoWorkspace } from "./demo-workspace";
 import {
   app,
   BrowserWindow,
@@ -32,6 +33,7 @@ if (!app.isPackaged && process.env.POS_TEST_DATA_DIR)
   app.setPath("userData", resolve(process.env.POS_TEST_DATA_DIR));
 if (!app.requestSingleInstanceLock()) app.quit();
 let service: ShopService;
+const workspace = new DemoWorkspace();
 let window: BrowserWindow;
 const databasePath = () => join(app.getPath("userData"), "business.sqlite");
 const checkDatabase = validateBackup;
@@ -353,6 +355,22 @@ app.whenReady().then(async () => {
       if (busy) return { ok: false, error: "BUSY" };
       busy = true;
       try {
+        if (operation === "demoDataset") {
+          const { action } = schemas.demoDataset.parse(input);
+          service =
+            action === "enter"
+              ? workspace.enter(service)
+              : workspace.leave(service);
+          return { ok: true, data: { active: workspace.active } };
+        }
+        if (workspace.active && !service.user) {
+          service = workspace.leave(service);
+          if (!["status", "logout", "login"].includes(operation))
+            throw new DomainError("UNAUTHENTICATED");
+        }
+        if (operation === "logout" && workspace.active)
+          service = workspace.leave(service);
+        workspace.guard(operation);
         const desktopOps: Operation[] = [
           "printers",
           "photo",
@@ -377,6 +395,8 @@ app.whenReady().then(async () => {
             systemLocale: app.getSystemLocale(),
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           };
+        if (operation === "snapshot" || operation === "status")
+          data = { ...data, demoMode: workspace.active };
         return { ok: true, data };
       } catch (error: any) {
         const known = error instanceof DomainError;

@@ -1,3 +1,4 @@
+import { verifySampleShop } from "./sample-shop.mjs";
 import { verifyThemePreference, verifySearchIcon } from "./theme-search.mjs";
 import { verifyDemoRefresh } from "./demo-refresh.mjs";
 import { navigateTo, openNavigation, closeNavigation } from "./navigation.mjs";
@@ -149,6 +150,32 @@ try {
   await verifyDemoRefresh(page, async () => {
     adb("shell", "input", "keyevent", "4");
   });
+  const liveBeforeSample = execFileSync(
+    "adb",
+    ["exec-out", "run-as", pkg, "cat", "files/business.sqlite"],
+    { maxBuffer: 40 * 1024 * 1024 },
+  );
+  page = await verifySampleShop(
+    page,
+    { username: "apk-owner", password: "synthetic apk password" },
+    async () => {
+      adb("shell", "am", "force-stop", pkg);
+      await device.close();
+      device = (await android.devices({ omitDriverInstall: true }))[0];
+      expect(device).toBeTruthy();
+      adb("shell", "am", "start", "-n", `${pkg}/.MainActivity`);
+      return await connect();
+    },
+    async () => {
+      const after = execFileSync(
+        "adb",
+        ["exec-out", "run-as", pkg, "cat", "files/business.sqlite"],
+        { maxBuffer: 40 * 1024 * 1024 },
+      );
+      expect(after.equals(liveBeforeSample)).toBe(true);
+    },
+  );
+  results.sampleWorkspace = true;
   results.demoInventory = true;
   results.pullRefresh = true;
   results.mobileAdditions = true;

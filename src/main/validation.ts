@@ -30,6 +30,12 @@ const inspectionFields = {
   included: z.string().max(1000).default(""),
 };
 export const schemas = {
+  demoDataset: z
+    .object({
+      action: z.enum(["enter", "leave"]),
+      uiLanguage: z.enum(["my-MM", "th-TH", "en-US"]).optional(),
+    })
+    .strict(),
   demoInventory: z
     .object({
       action: z.enum(["add", "remove"]),

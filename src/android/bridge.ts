@@ -1,3 +1,4 @@
+import { DemoWorkspace } from "../main/demo-workspace";
 import { printerTestHTML } from "../shared/printer-test";
 import { registerPlugin } from "@capacitor/core";
 import { Buffer } from "buffer";
@@ -81,9 +82,11 @@ export async function createAndroidBridge(
 ): Promise<Bridge> {
   const loaded = await native.load();
   let service = fromBytes(loaded.data);
+  const workspace = new DemoWorkspace();
   const info = await native.info();
   let saveFailed = false;
   const persist = async () => {
+    if (workspace.active) return;
     try {
       await native.save({
         data: Buffer.from(bytes(service)).toString("base64"),
@@ -369,6 +372,22 @@ export async function createAndroidBridge(
       saveFailed = false;
       const prior = bytes(service);
       try {
+        if (operation === "demoDataset") {
+          const { action } = schemas.demoDataset.parse(input);
+          service =
+            action === "enter"
+              ? workspace.enter(service)
+              : workspace.leave(service);
+          return { ok: true, data: { active: workspace.active } };
+        }
+        if (workspace.active && !service.user) {
+          service = workspace.leave(service);
+          if (!["status", "logout", "login"].includes(operation))
+            throw new DomainError("UNAUTHENTICATED");
+        }
+        if (operation === "logout" && workspace.active)
+          service = workspace.leave(service);
+        workspace.guard(operation);
         const result = desktopOps.has(operation)
           ? await desktop(operation, input)
           : service.invoke(operation, input);
@@ -378,8 +397,15 @@ export async function createAndroidBridge(
           ok: true,
           data:
             operation === "status"
-              ? { ...result, ...info, locale: navigator.language }
-              : result,
+              ? {
+                  ...result,
+                  ...info,
+                  locale: navigator.language,
+                  demoMode: workspace.active,
+                }
+              : operation === "snapshot"
+                ? { ...result, demoMode: workspace.active }
+                : result,
         };
       } catch (e: any) {
         // Failed authentication updates a durable shared throttle, even across app restarts.

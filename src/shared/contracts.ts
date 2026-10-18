@@ -16,6 +16,7 @@ export const operations = [
   "printer",
   "barcodeGenerate",
   "demoInventory",
+  "demoDataset",
   "exchange",
   "paymentMethod",
   "inspectionUpdate",

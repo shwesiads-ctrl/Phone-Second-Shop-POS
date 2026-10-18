@@ -1,5 +1,37 @@
 export type Language = "my-MM" | "th-TH" | "en-US";
 const words: Record<string, [string, string, string]> = {
+  sampleTitle: [
+    "Full sample shop",
+    "နမူနာဆိုင် အပြည့်အစုံ",
+    "ร้านตัวอย่างครบชุด",
+  ],
+  sampleEnter: ["Open sample shop", "နမူနာဆိုင် ဖွင့်ရန်", "เปิดร้านตัวอย่าง"],
+  sampleLeave: ["Return to my shop", "မိမိဆိုင်သို့ ပြန်ရန်", "กลับร้านของฉัน"],
+  sampleBrief: [
+    "Practice only. Real shop unchanged; exit/restart discards practice data.",
+    "စမ်းသပ်ရန်သာ။ မိမိဆိုင်စာရင်း မပြောင်းပါ။ ပြန်ထွက်/ပြန်ဖွင့်လျှင် နမူနာပြင်ဆင်မှု ပျက်မည်။",
+    "ฝึกเท่านั้น ร้านจริงไม่เปลี่ยน ออกหรือเริ่มใหม่จะทิ้งข้อมูลฝึก",
+  ],
+  sampleActive: [
+    "DEMO · Sample shop — practice only",
+    "DEMO · နမူနာဆိုင် — စမ်းသပ်ရန်သာ",
+    "DEMO · ร้านตัวอย่างสำหรับฝึกเท่านั้น",
+  ],
+  sampleNotice: [
+    "100 products, posted purchases/sales, customers, payments and repairs in a separate temporary database. Your real shop is untouched. Practice changes are discarded on exit or app restart.",
+    "ဖုန်း/အပိုပစ္စည်း ၁၀၀၊ အဝယ်၊ အရောင်း၊ customer၊ ငွေပေးချေမှုနှင့် repair ပါသော သီးခြားယာယီနမူနာဆိုင် ဖြစ်သည်။ မိမိဆိုင်စာရင်း မပြောင်းပါ။ ပြန်ထွက်ခြင်း သို့မဟုတ် app ပြန်ဖွင့်ခြင်းတွင် စမ်းသပ်ပြင်ဆင်မှုများ ပျက်မည်။",
+    "สินค้า 100 รายการ พร้อมซื้อ/ขาย ลูกค้า ชำระเงินและซ่อม ในฐานข้อมูลชั่วคราวแยกจากร้านจริง การฝึกจะถูกทิ้งเมื่อออกหรือเริ่มแอปใหม่",
+  ],
+  DEMO_RESTRICTED: [
+    "This action is unavailable in the temporary sample shop. Return to your real shop first.",
+    "နမူနာဆိုင်တွင် ဤလုပ်ဆောင်ချက် မရပါ။ မိမိဆိုင်သို့ အရင်ပြန်ပါ။",
+    "การทำงานนี้ใช้ไม่ได้ในร้านตัวอย่าง กลับร้านจริงก่อน",
+  ],
+  SAMPLE_CART: [
+    "Clear or hold your cart before switching shops.",
+    "ဆိုင်မပြောင်းမီ ခြင်းထဲမှ ပစ္စည်းများကို ရှင်းပါ သို့မဟုတ် ခဏသိမ်းပါ။",
+    "ล้างหรือพักตะกร้าก่อนสลับร้าน",
+  ],
   dayMode: ["Day mode", "နေ့ဘက်ပုံစံ", "โหมดกลางวัน"],
   nightMode: ["Night mode", "ညဘက်ပုံစံ", "โหมดกลางคืน"],
   pullRefresh: [

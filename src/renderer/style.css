@@ -749,3 +749,35 @@ dialog.demo-confirmation::backdrop {
 :root[data-theme="dark"] .info {
   color: var(--info-text);
 }
+
+.panel,
+.two-columns > section {
+  min-width: 0;
+}
+.sample-banner {
+  background: var(--info-bg);
+  color: var(--info-text);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.sample-banner > div {
+  flex: 1;
+  min-width: 180px;
+}
+.sample-banner p {
+  margin: 8px 0 0;
+}
+.sample-intro {
+  margin-bottom: 18px;
+}
+.dashboard-tables .empty,
+.dashboard-repairs .empty {
+  white-space: normal;
+  padding: 24px 12px;
+}
