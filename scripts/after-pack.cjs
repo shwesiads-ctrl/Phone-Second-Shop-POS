@@ -31,8 +31,14 @@ module.exports = async (context) => {
     (a, b) => b.split(path.sep).length - a.split(path.sep).length,
   ))
     lines.push(`RMDir "$INSTDIR\\${quote(directory)}"`);
-  fs.writeFileSync(
-    path.join(context.packager.projectDir, "build", "uninstall-files.nsh"),
-    lines.join("\n") + "\n",
+  const manifestPath = path.join(
+    context.packager.projectDir,
+    "build",
+    "uninstall-files.nsh",
+  );
+  fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
+  fs.writeFileSync(manifestPath, lines.join("\n") + "\n");
+  console.log(
+    `Generated Windows uninstall manifest: ${manifestPath} (${files.length} packaged files)`,
   );
 };

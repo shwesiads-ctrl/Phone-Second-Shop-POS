@@ -85,7 +85,7 @@ FunctionEnd
 Section "Uninstall"
   SetShellVarContext current
   SetRegView 64
-  !include "${BUILD_RESOURCES_DIR}/uninstall-files.nsh"
+  !include "${BUILD_RESOURCES_DIR}\uninstall-files.nsh"
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$SMPROGRAMS\Phone Second Shop POS\Phone Second Shop POS.lnk"
   RMDir "$SMPROGRAMS\Phone Second Shop POS"
