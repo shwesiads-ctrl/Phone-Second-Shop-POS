@@ -15,7 +15,7 @@
     "test": "tsx --test tests/*.test.ts",
     "build": "npm run typecheck && vite build && node scripts/build.mjs",
     "start": "electron .",
-    "dist:win": "npm test && npm run test:desktop && electron-builder --win nsis --x64",
+    "dist:win": "npm test && npm run test:desktop && electron-builder --win nsis --x64 --publish never",
     "pack:linux": "npm test && npm run build && electron-builder --linux dir --x64",
     "test:desktop": "npm run build && node tests/e2e/desktop.mjs",
     "test:print": "npm run build && node tests/e2e/currency-print.mjs"
