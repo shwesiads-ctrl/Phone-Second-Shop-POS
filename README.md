@@ -2,7 +2,15 @@
 
 Offline Electron + React + TypeScript desktop POS for a second-hand phone shop. SQLite stays in Electron's application user-data folder. Default UI: မြန်မာ; other languages: ไทย and English. Developer: Myominaung · [Telegram @kominit](https://t.me/kominit).
 
-This is version **0.1.0**, an initial implementation for shop acceptance testing. Read [feature status](docs/FEATURES.md) and [accounting policy](docs/ACCOUNTING.md) before entering real business data.
+This is version **0.2.0**, a test release for shop acceptance testing. Read [feature status](docs/FEATURES.md) and [accounting policy](docs/ACCOUNTING.md) before entering real business data.
+
+## Windows download
+
+[Download Windows x64 installer](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/v0.2.0-ci.5/Phone.Second.Shop.POS.Setup.0.2.0.exe) · [Release notes and SHA256](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/v0.2.0-ci.5)
+
+Installer ကို အပေါ်က link မှ download ဆွဲနိုင်ပါသည်။ Unsigned test build ဖြစ်သည်။ Windows clean installation/upgrade/uninstall နှင့် physical printing စမ်းသပ်မှုများ မပြီးသေးပါ။ Source-code ZIP သည် installer မဟုတ်ပါ။
+
+The GitHub Windows build/test/package verification passed. This does not establish clean installation, upgrade/uninstall or physical printer acceptance. Back up real shop data before testing.
 
 ## Development
 

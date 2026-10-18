@@ -51,3 +51,11 @@ Environment draft **revision 2** saved successfully and read back with exact mat
 - Production archive checks exclude root test/scripts and development-tool packages. Native Windows execution/installation remains **PENDING**.
 
 The final artifact checksum is recorded after packaging and does not attempt to embed a self-referential installer hash in the installer itself. Build, archive verification, unit, PDF and audit evidence are retained locally in `test-results/evidence/` and the machine-readable result files.
+
+## Subsequent GitHub publication and Windows runner verification
+
+Source is now published on the repository's `main` branch. The [Windows test release](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/v0.2.0-ci.5) is published as **v0.2.0-ci.5**, an unsigned prerelease containing app version 0.2.0. [GitHub Actions run 39094820574](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39094820574) completed **successfully** on Windows Server 2022: frozen install, 49 tests, production build, real source-app Electron workflow, NSIS packaging and archive verification. Packaging fixes normalize the generated manifest include path, disable Builder's implicit CI publishing and normalize nested ASAR lookup paths. Earlier failed CI attempts were diagnosed and are not counted as passes.
+
+The GitHub attachment was confirmed accessible with **HTTP 200** and Content-Length **116,575,025 bytes**. Its downloaded checksum file agrees with the attached build metadata: `fb92c48dc1821de78abe556815567de13d9d0c51924b470787692f249ea18af2`. Installer and app certificate-directory sizes are zero; the build remains **unsigned**. Twenty-eight generated main/preload/renderer/font/license files matched its tested Windows build. These Windows-build bytes differ from the earlier Linux cross-build; use the checksum attached to the release being downloaded.
+
+This executes the **source app** on a Windows runner. Clean installer execution, first-run creation through the installed EXE, native upgrade/uninstall preservation, Windows 10/11 device acceptance, SmartScreen and physical printing remain pending. No environment-draft publication occurred. Statements above about source being local describe the original cloud verification before this GitHub publication.

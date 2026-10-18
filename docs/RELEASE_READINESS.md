@@ -19,6 +19,8 @@ Status: **candidate built/tested in Linux cloud; not approved for a production W
 
 - [x] Final 0.2.0 NSIS cross-build and archive integrity; x64 app/version, 28 generated files and SHA256 verified; installer/app unsigned.
 
+- [x] Source and unsigned installer published to GitHub prerelease v0.2.0-ci.5; Windows Server 2022 unit/source-app/build/archive workflow passed. Public installer download returned HTTP 200.
+
 ## Required before production release
 
 - [ ] Windows clean installation on supported Windows 10/11 x64, standard user, no Node runtime installed.
@@ -34,7 +36,7 @@ Status: **candidate built/tested in Linux cloud; not approved for a production W
 - [ ] Accountant/shop acceptance of rounding, original-currency refunds, period reports and limits; no automatic FX revaluation/general ledger exists.
 - [ ] Review remaining master-spec gaps in FEATURES.md: repair cart services, cashier PIN, re-intake cycles, portable target, stock/general-ledger journals, label presets, encryption/autobackups and photo editing.
 - [ ] Review and save the environment draft, then publish through environment settings. Draft persistence is not publication.
-- [ ] Independently verify a fresh task restores the source/dependencies and reruns setup. Source is local workspace work, not pushed to GitHub; a remote-only checkout does not reproduce these changes.
+- [ ] Independently verify a fresh cloud task restores the environment and reruns setup. Source is now published to GitHub; environment snapshot restoration remains unverified.
 
 ## Environment settings checklist
 
