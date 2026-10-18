@@ -10,6 +10,9 @@ const harness: any = {
   exports: [],
   importData: undefined,
   previews: [],
+  printerCalls: [],
+  printerConnected: false,
+  supportCalls: 0,
 };
 const native: NativePOS = {
   load: async () => ({
@@ -33,7 +36,30 @@ const native: NativePOS = {
     harness.previews.push(input);
   },
   copy: async () => {},
-  support: async () => {},
+  support: async () => {
+    harness.supportCalls++;
+  },
+  printer: async (input) => {
+    harness.printerCalls.push(input);
+    if (input.action === "connect") harness.printerConnected = true;
+    if (input.action === "disconnect") harness.printerConnected = false;
+    return {
+      supported: true,
+      enabled: true,
+      connected: harness.printerConnected,
+      address: harness.printerConnected ? "00:11:22:33:44:55" : "",
+      devices:
+        input.action === "search"
+          ? [
+              {
+                name: "Synthetic ESC/POS",
+                address: "00:11:22:33:44:55",
+                paired: true,
+              },
+            ]
+          : [],
+    };
+  },
 };
 (window as any).androidHarness = harness;
 window.pos = await createAndroidBridge(native);

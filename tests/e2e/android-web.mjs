@@ -1,3 +1,4 @@
+import { verifyMobileAdditions } from "./mobile-additions.mjs";
 import { verifyOwnerRecovery } from "./owner-recovery.mjs";
 import { verifyMobileLayout } from "./mobile-layout.mjs";
 import { _electron as electron, expect } from "@playwright/test";
@@ -61,6 +62,7 @@ try {
   }
   await page.setViewportSize({ width: 420, height: 900 });
   await verifyOwnerRecovery(page, "android-owner", "android test password");
+  await verifyMobileAdditions(page, true);
   const call = async (op, input = {}) => {
     const reply = await page.evaluate(
       ({ op, input }) => window.pos.call(op, input),
@@ -110,7 +112,7 @@ try {
     paper: "58mm",
   });
   expect(
-    await page.evaluate(() => window.androidHarness.previews[0].html),
+    await page.evaluate(() => window.androidHarness.previews.at(-1).html),
   ).toContain("file:///android_asset/public/assets/receipt-myanmar.woff2");
   await call("label", { kind: "accessory", id: stockId });
   await call("backup");

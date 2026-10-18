@@ -1,3 +1,4 @@
+import { verifyMobileAdditions } from "./mobile-additions.mjs";
 import { verifyOwnerRecovery } from "./owner-recovery.mjs";
 import { verifyMobileLayout } from "./mobile-layout.mjs";
 // Actual installed debug APK, Android WebView and private native storage; no mock bridge.
@@ -23,6 +24,10 @@ const results = {
   apkInstalled: false,
   firstRunSetup: false,
   ownerRecovery: false,
+  mobileAdditions: false,
+  backExitConfirmation: false,
+  automaticBarcode: false,
+  bluetoothHardware: "PENDING: no physical printer",
   offlineSale: false,
   originalTender: false,
   privatePersistence: false,
@@ -54,6 +59,30 @@ async function connect() {
   throw new Error("Android WebView unavailable");
 }
 
+async function nativeDialogButton(prefix) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    adb("shell", "uiautomator", "dump", "/sdcard/pos-ui.xml");
+    const xml = adb("shell", "cat", "/sdcard/pos-ui.xml");
+    const nodes = xml.match(/<node\s[^>]+>/g) || [];
+    const node = nodes.find((n) =>
+      n.toLowerCase().includes(`text="${prefix.toLowerCase()}`),
+    );
+    const bounds = node?.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
+    if (bounds) {
+      adb(
+        "shell",
+        "input",
+        "tap",
+        String(Math.round((+bounds[1] + +bounds[3]) / 2)),
+        String(Math.round((+bounds[2] + +bounds[4]) / 2)),
+      );
+      return;
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error("Native exit confirmation button not found");
+}
+
 async function call(op, input = {}) {
   const r = await page.evaluate(({ op, input }) => window.pos.call(op, input), {
     op,
@@ -78,6 +107,8 @@ try {
   ).toBeVisible();
   await verifyMobileLayout(page, "test-results/android/layout");
   await verifyOwnerRecovery(page, "apk-owner", "synthetic apk password");
+  await verifyMobileAdditions(page, false);
+  results.mobileAdditions = true;
   results.ownerRecovery = true;
   results.firstRunSetup = true;
   await call("rate", {
@@ -98,6 +129,14 @@ try {
     reorder: 0,
     method: "Cash",
   });
+  const stock = (await call("snapshot")).accessories.find(
+    (p) => p.sku === "APK-1",
+  );
+  expect(stock.barcode).toMatch(/^P2\d{12}$/);
+  expect((await call("barcodeGenerate", { id: stock.id })).barcode).toBe(
+    stock.barcode,
+  );
+  results.automaticBarcode = true;
   await page.reload();
   await page.waitForFunction(() => !!window.pos);
   await page.getByLabel("Username", { exact: true }).fill("apk-owner");
@@ -165,6 +204,10 @@ try {
   await expect(
     page.getByRole("heading", { name: "ประวัติการขาย", exact: true }).first(),
   ).toBeVisible();
+  adb("shell", "input", "keyevent", "4");
+  await nativeDialogButton("Stay");
+  expect((await call("snapshot")).sales).toHaveLength(1);
+  results.backExitConfirmation = true;
   adb("shell", "am", "force-stop", pkg);
   adb("shell", "am", "start", "-n", `${pkg}/.MainActivity`);
   page = await connect();
@@ -187,6 +230,26 @@ try {
   await page.getByRole("button", { name: "Log in", exact: true }).click();
   expect((await call("snapshot")).sales).toHaveLength(1);
   results.sameApkReinstall = true;
+  adb("shell", "input", "keyevent", "4");
+  await nativeDialogButton("Exit ·");
+  await new Promise((r) => setTimeout(r, 1000));
+  expect(
+    adb("shell", "dumpsys", "activity", "activities")
+      .split("\n")
+      .filter((s) => /topResumedActivity|mResumedActivity/.test(s))
+      .join("\n"),
+  ).not.toContain(pkg);
+  adb("shell", "am", "start", "-n", `${pkg}/.MainActivity`);
+  page = await connect();
+  await page.getByLabel("Username", { exact: true }).fill("apk-owner");
+  await page
+    .getByLabel("Password (10+ characters)", { exact: true })
+    .fill("synthetic apk password");
+  await page
+    .getByRole("button", { name: "Log in", exact: true })
+    .first()
+    .click();
+  expect((await call("snapshot")).sales).toHaveLength(1);
   // Export the native app's actual SQLite file through debug-only run-as for integrity checking.
   const database = execFileSync(
     "adb",

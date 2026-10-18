@@ -192,3 +192,21 @@ body {
   user-select: text;
   margin: 12px 0;
 }
+
+.printer-devices {
+  padding: 0;
+  list-style: none;
+}
+.printer-devices li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+.printer-devices span {
+  overflow-wrap: anywhere;
+  flex: 1;
+  min-width: 150px;
+}

@@ -1,3 +1,4 @@
+import { barcodeCandidate } from "../shared/barcode";
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "@fontsource/noto-sans-myanmar/400.css";
@@ -259,6 +260,7 @@ function Form({
                   />
                 ) : (
                   <input
+                    aria-label={t(f.label || f.key)}
                     autoComplete={
                       f.type === "password" ? "new-password" : "off"
                     }
@@ -281,6 +283,25 @@ function Form({
                     maxLength={f.type === "password" ? 128 : 200}
                   />
                 )}
+                {["barcode", "sku", "alternate"].includes(f.key) &&
+                  !config.readonly && (
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => {
+                        if (
+                          !values[f.key] ||
+                          window.confirm(t("replaceBarcode"))
+                        )
+                          setValues({
+                            ...values,
+                            [f.key]: barcodeCandidate(crypto.randomUUID()),
+                          });
+                      }}
+                    >
+                      {t("generateBarcode")}
+                    </button>
+                  )}
               </label>
             ))}
           </div>
@@ -306,6 +327,8 @@ function App() {
     (localStorage.getItem("pos.language") as Language) || "my-MM",
   );
   const t = (key: string) => translate(language, key);
+  const [printerState, setPrinterState] = useState<Row | null>(null);
+  const [printerPaper, setPrinterPaper] = useState("80mm");
   const [recoveryMode, setRecoveryMode] = useState(false);
   const [recoveryKey, setRecoveryKey] = useState("");
   const [recovered, setRecovered] = useState(false);
@@ -427,6 +450,17 @@ function App() {
     document.addEventListener("visibilitychange", clear);
     return () => document.removeEventListener("visibilitychange", clear);
   }, []);
+  async function printerAction(action: string, address?: string) {
+    await run(async () => {
+      const result = await call("printer", {
+        action,
+        address,
+        paper: printerPaper,
+      });
+      if (result && typeof result === "object") setPrinterState(result);
+      return result;
+    }, false);
+  }
   async function initialize() {
     try {
       const s = await call("status");
@@ -1397,6 +1431,7 @@ function App() {
                 columns={[
                   "id",
                   "sku",
+                  "barcode",
                   "name",
                   "category",
                   "quantity",
@@ -1415,6 +1450,14 @@ function App() {
                             false,
                           ),
                       )}
+                      {!r.barcode &&
+                        btn(
+                          "generateBarcode",
+                          () =>
+                            void run(() =>
+                              call("barcodeGenerate", { id: r.id }),
+                            ),
+                        )}
                       {btn("adjust", () =>
                         transactionEditor(
                           "adjust",
@@ -2539,6 +2582,89 @@ function App() {
           )}
           {page === "settings" && (
             <>
+              {status?.ownerOnly && (
+                <>
+                  <section className="panel">
+                    <h2>{t("bluetoothPrinter")}</h2>
+                    <p className="info">{t("printerPolicy")}</p>
+                    <div className="export-actions">
+                      {btn("printerStatus", () => void printerAction("status"))}
+                      {btn("printerSearch", () => void printerAction("search"))}
+                      {btn("printerPair", () => void printerAction("settings"))}
+                      {btn(
+                        "printerDisconnect",
+                        () => void printerAction("disconnect"),
+                      )}
+                    </div>
+                    <label>
+                      {t("receipt")}
+                      <select
+                        value={printerPaper}
+                        onChange={(e) => setPrinterPaper(e.target.value)}
+                      >
+                        <option>58mm</option>
+                        <option>80mm</option>
+                      </select>
+                    </label>
+                    {printerState && (
+                      <p role="status">
+                        {t(
+                          printerState.connected
+                            ? "printerConnected"
+                            : printerState.supported === false
+                              ? "PRINTER_UNSUPPORTED"
+                              : !printerState.enabled
+                                ? "PRINTER_BLUETOOTH_OFF"
+                                : "printerDisconnected",
+                        )}
+                        {printerState.connected && ` · ${printerState.address}`}
+                      </p>
+                    )}
+                    <ul className="printer-devices">
+                      {(printerState?.devices || []).map((device: Row) => (
+                        <li key={device.address}>
+                          <span>
+                            {device.name} · {device.address} ·{" "}
+                            {t(
+                              device.paired
+                                ? "printerPaired"
+                                : "PRINTER_PAIR_FIRST",
+                            )}
+                          </span>
+                          <button
+                            disabled={busy || !device.paired}
+                            onClick={() =>
+                              void printerAction("connect", device.address)
+                            }
+                          >
+                            {t("printerConnect")}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    {printerState?.devices?.length === 0 && (
+                      <p>{t("printerNoDevices")}</p>
+                    )}
+                    <button
+                      disabled={busy || !printerState?.connected}
+                      onClick={() => void printerAction("test")}
+                    >
+                      {t("printerTest")}
+                    </button>
+                  </section>
+                  <section className="panel">
+                    <h2>{t("customFeature")}</h2>
+                    <p>{t("customFeatureHelp")}</p>
+                    <button
+                      disabled={busy}
+                      onClick={() => void run(() => call("support"), false)}
+                    >
+                      Telegram · @kominit
+                    </button>
+                  </section>
+                </>
+              )}
+
               {user.role === "Owner" && (
                 <section className="panel">
                   <h2>{t("ownerSecurity")}</h2>

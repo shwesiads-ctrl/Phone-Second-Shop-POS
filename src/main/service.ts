@@ -1,3 +1,4 @@
+import { barcodeCandidate } from "../shared/barcode";
 import {
   randomUUID,
   randomBytes,
@@ -29,6 +30,8 @@ const access: Partial<Record<Operation, Role[]>> = {
   warrantyUpdate: managers,
   photo: [...stock, "Technician"],
   label: [...stock, "Cashier"],
+  barcodeGenerate: stock,
+  printer: ["Owner"],
   permission: ["Owner"],
   repairPart: technicians,
   replenish: stock,
@@ -123,6 +126,20 @@ export class ShopService {
       };
     }
     return this.session;
+  }
+  private newBarcode(): string {
+    for (let i = 0; i < 5; i++) {
+      const barcode = barcodeCandidate(randomUUID());
+      if (
+        !this.row(
+          "SELECT id FROM accessories WHERE barcode=? OR sku=?",
+          barcode,
+          barcode,
+        )
+      )
+        return barcode;
+    }
+    throw new DomainError("CONFLICT");
   }
   private primaryOwner() {
     return this.row(
@@ -404,6 +421,7 @@ export class ShopService {
     if (input.method) validMethod(input.method);
     if (input.payments)
       for (const payment of input.payments) validMethod(payment.method);
+    if (operation === "printer") throw new DomainError("PRINTER_UNSUPPORTED");
     if (operation === "wholesale") return true;
     if (operation === "paymentMethod")
       return transaction(this.db, () => {
@@ -822,12 +840,38 @@ export class ShopService {
       });
     if (operation === "purchase") return this.purchase(input);
     if (operation === "purchaseReverse") return this.reversePurchase(input);
+    if (operation === "barcodeGenerate")
+      return transaction(this.db, () => {
+        const item = this.row(
+          "SELECT id,barcode FROM accessories WHERE id=?",
+          input.id,
+        );
+        assert(item, "NOT_FOUND");
+        if (item.barcode) return { barcode: item.barcode };
+        const barcode = this.newBarcode();
+        this.run(
+          "UPDATE accessories SET barcode=? WHERE id=?",
+          barcode,
+          input.id,
+        );
+        this.audit("barcode.generate", String(input.id));
+        return { barcode };
+      });
     if (operation === "accessory")
       return transaction(this.db, () => {
+        const barcode = input.barcode || this.newBarcode();
+        assert(
+          !this.row(
+            "SELECT id FROM accessories WHERE barcode=? OR sku=?",
+            barcode,
+            barcode,
+          ),
+          "CONFLICT",
+        );
         const r = this.run(
           "INSERT INTO accessories(sku,barcode,name,category,cost,price,currency,quantity,reorder) VALUES(?,?,?,?,?,?,?,?,?)",
           input.sku,
-          input.barcode,
+          barcode,
           input.name,
           input.category,
           input.cost,

@@ -31,8 +31,24 @@ export interface NativePOS {
   }): Promise<void>;
   copy(input: { text: string }): Promise<void>;
   support(): Promise<void>;
+  printer?(input: { action: string; address?: string }): Promise<any>;
 }
-const Native = registerPlugin<NativePOS>("PosNative");
+const StoreNative = registerPlugin<NativePOS>("PosNative");
+const PrinterNative = registerPlugin<{
+  execute(input: { action: string; address?: string }): Promise<any>;
+}>("BluetoothPrinter");
+const Native: NativePOS = {
+  load: () => StoreNative.load(),
+  save: (i) => StoreNative.save(i),
+  info: () => StoreNative.info(),
+  exportFile: (i) => StoreNative.exportFile(i),
+  importFile: () => StoreNative.importFile(),
+  pickImage: () => StoreNative.pickImage(),
+  preview: (i) => StoreNative.preview(i),
+  copy: (i) => StoreNative.copy(i),
+  support: () => StoreNative.support(),
+  printer: (i) => PrinterNative.execute(i),
+};
 const readOnly = new Set<Operation>([
   "status",
   "snapshot",
@@ -84,6 +100,40 @@ export async function createAndroidBridge(
     const labels =
       dictionaries[language as keyof typeof dictionaries] ??
       dictionaries["my-MM"];
+    if (operation === "printer") {
+      if (input.action === "test") {
+        const state = await native.printer?.({ action: "status" });
+        if (!state?.connected) throw new DomainError("PRINTER_NOT_CONNECTED");
+        await native.preview({
+          paper: input.paper,
+          preview: true,
+          html: `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src file:; style-src 'unsafe-inline'"><style>@font-face{font-family:Myanmar;src:url('file:///android_asset/public/assets/receipt-myanmar.woff2')}@font-face{font-family:Thai;src:url('file:///android_asset/public/assets/receipt-thai.woff2')}body{font-family:Myanmar,Thai,sans-serif;font-size:14px;color:black;background:white}p{overflow-wrap:anywhere}</style></head><body><h2>POS TEST · ${input.paper}</h2><p>English receipt test<br>မြန်မာ စမ်းသပ်ပုံနှိပ်ခြင်း<br>ทดสอบใบเสร็จภาษาไทย</p><p>TEST ONLY — NOT A SALE<br>2 × 1,500 MMK = 3,000 MMK<br>Discount: 500 MMK<br>Total: 2,500 MMK<br>Paid: 3,000 MMK<br>Change: 500 MMK</p><p>0123456789<br>------------------------</p></body></html>`,
+        });
+        return true;
+      }
+      try {
+        return (
+          (await native.printer?.(input)) ?? {
+            supported: false,
+            connected: false,
+            devices: [],
+          }
+        );
+      } catch (e: any) {
+        throw new DomainError(
+          [
+            "PRINTER_PERMISSION",
+            "PRINTER_BLUETOOTH_OFF",
+            "PRINTER_PAIR_FIRST",
+            "PRINTER_CONNECT_FAILED",
+            "BUSY",
+            "INVALID_INPUT",
+          ].includes(e?.message)
+            ? e.message
+            : "PRINTER_CONNECT_FAILED",
+        );
+      }
+    }
     if (operation === "printers") return []; // Android uses its system print-service chooser.
     if (operation === "copy") {
       await native.copy(input);
@@ -287,6 +337,7 @@ export async function createAndroidBridge(
     throw new DomainError("INVALID_OPERATION");
   }
   const desktopOps = new Set<Operation>([
+    "printer",
     "printers",
     "backup",
     "restore",

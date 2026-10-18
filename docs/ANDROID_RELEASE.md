@@ -1,5 +1,10 @@
 # Phone Second Shop POS — Android test APK
 
+## Android additions · 0.2.0-android.4
+
+Adds native Back/Exit confirmation, Owner customization link to Telegram @kominit, Classic Bluetooth SPP discovery/paired connection/disconnect, 58/80mm Unicode ESC-POS raster printing through receipt/test preview, and automatic internal accessory barcodes. See [setup, supported protocols and pending hardware acceptance](ANDROID_PRINTER_FEATURES.md). No database migration or dependency changes. All 62 shared tests and TypeScript passed, and the desktop workflow passed. Browser/native APK results are gated separately. Hardware printing is explicitly pending; a socket/send is not paper confirmation. The APK remains debug-signed and may not upgrade an older differently signed build. Preserve an external backup before changing installs.
+
+
 ## Free Owner edition · 0.2.0-android.3
 
 **Verified published APK:** [android-v0.2.0-test.5](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.5), source `703c30e`; [Actions run 39113483060](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39113483060) succeeded. All 57 shared/security/migration tests, APK build, real installed Android WebView Owner recovery/UI, offline sale/change, receipt preview, force-stop persistence, same-APK reinstall, schema-9 database integrity and APK signature/package checks passed. Full public download returned HTTP 200, **10,691,998 bytes**; SHA256 **`59d6528853d2d205bd2927f6e93d654edb7be2321b61130f482fe935b0b5be46`** matched the attached checksum and verification JSON. Native screenshots are evidence; physical phones/printers and upgrades from differently signed older APKs remain unverified.

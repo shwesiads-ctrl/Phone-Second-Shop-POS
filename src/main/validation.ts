@@ -134,6 +134,24 @@ export const schemas = {
       }),
   }),
   resume: z.object({ id }),
+  printer: z
+    .object({
+      action: z.enum([
+        "status",
+        "search",
+        "connect",
+        "disconnect",
+        "settings",
+        "test",
+      ]),
+      address: z
+        .string()
+        .regex(/^(?:[A-F0-9]{2}:){5}[A-F0-9]{2}$/)
+        .optional(),
+      paper: z.enum(["58mm", "80mm"]).default("80mm"),
+    })
+    .refine((input) => input.action !== "connect" || !!input.address),
+  barcodeGenerate: z.object({ id }),
   status: z.object({}),
   setup: z.object({ username, password }),
   login: z.object({ username, password: z.string().max(128) }),

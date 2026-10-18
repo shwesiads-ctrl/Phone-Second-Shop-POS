@@ -13,6 +13,8 @@ export type Row = Record<string, any>;
 export type Reply<T = any> =
   { ok: true; data: T } | { ok: false; error: string };
 export const operations = [
+  "printer",
+  "barcodeGenerate",
   "exchange",
   "paymentMethod",
   "inspectionUpdate",

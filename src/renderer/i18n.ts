@@ -1,5 +1,95 @@
 export type Language = "my-MM" | "th-TH" | "en-US";
 const words: Record<string, [string, string, string]> = {
+  generateBarcode: [
+    "Generate barcode",
+    "Barcode အလိုအလျောက်ထုတ်ရန်",
+    "สร้างบาร์โค้ด",
+  ],
+  replaceBarcode: [
+    "Replace this unsaved barcode/SKU?",
+    "မသိမ်းရသေးသော Barcode/SKU ကို အစားထိုးမလား",
+    "แทนที่บาร์โค้ด/SKU ที่ยังไม่บันทึก?",
+  ],
+  bluetoothPrinter: [
+    "Bluetooth POS printer",
+    "Bluetooth POS ပရင်တာ",
+    "เครื่องพิมพ์ POS บลูทูธ",
+  ],
+  printerPolicy: [
+    "Classic Bluetooth SPP / ESC-POS only, not BLE. Pair in Android settings, then search and connect. Choose 58mm (384 dots) or 80mm (576 dots). Test opens a Unicode preview; press Bluetooth print there. Sent does not confirm paper output; check before retrying. Physical hardware acceptance is pending.",
+    "Classic Bluetooth SPP / ESC-POS အတွက်သာ ဖြစ်ပါသည်။ BLE မရပါ။ Android Settings တွင် pair လုပ်ပြီး ရှာဖွေချိတ်ဆက်ပါ။ 58mm (384 dots) သို့မဟုတ် 80mm (576 dots) ရွေးပါ။ Test preview ထဲက Bluetooth ပုံနှိပ်ခလုတ်ကို နှိပ်ပါ။ ပို့ပြီးခြင်းသည် စာရွက်ထွက်ပြီးဟု မဆိုလိုပါ။ ထပ်မနှိပ်မီ စစ်ဆေးပါ။ ပရင်တာအစစ် စမ်းသပ်မှု ကျန်ပါသည်။",
+    "รองรับ Classic Bluetooth SPP / ESC-POS ไม่ใช่ BLE จับคู่ในการตั้งค่า Android แล้วค้นหาและเชื่อมต่อ เลือก 58mm (384 จุด) หรือ 80mm (576 จุด) เปิดตัวอย่างทดสอบแล้วกดพิมพ์บลูทูธ การส่งสำเร็จไม่ยืนยันกระดาษออก ตรวจสอบก่อนพิมพ์ซ้ำ ยังรอทดสอบฮาร์ดแวร์จริง",
+  ],
+  printerStatus: ["Printer status", "ပရင်တာအခြေအနေ", "สถานะเครื่องพิมพ์"],
+  printerSearch: ["Search printers", "ပရင်တာ ရှာရန်", "ค้นหาเครื่องพิมพ์"],
+  printerPair: [
+    "Android pairing settings",
+    "Android တွင် pair လုပ်ရန်",
+    "ตั้งค่าการจับคู่ Android",
+  ],
+  printerDisconnect: [
+    "Disconnect printer",
+    "ပရင်တာ ချိတ်ဆက်မှုဖြုတ်ရန်",
+    "ตัดการเชื่อมต่อเครื่องพิมพ์",
+  ],
+  printerConnect: [
+    "Connect printer",
+    "ပရင်တာ ချိတ်ရန်",
+    "เชื่อมต่อเครื่องพิมพ์",
+  ],
+  printerConnected: ["Connected", "ချိတ်ဆက်ထားသည်", "เชื่อมต่อแล้ว"],
+  printerDisconnected: ["Not connected", "မချိတ်ဆက်ထားပါ", "ยังไม่เชื่อมต่อ"],
+  printerPaired: ["Paired", "Pair လုပ်ပြီး", "จับคู่แล้ว"],
+  printerNoDevices: [
+    "No devices listed. Enable Bluetooth, allow permissions and pair the printer in Android settings.",
+    "Device မတွေ့ပါ။ Bluetooth ဖွင့်ပြီး permission ခွင့်ပြု၍ Android Settings တွင် pair လုပ်ပါ။",
+    "ไม่พบอุปกรณ์ เปิดบลูทูธ อนุญาตสิทธิ์ แล้วจับคู่ในการตั้งค่า Android",
+  ],
+  printerTest: [
+    "Test print preview",
+    "စမ်းသပ်ပုံနှိပ်ရန် Preview",
+    "ตัวอย่างพิมพ์ทดสอบ",
+  ],
+  PRINTER_PERMISSION: [
+    "Bluetooth permission denied",
+    "Bluetooth permission ခွင့်မပြုထားပါ",
+    "ไม่ได้รับสิทธิ์บลูทูธ",
+  ],
+  PRINTER_BLUETOOTH_OFF: [
+    "Bluetooth is off or unavailable",
+    "Bluetooth ပိတ်ထားသည် သို့မဟုတ် မရနိုင်ပါ",
+    "บลูทูธปิดหรือไม่พร้อมใช้งาน",
+  ],
+  PRINTER_PAIR_FIRST: [
+    "Pair in Android settings first",
+    "Android Settings တွင် pair အရင်လုပ်ပါ",
+    "จับคู่ในการตั้งค่า Android ก่อน",
+  ],
+  PRINTER_CONNECT_FAILED: [
+    "Printer connection failed",
+    "ပရင်တာ ချိတ်ဆက်မရပါ",
+    "เชื่อมต่อเครื่องพิมพ์ไม่สำเร็จ",
+  ],
+  PRINTER_NOT_CONNECTED: [
+    "Connect a printer first",
+    "ပရင်တာ အရင်ချိတ်ပါ",
+    "เชื่อมต่อเครื่องพิมพ์ก่อน",
+  ],
+  PRINTER_UNSUPPORTED: [
+    "Bluetooth printing is unavailable here",
+    "ဤစက်တွင် Bluetooth ပုံနှိပ်ခြင်း မရနိုင်ပါ",
+    "อุปกรณ์นี้ไม่รองรับการพิมพ์บลูทูธ",
+  ],
+  customFeature: [
+    "Customization / new feature",
+    "စိတ်ကြိုက်ပြင်ဆင်ခြင်း / Feature အသစ်",
+    "ปรับแต่ง / ขอคุณสมบัติใหม่",
+  ],
+  customFeatureHelp: [
+    "Contact @kominit on Telegram to discuss customization. Opening the link sends no message or shop data automatically.",
+    "စိတ်ကြိုက်ပြင်ဆင်မှုနှင့် Feature အသစ်အတွက် Telegram @kominit ကို ဆက်သွယ်ပါ။ Link ဖွင့်ရုံဖြင့် message သို့မဟုတ် ဆိုင်ဒေတာ အလိုအလျောက် မပို့ပါ။",
+    "ติดต่อ @kominit ทาง Telegram เพื่อสอบถามการปรับแต่ง การเปิดลิงก์ไม่ส่งข้อความหรือข้อมูลร้านโดยอัตโนมัติ",
+  ],
   freeOwner: [
     "Free · Owner only",
     "အခမဲ့ · ပိုင်ရှင်သီးသန့်",

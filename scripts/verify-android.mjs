@@ -17,6 +17,9 @@ for (const key of [
   "apkInstalled",
   "firstRunSetup",
   "ownerRecovery",
+  "mobileAdditions",
+  "backExitConfirmation",
+  "automaticBarcode",
   "offlineSale",
   "originalTender",
   "privatePersistence",
@@ -69,7 +72,7 @@ writeFileSync(
   "test-results/android/apk-verification.json",
   JSON.stringify(
     {
-      version: "0.2.0-android.3",
+      version: "0.2.0-android.4",
       bytes: bytes.length,
       sha256,
       signing:
