@@ -1,3 +1,4 @@
+import { verifyOwnerRecovery } from "./owner-recovery.mjs";
 import { verifyMobileLayout } from "./mobile-layout.mjs";
 // Actual installed debug APK, Android WebView and private native storage; no mock bridge.
 import { _android as android } from "playwright";
@@ -21,6 +22,7 @@ const results = {
   platform: "Android emulator API 35 x86_64",
   apkInstalled: false,
   firstRunSetup: false,
+  ownerRecovery: false,
   offlineSale: false,
   originalTender: false,
   privatePersistence: false,
@@ -75,6 +77,8 @@ try {
     page.getByRole("heading", { name: "Dashboard", exact: true }).first(),
   ).toBeVisible();
   await verifyMobileLayout(page, "test-results/android/layout");
+  await verifyOwnerRecovery(page, "apk-owner", "synthetic apk password");
+  results.ownerRecovery = true;
   results.firstRunSetup = true;
   await call("rate", {
     from: "USD",

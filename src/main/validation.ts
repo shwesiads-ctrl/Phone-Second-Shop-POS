@@ -138,6 +138,12 @@ export const schemas = {
   setup: z.object({ username, password }),
   login: z.object({ username, password: z.string().max(128) }),
   logout: z.object({}),
+  recoveryGenerate: z.object({ current: z.string().min(1).max(128) }),
+  recoveryReset: z.object({
+    username,
+    key: z.string().min(1).max(100),
+    password,
+  }),
   password: z.object({ current: z.string().max(128), password }),
   snapshot: z.object({
     from: z.iso.date().optional(),

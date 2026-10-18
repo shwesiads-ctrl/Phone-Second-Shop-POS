@@ -180,3 +180,15 @@ body {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+.recovery-secret {
+  padding: 16px;
+  background: #fff5dc;
+  border-radius: 8px;
+}
+.recovery-secret code {
+  display: block;
+  overflow-wrap: anywhere;
+  user-select: text;
+  margin: 12px 0;
+}

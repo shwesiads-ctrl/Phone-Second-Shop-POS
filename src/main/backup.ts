@@ -28,6 +28,8 @@ export function validateBackup(path: string) {
       db.prepare(`SELECT * FROM ${table} LIMIT 0`).all();
     if (version === SCHEMA_VERSION)
       for (const table of [
+        "owner_recovery",
+        "auth_guard",
         "payment_refunds",
         "report_runs",
         "return_items",

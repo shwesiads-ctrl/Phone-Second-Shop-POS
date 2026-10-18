@@ -38,6 +38,8 @@ export const operations = [
   "login",
   "logout",
   "password",
+  "recoveryGenerate",
+  "recoveryReset",
   "snapshot",
   "users",
   "contact",

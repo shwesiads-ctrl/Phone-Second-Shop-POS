@@ -1,5 +1,51 @@
 export type Language = "my-MM" | "th-TH" | "en-US";
 const words: Record<string, [string, string, string]> = {
+  freeOwner: [
+    "Free · Owner only",
+    "အခမဲ့ · ပိုင်ရှင်သီးသန့်",
+    "ฟรี · เจ้าของเท่านั้น",
+  ],
+  ownerSecurity: [
+    "Owner security settings",
+    "ပိုင်ရှင် လုံခြုံရေးဆက်တင်များ",
+    "ความปลอดภัยของเจ้าของ",
+  ],
+  recoveryKey: [
+    "Recovery key",
+    "အကောင့်ပြန်ယူရန် လျှို့ဝှက်သော့",
+    "กุญแจกู้คืนบัญชี",
+  ],
+  generateRecovery: [
+    "Create / replace recovery key",
+    "Recovery key ထုတ်ရန် / အသစ်လဲရန်",
+    "สร้าง / เปลี่ยนกุญแจกู้คืน",
+  ],
+  recoveryWarning: [
+    "Shown once. Store this key privately outside the app. Anyone with it and your username can reset your password. Replacing it invalidates the previous key; recovery consumes it. Backups contain recovery credentials from the backup date.",
+    "တစ်ကြိမ်သာ ပြပါမည်။ သော့ကို app ပြင်ပတွင် လုံခြုံစွာသိမ်းပါ။ သော့နှင့် username သိသူက password ပြောင်းနိုင်ပါသည်။ အသစ်ထုတ်လျှင် သော့ဟောင်းပျက်မည်။ ပြန်ယူပြီးသော့ကို ထပ်သုံးမရပါ။ Backup ပြန်တင်လျှင် ထိုအချိန်က သော့ပြန်ပါလာနိုင်ပါသည်။",
+    "แสดงครั้งเดียว เก็บไว้นอกแอปอย่างปลอดภัย ผู้ที่มีกุญแจและชื่อผู้ใช้เปลี่ยนรหัสผ่านได้ กุญแจใหม่ยกเลิกอันเก่า ใช้กู้คืนได้ครั้งเดียว การคืนข้อมูลสำรองอาจนำกุญแจเดิมกลับมา",
+  ],
+  keySaved: [
+    "I saved it · hide key",
+    "သိမ်းပြီးပြီ · သော့ကိုဖျောက်ရန်",
+    "บันทึกแล้ว · ซ่อนกุญแจ",
+  ],
+  forgotPassword: ["Forgot password?", "Password မေ့နေပါသလား", "ลืมรหัสผ่าน?"],
+  recoverAccount: [
+    "Reset with recovery key",
+    "Recovery key ဖြင့် password ပြန်သတ်မှတ်ရန်",
+    "ตั้งรหัสผ่านใหม่ด้วยกุญแจกู้คืน",
+  ],
+  newPassword: [
+    "New password (10+ characters)",
+    "Password အသစ် (အနည်းဆုံး ၁၀ လုံး)",
+    "รหัสผ่านใหม่ (อย่างน้อย 10 ตัว)",
+  ],
+  recoverySuccess: [
+    "Password reset. Log in, then create a new recovery key in settings.",
+    "Password ပြန်သတ်မှတ်ပြီးပါပြီ။ ဝင်ရောက်ပြီး Settings တွင် Recovery key အသစ်ထုတ်ပါ။",
+    "ตั้งรหัสผ่านใหม่แล้ว เข้าสู่ระบบแล้วสร้างกุญแจใหม่ในการตั้งค่า",
+  ],
   exchange: [
     "Exchange using this cart",
     "ဤခြင်းဖြင့် ပစ္စည်းလဲရန်",

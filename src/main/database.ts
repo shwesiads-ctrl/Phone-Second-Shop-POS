@@ -1,7 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
-export const SCHEMA_VERSION = 8;
+export const SCHEMA_VERSION = 9;
 export function openDatabase(path: string) {
   if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
   const db = new DatabaseSync(path);
@@ -131,6 +131,12 @@ export function openDatabase(path: string) {
       CREATE TRIGGER payments_immutable_delete BEFORE DELETE ON payments BEGIN SELECT RAISE(ABORT,'IMMUTABLE_PAYMENT');END;
       PRAGMA user_version=8;COMMIT;`);
     }
+    if (version < 9)
+      db.exec(`BEGIN IMMEDIATE;
+      CREATE TABLE owner_recovery(user_id INTEGER PRIMARY KEY REFERENCES users(id), key_hash TEXT NOT NULL, created TEXT NOT NULL);
+      CREATE TABLE auth_guard(id INTEGER PRIMARY KEY CHECK(id=1), attempts INTEGER NOT NULL DEFAULT 0, retry_at INTEGER NOT NULL DEFAULT 0);
+      INSERT INTO auth_guard(id) VALUES(1);
+      PRAGMA user_version=9; COMMIT;`);
   } catch (error) {
     try {
       db.exec("ROLLBACK");

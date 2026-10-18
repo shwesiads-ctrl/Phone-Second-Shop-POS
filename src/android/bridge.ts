@@ -44,7 +44,7 @@ function fromBytes(data?: string) {
   useDatabaseBytes(
     data ? new Uint8Array(Buffer.from(data, "base64")) : undefined,
   );
-  return new ShopService(openDatabase(":memory:"));
+  return new ShopService(openDatabase(":memory:"), true);
 }
 function bytes(service: ShopService) {
   return (service.db as unknown as DatabaseSync).export();
@@ -323,6 +323,14 @@ export async function createAndroidBridge(
               : result,
         };
       } catch (e: any) {
+        // Failed authentication updates a durable shared throttle, even across app restarts.
+        if (!saveFailed && errorCode(e) === "LOGIN_FAILED") {
+          try {
+            await persist();
+          } catch {
+            e = new DomainError("STORAGE_FAILED");
+          }
+        }
         // A failed durable save must not leave a transaction applied only in RAM.
         if (saveFailed) {
           service.db.close();

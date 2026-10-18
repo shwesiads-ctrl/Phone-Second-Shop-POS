@@ -63,6 +63,7 @@ function hash(password: string) {
   return `${salt}:${scryptSync(password, salt, 64).toString("hex")}`;
 }
 function verify(password: string, stored: string) {
+  if (!/^[a-f0-9]{32}:[a-f0-9]{128}$/.test(stored)) return false;
   const [salt, digest] = stored.split(":");
   const input = scryptSync(password, salt, 64);
   return timingSafeEqual(input, Buffer.from(digest, "hex"));
@@ -78,10 +79,12 @@ function product(a: number, b: number) {
 export class ShopService {
   private session: User | null = null;
   private expires = 0;
-  private attempts = 0;
-  private retryAt = 0;
+  private credential = "";
   readonly ledger: MoneyLedger;
-  constructor(public db: DB) {
+  constructor(
+    public db: DB,
+    public readonly ownerOnly = false,
+  ) {
     this.ledger = new MoneyLedger(db);
   }
   row(sql: string, ...params: any[]): Row | undefined {
@@ -94,11 +97,68 @@ export class ShopService {
     return this.db.prepare(sql).run(...params);
   }
   get user() {
-    if (Date.now() > this.expires) this.session = null;
+    if (this.session) {
+      const account = this.row(
+        "SELECT * FROM users WHERE id=?",
+        this.session.id,
+      );
+      if (
+        Date.now() > this.expires ||
+        !account?.active ||
+        account.password !== this.credential ||
+        (this.ownerOnly &&
+          (account.role !== "Owner" || account.id !== this.primaryOwner()?.id))
+      )
+        this.session = null;
+    }
+    if (this.session) {
+      const account = this.row(
+        "SELECT username,role FROM users WHERE id=?",
+        this.session.id,
+      )!;
+      this.session = {
+        ...this.session,
+        username: account.username,
+        role: account.role,
+      };
+    }
     return this.session;
+  }
+  private primaryOwner() {
+    return this.row(
+      "SELECT id FROM users WHERE role='Owner' AND active=1 ORDER BY id LIMIT 1",
+    );
+  }
+  private checkAuthDelay() {
+    assert(
+      Date.now() >=
+        this.row("SELECT retry_at FROM auth_guard WHERE id=1")!.retry_at,
+      "LOGIN_DELAY",
+    );
+  }
+  private authFailed(): never {
+    const attempts = Math.min(
+      20,
+      this.row("SELECT attempts FROM auth_guard WHERE id=1")!.attempts + 1,
+    );
+    this.run(
+      "UPDATE auth_guard SET attempts=?,retry_at=? WHERE id=1",
+      attempts,
+      Date.now() + Math.min(60000, 1000 * 2 ** Math.min(attempts - 1, 6)),
+    );
+    throw new DomainError("LOGIN_FAILED");
+  }
+  private clearAuthDelay() {
+    this.run("UPDATE auth_guard SET attempts=0,retry_at=0 WHERE id=1");
   }
   require(operation: Operation) {
     assert(this.user, "UNAUTHENTICATED");
+    assert(
+      !this.ownerOnly ||
+        (this.user.role === "Owner" &&
+          !["users", "permission"].includes(operation)),
+      "FORBIDDEN",
+    );
     const allowed = access[operation];
     const custom = this.row(
       "SELECT allowed FROM permissions WHERE user_id=? AND operation=?",
@@ -206,9 +266,13 @@ export class ShopService {
     const input = (schemas[operation] as any).parse(raw ?? {});
     if (operation === "status")
       return {
+        ownerOnly: this.ownerOnly,
+        edition: this.ownerOnly ? "Free Owner" : "Desktop",
         initialized: !!this.row("SELECT id FROM users LIMIT 1"),
         user: this.user,
-        settings: this.settings(),
+        settings: this.user
+          ? this.settings()
+          : { language: this.settings().language },
       };
     if (operation === "setup")
       return transaction(this.db, () => {
@@ -227,12 +291,16 @@ export class ShopService {
           username: input.username,
           role: "Owner",
         };
+        this.credential = this.row(
+          "SELECT password FROM users WHERE id=?",
+          this.session.id,
+        )!.password;
         this.expires = Date.now() + 30 * 60 * 1000;
         this.audit("owner.setup", String(result.lastInsertRowid));
         return this.user;
       });
     if (operation === "login") {
-      assert(Date.now() >= this.retryAt, "LOGIN_DELAY");
+      this.checkAuthDelay();
       const found = this.row(
         "SELECT * FROM users WHERE username=? AND active=1",
         input.username,
@@ -243,25 +311,88 @@ export class ShopService {
         found?.password ??
           "00000000000000000000000000000000:" + "00".repeat(64),
       );
-      if (!found || !ok) {
-        this.attempts++;
-        this.retryAt =
-          Date.now() +
-          Math.min(60000, 1000 * 2 ** Math.min(this.attempts - 1, 6));
-        throw new DomainError("LOGIN_FAILED");
-      }
+      if (
+        !found ||
+        !ok ||
+        (this.ownerOnly &&
+          (found.role !== "Owner" || found.id !== this.primaryOwner()?.id))
+      )
+        this.authFailed();
+      this.credential = found.password;
       this.session = {
         id: found.id,
         username: found.username,
         role: found.role,
       };
       this.expires = Date.now() + 30 * 60 * 1000;
-      this.attempts = 0;
-      this.retryAt = 0;
+      this.clearAuthDelay();
       this.audit("login", String(found.id));
       return this.user;
     }
+    if (operation === "recoveryReset") {
+      this.checkAuthDelay();
+      const found = this.row(
+        "SELECT u.id,u.role,u.active,r.key_hash FROM users u LEFT JOIN owner_recovery r ON r.user_id=u.id WHERE u.username=?",
+        input.username,
+      );
+      const normalized = input.key.replace(/[-\s]/g, "").toUpperCase();
+      const ok = verify(
+        normalized,
+        found?.key_hash ??
+          "00000000000000000000000000000000:" + "00".repeat(64),
+      );
+      if (
+        !found ||
+        !found.active ||
+        found.role !== "Owner" ||
+        !ok ||
+        (this.ownerOnly && found.id !== this.primaryOwner()?.id)
+      )
+        this.authFailed();
+      return transaction(this.db, () => {
+        this.run(
+          "UPDATE users SET password=? WHERE id=?",
+          hash(input.password),
+          found.id,
+        );
+        this.run("DELETE FROM owner_recovery WHERE user_id=?", found.id);
+        this.clearAuthDelay();
+        this.session = null;
+        this.credential = "";
+        // Never audit key/password values. Recovery deliberately creates no login session.
+        this.run(
+          "INSERT INTO audit(actor,action,entity,details,created) VALUES(?,?,?,?,?)",
+          found.id,
+          "owner.recover",
+          String(found.id),
+          "{}",
+          now(),
+        );
+        return true;
+      });
+    }
     this.require(operation);
+    if (operation === "recoveryGenerate") {
+      assert(this.user!.role === "Owner", "FORBIDDEN");
+      this.checkAuthDelay();
+      const account = this.row(
+        "SELECT password FROM users WHERE id=?",
+        this.user!.id,
+      )!;
+      if (!verify(input.current, account.password)) this.authFailed();
+      const key = randomBytes(32).toString("hex").toUpperCase();
+      return transaction(this.db, () => {
+        this.run(
+          "INSERT INTO owner_recovery(user_id,key_hash,created) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET key_hash=excluded.key_hash,created=excluded.created",
+          this.user!.id,
+          hash(key),
+          now(),
+        );
+        this.clearAuthDelay();
+        this.audit("owner.recovery.rotate", String(this.user!.id));
+        return { key: key.match(/.{8}/g)!.join("-") };
+      });
+    }
     const validMethod = (name: string) =>
       assert(
         this.row(
@@ -649,12 +780,18 @@ export class ShopService {
         "SELECT password FROM users WHERE id=?",
         this.user!.id,
       )!;
-      assert(verify(input.current, user.password), "LOGIN_FAILED");
+      this.checkAuthDelay();
+      if (!verify(input.current, user.password)) this.authFailed();
       this.run(
         "UPDATE users SET password=? WHERE id=?",
         hash(input.password),
         this.user!.id,
       );
+      this.credential = this.row(
+        "SELECT password FROM users WHERE id=?",
+        this.session!.id,
+      )!.password;
+      this.clearAuthDelay();
       this.audit("password.change", String(this.user!.id));
       return true;
     }

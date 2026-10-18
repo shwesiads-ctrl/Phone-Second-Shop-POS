@@ -16,6 +16,7 @@ const outcome = JSON.parse(
 for (const key of [
   "apkInstalled",
   "firstRunSetup",
+  "ownerRecovery",
   "offlineSale",
   "originalTender",
   "privatePersistence",
@@ -27,7 +28,7 @@ const db = new DatabaseSync("test-results/android/emulator-business.sqlite", {
   readOnly: true,
 });
 assert.equal(db.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
-assert.equal(db.prepare("PRAGMA user_version").get().user_version, 8);
+assert.equal(db.prepare("PRAGMA user_version").get().user_version, 9);
 assert.equal(db.prepare("SELECT COUNT(*) n FROM sales").get().n, 1);
 db.close();
 const apk = "android/app/build/outputs/apk/debug/app-debug.apk";
@@ -68,7 +69,7 @@ writeFileSync(
   "test-results/android/apk-verification.json",
   JSON.stringify(
     {
-      version: "0.2.0-android.2",
+      version: "0.2.0-android.3",
       bytes: bytes.length,
       sha256,
       signing:

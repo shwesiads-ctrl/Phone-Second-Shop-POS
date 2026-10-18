@@ -306,6 +306,9 @@ function App() {
     (localStorage.getItem("pos.language") as Language) || "my-MM",
   );
   const t = (key: string) => translate(language, key);
+  const [recoveryMode, setRecoveryMode] = useState(false);
+  const [recoveryKey, setRecoveryKey] = useState("");
+  const [recovered, setRecovered] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [user, setUser] = useState<User | null>(null);
   const [data, setData] = useState<any>(null);
@@ -396,6 +399,7 @@ function App() {
   }
   async function run(fn: () => Promise<unknown>, reload = true) {
     if (busy) return;
+    setRecoveryKey("");
     setBusy(true);
     setError("");
     setMessage("");
@@ -413,6 +417,16 @@ function App() {
       setBusy(false);
     }
   }
+  useEffect(() => {
+    setRecoveryKey("");
+  }, [page, user]);
+  useEffect(() => {
+    const clear = () => {
+      if (document.hidden) setRecoveryKey("");
+    };
+    document.addEventListener("visibilitychange", clear);
+    return () => document.removeEventListener("visibilitychange", clear);
+  }, []);
   async function initialize() {
     try {
       const s = await call("status");
@@ -889,13 +903,35 @@ function App() {
           </div>
           <h1>{t("app")}</h1>
           <p>{t("offline")}</p>
+          {status?.ownerOnly && <p>{t("freeOwner")}</p>}
+          {recovered && <p role="status">{t("recoverySuccess")}</p>}
           {languageSelector}
-          <h2>{t(status?.initialized ? "login" : "setup")}</h2>
+          <h2>
+            {t(
+              recoveryMode
+                ? "recoverAccount"
+                : status?.initialized
+                  ? "login"
+                  : "setup",
+            )}
+          </h2>
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              const form = new FormData(e.currentTarget);
+              const formElement = e.currentTarget;
+              const form = new FormData(formElement);
               void run(async () => {
+                if (recoveryMode) {
+                  await call("recoveryReset", {
+                    username: form.get("username"),
+                    key: form.get("recoveryKey"),
+                    password: form.get("password"),
+                  });
+                  formElement.reset();
+                  setRecoveryMode(false);
+                  setRecovered(true);
+                  return true;
+                }
                 const u = await call(status?.initialized ? "login" : "setup", {
                   username: form.get("username"),
                   password: form.get("password"),
@@ -916,27 +952,63 @@ function App() {
               />
             </label>
             <label>
-              {t("password")}
+              {t(recoveryMode ? "newPassword" : "password")}
               <input
                 name="password"
                 required
                 autoComplete={
-                  status?.initialized ? "current-password" : "new-password"
+                  status?.initialized && !recoveryMode
+                    ? "current-password"
+                    : "new-password"
                 }
                 type="password"
-                minLength={status?.initialized ? 1 : 10}
+                minLength={status?.initialized && !recoveryMode ? 1 : 10}
                 maxLength={128}
               />
             </label>
+            {recoveryMode && (
+              <label>
+                {t("recoveryKey")}
+                <input
+                  name="recoveryKey"
+                  required
+                  type="password"
+                  autoComplete="off"
+                  maxLength={100}
+                />
+              </label>
+            )}
             {error && (
               <p className="error" role="alert">
                 {t(error)}
               </p>
             )}
             <button disabled={busy || !status}>
-              {busy ? t("busy") : t(status?.initialized ? "login" : "setup")}
+              {busy
+                ? t("busy")
+                : t(
+                    recoveryMode
+                      ? "recoverAccount"
+                      : status?.initialized
+                        ? "login"
+                        : "setup",
+                  )}
             </button>
           </form>
+          {status?.initialized && (
+            <button
+              type="button"
+              className="secondary"
+              disabled={busy}
+              onClick={() => {
+                setRecoveryMode(!recoveryMode);
+                setError("");
+                setRecovered(false);
+              }}
+            >
+              {t(recoveryMode ? "login" : "forgotPassword")}
+            </button>
+          )}
         </div>
       </main>
     );
@@ -965,13 +1037,19 @@ function App() {
           </div>
           <div>
             <strong>Phone Second Shop</strong>
-            <small>POINT OF SALE</small>
+            <small>
+              {status?.ownerOnly ? t("freeOwner") : "POINT OF SALE"}
+            </small>
           </div>
         </div>
         <nav>
           {nav
             .filter(
-              (key) => !(["users"].includes(key) && user.role !== "Owner"),
+              (key) =>
+                !(
+                  key === "users" &&
+                  (status?.ownerOnly || user.role !== "Owner")
+                ),
             )
             .map((key, index) => (
               <button
@@ -2461,6 +2539,55 @@ function App() {
           )}
           {page === "settings" && (
             <>
+              {user.role === "Owner" && (
+                <section className="panel">
+                  <h2>{t("ownerSecurity")}</h2>
+                  {status?.ownerOnly && (
+                    <p className="info">{t("freeOwner")}</p>
+                  )}
+                  <p>{t("recoveryWarning")}</p>
+                  <form
+                    autoComplete="off"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const current = new FormData(form).get("current");
+                      void run(async () => {
+                        const result = await call("recoveryGenerate", {
+                          current,
+                        });
+                        form.reset();
+                        setRecoveryKey(result.key);
+                        return true;
+                      }, false);
+                    }}
+                  >
+                    <label>
+                      {t("current")}
+                      <input
+                        name="current"
+                        type="password"
+                        required
+                        maxLength={128}
+                        autoComplete="current-password"
+                      />
+                    </label>
+                    <button disabled={busy}>{t("generateRecovery")}</button>
+                  </form>
+                  {recoveryKey && (
+                    <div className="recovery-secret" role="status">
+                      <p>{t("recoveryWarning")}</p>
+                      <code>{recoveryKey}</code>
+                      <button
+                        className="secondary"
+                        onClick={() => setRecoveryKey("")}
+                      >
+                        {t("keySaved")}
+                      </button>
+                    </div>
+                  )}
+                </section>
+              )}
               <section className="panel">
                 <h2>{t("settings")}</h2>
                 <p className="info">{t("fxPolicy")}</p>

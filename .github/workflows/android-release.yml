@@ -99,7 +99,7 @@ jobs:
           set -euo pipefail
           mapfile -d '' assets < <(find artifacts -type f \( -name '*.apk' -o -name '*.sha256' -o -name 'apk-verification.json' \) -print0)
           test "${#assets[@]}" -eq 3
-          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title 'Phone Second Shop POS — Android test APK' --notes-file docs/ANDROID_RELEASE.md
+          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title 'Phone Second Shop POS — Free Owner Android test APK' --notes-file docs/ANDROID_RELEASE.md
   diagnostics:
     needs: build-test
     if: failure()

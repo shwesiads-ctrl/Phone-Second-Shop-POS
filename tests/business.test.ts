@@ -52,7 +52,7 @@ function sale(s: ShopService, overrides: Record<string, unknown> = {}) {
     ...overrides,
   });
 }
-test("first-run owner, password hashing, login delay, session and RBAC", () => {
+test("first-run owner, password hashing, login delay, session and RBAC", async () => {
   const s = shop();
   assert.match(s.row("SELECT password FROM users")!.password, /^[a-f0-9]{32}:/);
   assert.throws(() => s.invoke("setup", owner), /ALREADY_INITIALIZED/);
@@ -69,6 +69,8 @@ test("first-run owner, password hashing, login delay, session and RBAC", () => {
   );
   assert.throws(() => s.invoke("login", owner), /LOGIN_DELAY/);
   const fresh = new ShopService(s.db);
+  assert.throws(() => fresh.invoke("login", owner), /LOGIN_DELAY/);
+  await new Promise((resolve) => setTimeout(resolve, 1100));
   fresh.invoke("login", {
     username: "cashier",
     password: "another long password",
@@ -398,7 +400,7 @@ test("backup and migrations reopen persistent database with business records int
     "ok",
   );
   assert.equal(restored.prepare("SELECT COUNT(*) n FROM phones").get()!.n, 1);
-  assert.equal(restored.prepare("PRAGMA user_version").get()!.user_version, 8);
+  assert.equal(restored.prepare("PRAGMA user_version").get()!.user_version, 9);
   restored.close();
   rmSync(dir, { recursive: true });
 });

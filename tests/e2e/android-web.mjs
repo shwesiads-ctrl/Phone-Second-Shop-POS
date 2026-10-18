@@ -1,3 +1,4 @@
+import { verifyOwnerRecovery } from "./owner-recovery.mjs";
 import { verifyMobileLayout } from "./mobile-layout.mjs";
 import { _electron as electron, expect } from "@playwright/test";
 import { spawn } from "node:child_process";
@@ -59,6 +60,7 @@ try {
     );
   }
   await page.setViewportSize({ width: 420, height: 900 });
+  await verifyOwnerRecovery(page, "android-owner", "android test password");
   const call = async (op, input = {}) => {
     const reply = await page.evaluate(
       ({ op, input }) => window.pos.call(op, input),
@@ -119,7 +121,7 @@ try {
   await writeFile(backupPath, Buffer.from(encoded, "base64"));
   const db = new DatabaseSync(backupPath, { readOnly: true });
   expect(db.prepare("PRAGMA integrity_check").get().integrity_check).toBe("ok");
-  expect(db.prepare("PRAGMA user_version").get().user_version).toBe(8);
+  expect(db.prepare("PRAGMA user_version").get().user_version).toBe(9);
   expect(
     db.prepare("SELECT original_amount FROM payments").get().original_amount,
   ).toBe(100);
@@ -144,6 +146,7 @@ try {
   ).toBe("LOGIN_DELAY");
   await page.reload();
   await page.waitForFunction(() => !!window.pos);
+  await new Promise((r) => setTimeout(r, 1100));
   await call("login", {
     username: "android-owner",
     password: "android test password",
@@ -200,6 +203,7 @@ try {
   expect((await call("snapshot")).sales).toHaveLength(1);
   await page.reload();
   await page.waitForFunction(() => !!window.pos);
+  await new Promise((r) => setTimeout(r, 1100));
   await call("login", {
     username: "legacy-owner",
     password: "legacy-test-password",
