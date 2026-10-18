@@ -1,3 +1,4 @@
+import { verifyDemoRefresh } from "./demo-refresh.mjs";
 import { navigateTo, openNavigation, closeNavigation } from "./navigation.mjs";
 import { verifyMobileAdditions } from "./mobile-additions.mjs";
 import { verifyOwnerRecovery } from "./owner-recovery.mjs";
@@ -118,6 +119,9 @@ try {
   await verifyMobileLayout(page, "test-results/android/layout");
   await verifyOwnerRecovery(page, "apk-owner", "synthetic apk password");
   await verifyMobileAdditions(page, false);
+  await verifyDemoRefresh(page);
+  results.demoInventory = true;
+  results.pullRefresh = true;
   results.mobileAdditions = true;
   results.ownerRecovery = true;
   await openNavigation(page);

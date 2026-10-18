@@ -260,3 +260,17 @@ body {
     transition: none;
   }
 }
+
+.pull-refresh {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  padding: 12px 18px;
+  border-radius: 24px;
+  background: white;
+  box-shadow: 0 2px 12px #102b4640;
+  pointer-events: none;
+  max-width: 90vw;
+}

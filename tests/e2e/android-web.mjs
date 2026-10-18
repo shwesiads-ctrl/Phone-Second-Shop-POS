@@ -1,3 +1,4 @@
+import { verifyDemoRefresh } from "./demo-refresh.mjs";
 import { verifyMobileAdditions } from "./mobile-additions.mjs";
 import { verifyOwnerRecovery } from "./owner-recovery.mjs";
 import { verifyMobileLayout } from "./mobile-layout.mjs";
@@ -63,6 +64,7 @@ try {
   await page.setViewportSize({ width: 420, height: 900 });
   await verifyOwnerRecovery(page, "android-owner", "android test password");
   await verifyMobileAdditions(page, true);
+  await verifyDemoRefresh(page);
   const call = async (op, input = {}) => {
     const reply = await page.evaluate(
       ({ op, input }) => window.pos.call(op, input),

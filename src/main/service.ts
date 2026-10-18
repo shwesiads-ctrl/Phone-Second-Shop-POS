@@ -31,6 +31,7 @@ const access: Partial<Record<Operation, Role[]>> = {
   photo: [...stock, "Technician"],
   label: [...stock, "Cashier"],
   barcodeGenerate: stock,
+  demoInventory: ["Owner"],
   printer: ["Owner"],
   permission: ["Owner"],
   repairPart: technicians,
@@ -861,6 +862,116 @@ export class ShopService {
         );
         this.audit("barcode.generate", String(input.id));
         return { barcode };
+      });
+    if (operation === "demoInventory")
+      return transaction(this.db, () => {
+        assert(this.user!.role === "Owner", "FORBIDDEN");
+        const tracked: { id: number; sku: string; barcode: string }[] =
+          this.settings().demoInventory || [];
+        if (input.action === "add") {
+          if (tracked.length) return { count: tracked.length };
+          const batch = randomUUID();
+          const currency = this.settings().currency || "MMK";
+          const names = [
+            "Cable",
+            "Charger",
+            "Case",
+            "Screen protector",
+            "Headphones",
+          ];
+          const items = [];
+          for (let i = 1; i <= 100; i++) {
+            const sku = `DEMO-${batch}-${i}`;
+            const barcode = this.newBarcode();
+            const r = this.run(
+              "INSERT INTO accessories(sku,barcode,name,category,cost,price,currency,quantity,reorder) VALUES(?,?,?,?,?,?,?,?,?)",
+              sku,
+              barcode,
+              `[DEMO] ${names[(i - 1) % names.length]} ${String(i).padStart(3, "0")}`,
+              "DEMO",
+              0,
+              currency === "MMK" ? 1000 + i * 100 : 100 + i * 10,
+              currency,
+              10,
+              0,
+            );
+            const id = Number(r.lastInsertRowid);
+            this.movement("accessory", id, 10, "Demo opening stock", batch);
+            items.push({ id, sku, barcode });
+          }
+          this.run(
+            "INSERT INTO settings(key,value) VALUES('demoInventory',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+            JSON.stringify(items),
+          );
+          this.audit("demo.add", batch, { count: 100 });
+          return { count: 100 };
+        }
+        if (!tracked.length) return { count: 0 };
+        assert(!this.row("SELECT id FROM held_carts LIMIT 1"), "DEMO_IN_USE");
+        // Never erase sales, repairs, adjustments or any history created while testing.
+        for (const item of tracked) {
+          assert(
+            !this.row(
+              "SELECT id FROM photos WHERE kind='accessory' AND record_id=?",
+              item.id,
+            ),
+            "DEMO_IN_USE",
+          );
+          const row = this.row("SELECT * FROM accessories WHERE id=?", item.id);
+          assert(
+            row &&
+              row.sku === item.sku &&
+              row.barcode === item.barcode &&
+              row.quantity === 10,
+            "DEMO_IN_USE",
+          );
+          assert(
+            !this.row(
+              "SELECT id FROM sale_items WHERE kind='accessory' AND product_id=?",
+              item.id,
+            ),
+            "DEMO_IN_USE",
+          );
+          assert(
+            !this.row(
+              "SELECT id FROM repair_parts WHERE accessory_id=?",
+              item.id,
+            ),
+            "DEMO_IN_USE",
+          );
+          assert(
+            !this.row(
+              "SELECT id FROM replenishments WHERE accessory_id=?",
+              item.id,
+            ),
+            "DEMO_IN_USE",
+          );
+          const movements = this.rows(
+            "SELECT * FROM stock_movements WHERE kind='accessory' AND product_id=?",
+            item.id,
+          );
+          assert(
+            movements.length === 1 &&
+              movements[0].reason === "Demo opening stock" &&
+              movements[0].delta === 10,
+            "DEMO_IN_USE",
+          );
+        }
+        for (const item of tracked) {
+          this.run(
+            "DELETE FROM stock_movements WHERE kind='accessory' AND product_id=? AND reason='Demo opening stock'",
+            item.id,
+          );
+          this.run(
+            "DELETE FROM accessories WHERE id=? AND sku=? AND barcode=?",
+            item.id,
+            item.sku,
+            item.barcode,
+          );
+        }
+        this.run("DELETE FROM settings WHERE key='demoInventory'");
+        this.audit("demo.remove", "demoInventory", { items: tracked });
+        return { count: tracked.length };
       });
     if (operation === "accessory")
       return transaction(this.db, () => {

@@ -347,6 +347,8 @@ function App() {
   );
   const t = (key: string) => translate(language, key);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const pullStart = useRef<{ x: number; y: number } | null>(null);
   const [narrow, setNarrow] = useState(
     () => window.matchMedia("(max-width: 760px)").matches,
   );
@@ -1148,9 +1150,70 @@ function App() {
       className="shell"
       onTouchStart={(e) => {
         const p = e.touches[0];
+        const target = e.target as HTMLElement;
+        const nestedScroll = (() => {
+          let el: HTMLElement | null = target;
+          while (el && el !== document.body) {
+            if (
+              el.scrollHeight > el.clientHeight + 1 &&
+              /auto|scroll/.test(getComputedStyle(el).overflowY)
+            )
+              return true;
+            el = el.parentElement;
+          }
+          return false;
+        })();
+        pullStart.current =
+          drawer &&
+          !menuOpen &&
+          !busy &&
+          window.scrollY <= 0 &&
+          e.touches.length === 1 &&
+          !editor &&
+          !target.closest(
+            "input,select,textarea,button,.overlay,aside,.table-wrap",
+          ) &&
+          !nestedScroll &&
+          p
+            ? { x: p.clientX, y: p.clientY }
+            : null;
         touchOrigin.current = p ? { x: p.clientX, y: p.clientY } : null;
       }}
+      onTouchMove={(e) => {
+        const start = pullStart.current,
+          p = e.touches[0];
+        if (!start || !p) return;
+        if (
+          e.touches.length !== 1 ||
+          Math.abs(p.clientX - start.x) > 45 ||
+          window.scrollY > 0
+        ) {
+          pullStart.current = null;
+          setPullDistance(0);
+          return;
+        }
+        setPullDistance(Math.min(110, Math.max(0, p.clientY - start.y)));
+      }}
+      onTouchCancel={() => {
+        pullStart.current = null;
+        touchOrigin.current = null;
+        setPullDistance(0);
+      }}
       onTouchEnd={(e) => {
+        const pull = pullStart.current,
+          endPull = e.changedTouches[0];
+        pullStart.current = null;
+        setPullDistance(0);
+        if (
+          pull &&
+          endPull &&
+          endPull.clientY - pull.y >= 85 &&
+          Math.abs(endPull.clientX - pull.x) < 45 &&
+          window.scrollY <= 0 &&
+          !busy &&
+          !menuOpen
+        )
+          void run(load, false);
         const start = touchOrigin.current,
           end = e.changedTouches[0];
         touchOrigin.current = null;
@@ -1161,6 +1224,11 @@ function App() {
           setMenuOpen(true);
       }}
     >
+      {drawer && pullDistance > 0 && (
+        <div className="pull-refresh" role="status">
+          {t(pullDistance >= 85 ? "refresh" : "pullRefresh")}
+        </div>
+      )}
       {drawer && menuOpen && (
         <button
           type="button"
@@ -2725,6 +2793,29 @@ function App() {
           )}
           {page === "settings" && (
             <>
+              {user.role === "Owner" && (
+                <section className="panel">
+                  <h2>{t("demoTitle")}</h2>
+                  <p className="info">{t("demoNotice")}</p>
+                  <div className="export-actions">
+                    {btn("demoAdd", () => {
+                      if (window.confirm(t("demoNotice")))
+                        void run(async () => {
+                          await call("demoInventory", { action: "add" });
+                          setPagination(1);
+                        });
+                    })}
+                    {btn("demoRemove", () => {
+                      if (window.confirm(t("confirm")))
+                        void run(async () => {
+                          await call("demoInventory", { action: "remove" });
+                          setPagination(1);
+                        });
+                    })}
+                  </div>
+                </section>
+              )}
+
               {status?.ownerOnly && (
                 <>
                   <section className="panel">

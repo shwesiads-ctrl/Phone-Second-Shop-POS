@@ -1,5 +1,27 @@
 export type Language = "my-MM" | "th-TH" | "en-US";
 const words: Record<string, [string, string, string]> = {
+  pullRefresh: [
+    "Pull down to refresh",
+    "အောက်ကိုဆွဲချ၍ ပြန်ဖွင့်ရန်",
+    "ดึงลงเพื่อรีเฟรช",
+  ],
+  demoTitle: ["Demo inventory", "စမ်းသပ်ပစ္စည်းများ", "สินค้าทดลอง"],
+  demoAdd: [
+    "Add 100 demo items",
+    "Demo ပစ္စည်း ၁၀၀ ထည့်ရန်",
+    "เพิ่มสินค้าทดลอง 100 รายการ",
+  ],
+  demoRemove: ["Remove demo items", "Demo ပစ္စည်းများ ဖယ်ရန်", "ลบสินค้าทดลอง"],
+  demoNotice: [
+    "Sample accessories with zero cost. These affect stock totals; selling them creates real transaction records. Removal works only before use, with no held carts. Your own items are kept.",
+    "ကုန်ကျစရိတ် သုညဖြင့် စမ်းသပ်ပစ္စည်းများ ဖြစ်သည်။ လက်ကျန်စုစုပေါင်းတွင် ပါဝင်မည်။ ရောင်းချပါက ငွေစာရင်းအမှန်တွင် မှတ်တမ်းဝင်မည်။ မသုံးရသေးမှသာ ဖယ်နိုင်ပြီး ခဏသိမ်းအရောင်းခြင်းများ မရှိရပါ။ ကိုယ်တိုင်ထည့်ထားသော ပစ္စည်းများ မပျက်ပါ။",
+    "สินค้าตัวอย่างต้นทุนศูนย์ รวมในยอดสต็อก การขายสร้างรายการจริง ลบได้ก่อนใช้งานและไม่มีตะกร้าพักสินค้า สินค้าของคุณยังคงอยู่",
+  ],
+  DEMO_IN_USE: [
+    "Demo items were used/changed or a held cart exists. Removal cancelled to preserve history.",
+    "Demo ပစ္စည်းကို သုံး/ပြင်ထားခြင်း သို့မဟုတ် ခဏသိမ်းခြင်း ရှိနေသည်။ မှတ်တမ်းမပျက်စေရန် မဖယ်ပါ။",
+    "สินค้าทดลองถูกใช้/แก้ไขหรือมีตะกร้าพัก ยกเลิกการลบเพื่อรักษาประวัติ",
+  ],
   openMenu: ["Open menu", "မီနူးဖွင့်ရန်", "เปิดเมนู"],
   closeMenu: ["Close menu", "မီနူးပိတ်ရန်", "ปิดเมนู"],
   navigation: ["Navigation menu", "သွားလာရန် မီနူး", "เมนูนำทาง"],

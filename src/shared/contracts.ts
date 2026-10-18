@@ -15,6 +15,7 @@ export type Reply<T = any> =
 export const operations = [
   "printer",
   "barcodeGenerate",
+  "demoInventory",
   "exchange",
   "paymentMethod",
   "inspectionUpdate",
