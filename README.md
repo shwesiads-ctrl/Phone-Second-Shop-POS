@@ -14,7 +14,9 @@ The GitHub Windows build/test/package verification passed. This does not establi
 
 ## Android APK download
 
-[Download Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.3/Phone-Second-Shop-POS-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.3)
+[Download Free Owner Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.5/Phone-Second-Shop-POS-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.5)
+
+Free Owner edition: only the primary Owner can log in; staff/role management is disabled. Recovery keys can be generated in Owner security settings and used once from Forgot password. See [recovery instructions and security limits](docs/OWNER_SECURITY.md). Keep a verified external backup before upgrading; schema-9 backups require updated software.
 
 Android 10+ and an updated Android System WebView are required. This is a debug-signed test build, tested by actual APK installation and workflows on an API35 emulator. Windows and Android keep separate offline databases; no automatic synchronization. Android uninstall deletes app data, so export a verified backup before uninstalling or changing signing keys. Physical phones/printers and native document-picker acceptance remain pending. See [Android scope and limits](docs/ANDROID_RELEASE.md).
 
