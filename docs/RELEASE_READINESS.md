@@ -65,3 +65,7 @@ Android 0.2.0-android.9 / test.17 is published, full APK download/hash verified.
 ## Android day/night and search icon
 
 Android 0.2.0-android.10 / test.18 is published and full download/hash verified. 73 shared tests, desktop/full browser and actual API35 theme/reload/search-icon/night-demo/receipt/reinstall checks passed; night dashboard/modal screenshots were inspected. [Evidence and remaining physical device/system-picker/printer/signing limitations](DAY_NIGHT_SEARCH.md). No database migration or new Windows installation test.
+
+## Functional sample shop and dashboard fix
+
+Android 0.2.0-android.11 / test.19 is published and full APK download/hash verified. 76 shared tests, desktop/full browser and actual API35 sample-workspace/byte-isolation/restart/currency/JPEG/reinstall checks passed. Myanmar night sample dashboard/table images were inspected. Android15+ native main content now reserves system bars; physical inset/keyboard/ARM/printer behavior remains pending. [Exact evidence, temporary-mode behavior and remaining signing/hardware limits](FULL_SAMPLE_SHOP.md). No migration or new Windows installation test.

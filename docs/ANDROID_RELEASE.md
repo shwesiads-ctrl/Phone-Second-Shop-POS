@@ -1,6 +1,10 @@
 # Fixer Tools — Android test APK
 
-## Current: Android 0.2.0-android.10
+## Current: Android 0.2.0-android.11
+
+[Download verified APK test.19](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.19/Fixer-Tools-Android-0.2.0-test.apk). Fixes narrow dashboard tables/empty rows and Android15+ system-bar insets. Dashboard/Owner Settings → Open sample shop provides 40 phones + 60 accessories, posted purchases, 12 sales, payments and six repairs in a separate temporary database. Exit/restart discards practice changes while preserving the real shop. All 76 tests, desktop/browser and full API35 native workflow 39139909620 passed, including native file byte comparison and restart isolation. Download/checksum verified; [exact evidence and pending hardware/signing items](FULL_SAMPLE_SHOP.md).
+
+## Previous: Android 0.2.0-android.10
 
 [Download verified APK test.18](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.18/Fixer-Tools-Android-0.2.0-test.apk). Adds a saved sun/moon day/night toggle on login and in the header, themed controls/dialogs/tables and a consistent SVG search icon with a 44px touch target. All 73 tests, desktop/browser and complete API35 APK workflow 39137451289 passed. Full download/checksum verified; [exact evidence and remaining signing/hardware checks](DAY_NIGHT_SEARCH.md).
 
