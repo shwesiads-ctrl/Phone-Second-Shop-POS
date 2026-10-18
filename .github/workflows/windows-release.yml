@@ -30,13 +30,30 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
-          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?$' -or $env:RELEASE_TAG -ne "v$version") {
+          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?$' -or ($env:RELEASE_TAG -ne "v$version" -and $env:RELEASE_TAG -notmatch ("^v" + [regex]::Escape($version) + "-ci\.[0-9]+$"))) {
             throw 'Run this workflow from the tag matching package.json.'
           }
       - run: npm ci --no-audit --no-fund
       - run: node node_modules/electron/install.js
       - name: Test, build and package Windows x64
-        run: npm run dist:win
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force test-results | Out-Null
+          $PSNativeCommandUseErrorActionPreference = $false
+          npm run dist:win 2>&1 | Tee-Object -FilePath test-results/windows-build.log
+          $buildExit = $LASTEXITCODE
+          if ($buildExit -ne 0) {
+            $tail = Get-Content test-results/windows-build.log -Tail 160 | Out-String
+            Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value ("Windows build failed. Diagnostic tail:" + [Environment]::NewLine + '```text' + [Environment]::NewLine + $tail + [Environment]::NewLine + '```')
+          }
+          exit $buildExit
+      - name: Preserve Windows build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build-log
+          if-no-files-found: ignore
+          path: test-results/windows-build.log
       - name: Verify packaged contents and generate checksum
         shell: pwsh
         run: node scripts/verify-windows.mjs 'C:\Program Files\7-Zip\7z.exe'
@@ -81,3 +98,35 @@ jobs:
           mapfile -d '' assets < <(find artifacts -type f \( -name '*.exe' -o -name '*.sha256' -o -name 'windows-artifact.json' \) -print0)
           test "${#assets[@]}" -ge 3
           gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title "Phone Second Shop POS $RELEASE_TAG — unsigned test build" --notes-file docs/RELEASE_NOTES_0.2.0.md
+
+  diagnostics:
+    needs: build
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-build-log
+          path: downloaded-log
+      - name: Save bounded, redacted synthetic-test failure evidence
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+          let log=readFileSync('downloaded-log/windows-build.log','utf8').split(/\r?\n/).slice(-200).join('\n');
+          log=log.replace(/gh[pousr]_[A-Za-z0-9]+|github_pat_[A-Za-z0-9_]+/g,'[REDACTED]')
+            .replace(/(Bearer\s+)[^\s]+/gi,'$1[REDACTED]')
+            .replace(/((?:password|token|secret)\s*[:=]\s*)[^\s]+/gi,'$1[REDACTED]');
+          mkdirSync('ci-evidence',{recursive:true});writeFileSync('ci-evidence/windows-build-failure.txt',log+'\n');
+          NODE
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ci-evidence/windows-build-failure.txt
+          git commit -m "Record Windows test failure evidence for run $RUN_ID"
+          git push origin "HEAD:refs/heads/ci-evidence-$RUN_ID"
