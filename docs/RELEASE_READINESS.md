@@ -57,3 +57,7 @@ Android 0.2.0-android.6 / test.12 passed 68 shared tests, desktop and Android-br
 ## Android demo inventory and pull-to-refresh
 
 Android 0.2.0-android.8 / test.16 is published and full download/checksum verified. 73 tests, desktop/browser workflows and actual installed API35 demo/refresh/currency/JPEG/reopening/same-APK reinstall checks passed. See [precise evidence and history-preserving cleanup rules](DEMO_REFRESH.md). No schema migration needed. Physical touch/ARM/printer tests, external share delivery, stable production signing and differently signed upgrades remain pending. No new Windows build/installation test is claimed.
+
+## Android demo visibility and typeface fix
+
+Android 0.2.0-android.9 / test.17 is published, full APK download/hash verified. 73 shared tests, desktop, full browser and actual API35 APK checks passed: real demo dialog cancellation/confirmation, auto-navigation/filter clearing, font loading/layout, currency/receipt and reinstall/persistence. See [evidence and physical device/native picker/printer/signing limits](DEMO_VISIBILITY_FONTS.md). No schema migration or new Windows installation test.

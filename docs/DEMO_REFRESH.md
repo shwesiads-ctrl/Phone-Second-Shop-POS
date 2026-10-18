@@ -1,5 +1,7 @@
 # Demo inventory and pull-to-refresh
 
+For the latest automatic Accessories navigation, filter clearing, in-app confirmation and UI typeface fixes, see [Android 0.2.0-android.9 verification](DEMO_VISIBILITY_FONTS.md). The release evidence below records the earlier Android .8 build.
+
 Android 0.2.0-android.8 adds pull-to-refresh on narrow Android screens. At the top of the page, pull down at least 85 CSS pixels and release. This fetches the current filtered snapshot without a page reload, preserving the cart, language, search and filters. Busy operations, an open menu/editor, form controls, tables and nested scrolling regions do not start the gesture. The existing Refresh button remains available. Native physical touch behavior still needs device verification; automated tests dispatch touch events to exercise the application handler.
 
 Owner settings includes Add 100 demo items and Remove demo items. Samples are accessories, visibly prefixed [DEMO], have unique SKUs/barcodes, quantity 10 each and zero cost. Prices use the current currency precision. Adding again does not duplicate an active batch. These are visible stock in the current shop database, not a separate demo database: selling them creates actual transaction/cashbook records. The UI explains this before addition.

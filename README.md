@@ -14,9 +14,9 @@ The GitHub Windows build/test/package verification passed. This does not establi
 
 ## Android APK download
 
-[Download Fixer Tools Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.16/Fixer-Tools-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.16)
+[Download Fixer Tools Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.17/Fixer-Tools-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.17)
 
-Android app name/icon: **Fixer Tools** (0.2.0-android.8). Receipt preview includes **Save JPEG** to Pictures/FixerTools and **Share JPEG** via the Android chooser. Pull down at the top to refresh; Owner settings can add/remove 100 tracked demo accessories. See [demo/refresh results and safety rules](docs/DEMO_REFRESH.md). Receipt labels and native controls use the selected language; narrow screens use a sliding side menu. See [current verification](docs/RECEIPT_LANGUAGE_DRAWER.md) and [JPEG details](docs/FIXER_TOOLS_JPEG.md).
+Android app name/icon: **Fixer Tools** (0.2.0-android.9). Receipt preview includes **Save JPEG** to Pictures/FixerTools and **Share JPEG** via the Android chooser. Demo addition now opens Accessories and clears old filters; UI fonts bundle Myanmar/Thai regular/semibold/bold weights. See [visibility/font fix and verification](docs/DEMO_VISIBILITY_FONTS.md). Pull down at the top to refresh; Owner settings can add/remove 100 tracked demo accessories. See [demo/refresh results and safety rules](docs/DEMO_REFRESH.md). Receipt labels and native controls use the selected language; narrow screens use a sliding side menu. See [current verification](docs/RECEIPT_LANGUAGE_DRAWER.md) and [JPEG details](docs/FIXER_TOOLS_JPEG.md).
 
 Android additions: Back/Exit confirmation, customization contact via Telegram @kominit, automatic barcodes, and Classic Bluetooth SPP / ESC-POS search/connect/test-preview/raster printing. **Physical printer acceptance is pending.** See [printer setup and limits](docs/ANDROID_PRINTER_FEATURES.md).
 
