@@ -347,10 +347,21 @@ try {
     "PASS: actual Android APK clean installation, first owner, offline currency checkout/change, Unicode UI, native receipt preview, force-stop persistence and same-APK data-preserving reinstall. Physical printing and real ARM device pending.",
   );
 } catch (error) {
+  console.error("Original APK test failure:", String(error));
   await writeFile(
+    "test-results/android/emulator-results.json",
+    JSON.stringify({ ...results, error: String(error) }, null, 2),
+  );
+  await device
+    .screenshot()
+    .then((bytes) =>
+      writeFile("test-results/android/failure-native.png", bytes),
+    )
+    .catch(() => {});
+  /*await writeFile(
     "test-results/android/failure-native.png",
     await device.screenshot(),
-  ).catch(() => {});
+  ).catch(() => {});*/
   if (page)
     await page
       .screenshot({
