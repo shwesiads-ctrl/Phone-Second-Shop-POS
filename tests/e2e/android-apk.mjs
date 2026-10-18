@@ -92,13 +92,26 @@ async function nativeDialogButton(prefix) {
 }
 
 async function call(op, input = {}) {
-  const r = await page.evaluate(({ op, input }) => window.pos.call(op, input), {
-    op,
-    input,
-  });
-  expect(r.ok, op + ": " + r.error).toBe(true);
-  return r.data;
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const r = await page.evaluate(
+      ({ op, input }) => window.pos.call(op, input),
+      { op, input },
+    );
+    // Startup/login may still be persisting or loading the first snapshot.
+    // Only retry read requests explicitly rejected as BUSY; never replay writes.
+    if (
+      r.error === "BUSY" &&
+      ["snapshot", "status"].includes(op) &&
+      attempt < 29
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      continue;
+    }
+    expect(r.ok, op + ": " + r.error).toBe(true);
+    return r.data;
+  }
 }
+
 try {
   page = await connect();
   results.apkInstalled = true;
