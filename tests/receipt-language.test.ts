@@ -16,3 +16,38 @@ for (const language of ["en-US", "my-MM", "th-TH"] as Language[]) {
     }
   });
 }
+
+import { receiptHTML } from "../src/main/receipt";
+for (const language of ["en-US", "my-MM", "th-TH"] as Language[]) {
+  test(`invoice labels follow selected language while customer text survives: ${language}`, () => {
+    const html = receiptHTML(
+      {
+        settings: {
+          language,
+          store: "Fixer Tools",
+          receipt: "58mm",
+          footer: "",
+        },
+        invoice: "INV-TEST",
+        created: "2026-10-18T00:00:00Z",
+        currency: "MMK",
+        cashier_name: "Owner",
+        customer: "Customer မြန်မာ ไทย",
+        items: [],
+        discount: 0,
+        total: 3000,
+        paid: 3000,
+        status: "paid",
+        payments: [],
+      },
+      dictionaries[language],
+    );
+    assert.ok(html.includes(`lang="${language}"`));
+    assert.ok(html.includes(dictionaries[language].cashier));
+    assert.ok(html.includes("Customer မြန်မာ ไทย"));
+    for (const other of ["en-US", "my-MM", "th-TH"] as Language[]) {
+      if (other !== language)
+        assert.ok(!html.includes(`${dictionaries[other].cashier}:`));
+    }
+  });
+}
