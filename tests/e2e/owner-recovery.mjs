@@ -1,3 +1,4 @@
+import { navigateTo, openNavigation, closeNavigation } from "./navigation.mjs";
 import { expect } from "@playwright/test";
 // No screenshots, logs, or artifact files contain the generated recovery key.
 export async function verifyOwnerRecovery(page, username, password) {
@@ -16,10 +17,7 @@ export async function verifyOwnerRecovery(page, username, password) {
       }),
     );
     expect(blocked.error).toBe("FORBIDDEN");
-    await page
-      .locator("nav")
-      .getByRole("button", { name: "Settings", exact: true })
-      .click();
+    await navigateTo(page, "Settings");
     const section = page.locator("section").filter({
       has: page.getByRole("heading", {
         name: "Owner security settings",
@@ -68,7 +66,9 @@ export async function verifyOwnerRecovery(page, username, password) {
       .getByRole("button", { name: "Log in", exact: true })
       .first()
       .click();
+    await openNavigation(page);
     await expect(page.locator("nav")).toBeVisible();
+    await closeNavigation(page);
     const changed = await page.evaluate(
       ({ current, password }) =>
         window.pos.call("password", { current, password }),
@@ -86,7 +86,7 @@ export async function verifyOwnerRecovery(page, username, password) {
     );
     expect(consumed.error).toBe("LOGIN_FAILED");
     await new Promise((r) => setTimeout(r, 1100));
-    await page.locator("nav button").first().click();
+    await navigateTo(page, 0);
     console.log(
       "PASS: Free Owner UI, blocked staff creation, password-authorized key generation, hide key, logged-out recovery, login with replacement password and consumed-key rejection.",
     );

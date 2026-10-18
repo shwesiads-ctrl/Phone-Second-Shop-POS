@@ -192,10 +192,10 @@ async function desktop(operation: Operation, raw: unknown) {
   }
   if (operation === "receipt") {
     const invoice = service.invoice(input.id, input.kind);
-    const locale = input.language || invoice.settings.language || "my-MM";
+    const receiptLocale = input.language || locale;
     invoice.settings = {
       ...invoice.settings,
-      language: locale,
+      language: receiptLocale,
       receipt: input.paper || invoice.settings.receipt,
     };
     const print = new BrowserWindow({
@@ -214,7 +214,7 @@ async function desktop(operation: Operation, raw: unknown) {
     mkdirSync(directory, { recursive: true });
     const html = receiptHTML(
       invoice,
-      dictionaries[locale as keyof typeof dictionaries],
+      dictionaries[receiptLocale as keyof typeof dictionaries],
     );
     const fonts = join(__dirname, "../dist/assets");
     const adjusted = html.replaceAll(

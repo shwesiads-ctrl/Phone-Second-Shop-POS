@@ -346,6 +346,13 @@ function App() {
     (localStorage.getItem("pos.language") as Language) || "my-MM",
   );
   const t = (key: string) => translate(language, key);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [narrow, setNarrow] = useState(
+    () => window.matchMedia("(max-width: 760px)").matches,
+  );
+  const menuToggle = useRef<HTMLButtonElement>(null);
+  const menuPanel = useRef<HTMLElement>(null);
+  const touchOrigin = useRef<{ x: number; y: number } | null>(null);
   const [printerState, setPrinterState] = useState<Row | null>(null);
   const [printerPaper, setPrinterPaper] = useState("80mm");
   const [recoveryMode, setRecoveryMode] = useState(false);
@@ -386,6 +393,61 @@ function App() {
     expected: "",
     actual: "",
   });
+  const drawer = !!status?.ownerOnly && narrow;
+  const closeMenu = () => {
+    setMenuOpen(false);
+    requestAnimationFrame(() => menuToggle.current?.focus());
+  };
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 760px)");
+    const resize = () => {
+      setNarrow(query.matches);
+      setMenuOpen(false);
+    };
+    query.addEventListener("change", resize);
+    return () => query.removeEventListener("change", resize);
+  }, []);
+  useEffect(() => {
+    const close = () => closeMenu();
+    window.addEventListener("fixer-close-menu", close);
+    return () => window.removeEventListener("fixer-close-menu", close);
+  }, []);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [user?.id]);
+  useEffect(() => {
+    if (!drawer || !menuOpen) return;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    menuPanel.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    const keys = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMenu();
+      }
+      if (event.key === "Tab") {
+        const items = Array.from(
+          menuPanel.current?.querySelectorAll<HTMLElement>(
+            "button:not(:disabled),a[href],select",
+          ) || [],
+        );
+        const first = items[0],
+          last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", keys);
+    return () => {
+      document.body.style.overflow = overflow;
+      document.removeEventListener("keydown", keys);
+    };
+  }, [drawer, menuOpen]);
   const currency: Currency = data?.settings?.currency || "MMK";
   const m = (value: number, c: Currency = currency) =>
     money(
@@ -1082,8 +1144,44 @@ function App() {
       </main>
     );
   return (
-    <div className="shell">
-      <aside>
+    <div
+      className="shell"
+      onTouchStart={(e) => {
+        const p = e.touches[0];
+        touchOrigin.current = p ? { x: p.clientX, y: p.clientY } : null;
+      }}
+      onTouchEnd={(e) => {
+        const start = touchOrigin.current,
+          end = e.changedTouches[0];
+        touchOrigin.current = null;
+        if (!drawer || !start || !end || Math.abs(end.clientY - start.y) > 60)
+          return;
+        if (menuOpen && end.clientX - start.x < -60) closeMenu();
+        else if (!menuOpen && start.x < 24 && end.clientX - start.x > 80)
+          setMenuOpen(true);
+      }}
+    >
+      {drawer && menuOpen && (
+        <button
+          type="button"
+          className="drawer-backdrop"
+          tabIndex={-1}
+          aria-label={t("closeMenu")}
+          onClick={closeMenu}
+        />
+      )}
+      <aside
+        id="app-navigation-panel"
+        ref={menuPanel}
+        className={
+          drawer ? `mobile-drawer${menuOpen ? " is-open" : ""}` : undefined
+        }
+        inert={drawer && !menuOpen}
+        aria-hidden={drawer && !menuOpen ? true : undefined}
+        role={drawer ? "dialog" : undefined}
+        aria-modal={drawer && menuOpen ? true : undefined}
+        aria-label={t("navigation")}
+      >
         <div className="brand">
           <div className="logo small">
             <FixerMark />
@@ -1095,7 +1193,16 @@ function App() {
             </small>
           </div>
         </div>
-        <nav>
+        {drawer && (
+          <button
+            type="button"
+            className="secondary drawer-close"
+            onClick={closeMenu}
+          >
+            {t("closeMenu")} ×
+          </button>
+        )}
+        <nav aria-label={t("navigation")}>
           {nav
             .filter(
               (key) =>
@@ -1110,6 +1217,7 @@ function App() {
                 className={page === key ? "active" : ""}
                 onClick={() => {
                   setPage(key);
+                  if (drawer) closeMenu();
                   setError("");
                   setMessage("");
                 }}
@@ -1145,11 +1253,27 @@ function App() {
           {t("offline")}
         </div>
       </aside>
-      <div className="workspace">
+      <div className="workspace" inert={drawer && menuOpen}>
         <header>
-          <div>
-            <small>{t("app")}</small>
-            <h1>{t(page)}</h1>
+          <div className="header-title-row">
+            {drawer && (
+              <button
+                type="button"
+                className="secondary menu-trigger"
+                data-testid="menu-toggle"
+                ref={menuToggle}
+                aria-label={t("openMenu")}
+                aria-expanded={menuOpen}
+                aria-controls="app-navigation-panel"
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
+                ☰
+              </button>
+            )}
+            <div className="page-title">
+              <small>{t("app")}</small>
+              <h1>{t(page)}</h1>
+            </div>
           </div>
           <div className="header-actions">
             {languageSelector}

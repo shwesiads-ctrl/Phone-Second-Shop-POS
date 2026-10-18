@@ -28,6 +28,8 @@ for (const key of [
   "privatePersistence",
   "sameApkReinstall",
   "nativeReceiptPreview",
+  "drawerNavigation",
+  "receiptLanguage",
 ])
   assert.equal(outcome[key], true, key);
 const db = new DatabaseSync("test-results/android/emulator-business.sqlite", {
@@ -75,7 +77,7 @@ const badging = execFileSync(
   { encoding: "utf8" },
 );
 assert.match(badging, /application-label:'Fixer Tools'/);
-assert.match(badging, /versionName='0.2.0-android.5'/);
+assert.match(badging, /versionName='0.2.0-android.6'/);
 assert.match(
   badging,
   /package: name='com.myominaung.phonesecondshoppos.mobile'/,
@@ -113,7 +115,7 @@ writeFileSync(
   "test-results/android/apk-verification.json",
   JSON.stringify(
     {
-      version: "0.2.0-android.5",
+      version: "0.2.0-android.6",
       appName: "Fixer Tools",
       jpegExport: {
         ...dimensions,

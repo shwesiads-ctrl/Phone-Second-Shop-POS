@@ -1,3 +1,4 @@
+import { printerTestHTML } from "../shared/printer-test";
 import { registerPlugin } from "@capacitor/core";
 import { Buffer } from "buffer";
 import bwipjs from "bwip-js/browser";
@@ -28,6 +29,7 @@ export interface NativePOS {
     html: string;
     paper: string;
     preview: boolean;
+    language?: string;
   }): Promise<void>;
   copy(input: { text: string }): Promise<void>;
   support(): Promise<void>;
@@ -96,7 +98,10 @@ export async function createAndroidBridge(
   async function desktop(operation: Operation, raw: any) {
     const input = (schemas[operation] as any).parse(raw ?? {});
     service.require(operation);
-    const language = raw?.uiLanguage || service.settings().language || "my-MM";
+    const requested = raw?.uiLanguage || service.settings().language;
+    const language = ["en-US", "my-MM", "th-TH"].includes(requested)
+      ? requested
+      : "my-MM";
     const labels =
       dictionaries[language as keyof typeof dictionaries] ??
       dictionaries["my-MM"];
@@ -107,7 +112,8 @@ export async function createAndroidBridge(
         await native.preview({
           paper: input.paper,
           preview: true,
-          html: `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src file:; style-src 'unsafe-inline'"><style>@font-face{font-family:Myanmar;src:url('file:///android_asset/public/assets/receipt-myanmar.woff2')}@font-face{font-family:Thai;src:url('file:///android_asset/public/assets/receipt-thai.woff2')}body{font-family:Myanmar,Thai,sans-serif;font-size:14px;color:black;background:white}p{overflow-wrap:anywhere}</style></head><body><h2>POS TEST · ${input.paper}</h2><p>English receipt test<br>မြန်မာ စမ်းသပ်ပုံနှိပ်ခြင်း<br>ทดสอบใบเสร็จภาษาไทย</p><p>TEST ONLY — NOT A SALE<br>2 × 1,500 MMK = 3,000 MMK<br>Discount: 500 MMK<br>Total: 2,500 MMK<br>Paid: 3,000 MMK<br>Change: 500 MMK</p><p>0123456789<br>------------------------</p></body></html>`,
+          language,
+          html: printerTestHTML(language, input.paper),
         });
         return true;
       }
@@ -249,6 +255,7 @@ export async function createAndroidBridge(
       await native.preview({
         html,
         paper: invoice.settings.receipt || "80mm",
+        language: invoice.settings.language,
         preview: input.preview,
       });
       return true;
@@ -275,6 +282,7 @@ export async function createAndroidBridge(
       await native.preview({
         html: `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'"><style>img{display:block;max-width:100%;margin:12px auto}</style></head><body><img src="${img("qrcode")}"><img src="${img("code128")}"></body></html>`,
         paper: "80mm",
+        language,
         preview: true,
       });
       return true;

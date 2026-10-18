@@ -1,6 +1,25 @@
+import { navigateTo, openNavigation, closeNavigation } from "./navigation.mjs";
 import { expect } from "@playwright/test";
 // Check actual rendered geometry: the fixed desktop header used to overlap the toolbar.
 export async function verifyMobileLayout(page, prefix) {
+  if (await page.getByTestId("menu-toggle").isVisible()) {
+    await openNavigation(page);
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("menu-toggle")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+    await openNavigation(page);
+    await page
+      .locator(".drawer-backdrop")
+      .click({
+        position: { x: await page.evaluate(() => innerWidth - 10), y: 250 },
+      });
+    await expect(page.getByTestId("menu-toggle")).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  }
   for (const language of ["en-US", "my-MM", "th-TH"]) {
     await page.locator(".header-actions select").selectOption(language);
     console.log(
@@ -9,7 +28,7 @@ export async function verifyMobileLayout(page, prefix) {
       await page.evaluate(() => innerWidth),
     );
     for (const index of [0, 1, 2]) {
-      await page.locator("nav button").nth(index).click();
+      await navigateTo(page, index);
       await page.evaluate(() => document.fonts.ready);
       const geometry = await page.evaluate(() => {
         const rect = (e) => {
@@ -49,5 +68,5 @@ export async function verifyMobileLayout(page, prefix) {
     }
   }
   await page.locator(".header-actions select").selectOption("en-US");
-  await page.locator("nav button").first().click();
+  await navigateTo(page, 0);
 }

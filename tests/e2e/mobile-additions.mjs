@@ -1,9 +1,7 @@
+import { navigateTo, openNavigation, closeNavigation } from "./navigation.mjs";
 import { expect } from "@playwright/test";
 export async function verifyMobileAdditions(page, mocked = false) {
-  await page
-    .locator("nav")
-    .getByRole("button", { name: "Accessories", exact: true })
-    .click();
+  await navigateTo(page, "Accessories");
   await page.getByRole("button", { name: "Add", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("SKU", { exact: true }).fill("UNCHANGED-SKU");
@@ -17,10 +15,7 @@ export async function verifyMobileAdditions(page, mocked = false) {
     "UNCHANGED-SKU",
   );
   await dialog.getByRole("button", { name: "Close", exact: true }).click();
-  await page
-    .locator("nav")
-    .getByRole("button", { name: "Settings", exact: true })
-    .click();
+  await navigateTo(page, "Settings");
   await expect(
     page.getByRole("heading", {
       name: "Customization / new feature",
@@ -33,14 +28,12 @@ export async function verifyMobileAdditions(page, mocked = false) {
   await page
     .getByRole("button", { name: "Printer status", exact: true })
     .click();
-  const printerPanel = page
-    .locator("section")
-    .filter({
-      has: page.getByRole("heading", {
-        name: "Bluetooth POS printer",
-        exact: true,
-      }),
-    });
+  const printerPanel = page.locator("section").filter({
+    has: page.getByRole("heading", {
+      name: "Bluetooth POS printer",
+      exact: true,
+    }),
+  });
   await expect(printerPanel.getByRole("status")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Printer status", exact: true }),
@@ -67,9 +60,8 @@ export async function verifyMobileAdditions(page, mocked = false) {
     const preview = await page.evaluate(() =>
       window.androidHarness.previews.at(-1),
     );
-    expect(preview.html).toContain("မြန်မာ");
-    expect(preview.html).toContain("ทดสอบ");
-    expect(preview.html).toContain("TEST ONLY");
+    expect(preview.html).toContain("Test receipt");
+    expect(preview.html).not.toMatch(/[\u1000-\u109f\u0e00-\u0e7f]/);
     await page
       .getByRole("button", { name: "Disconnect printer", exact: true })
       .click();
@@ -81,7 +73,7 @@ export async function verifyMobileAdditions(page, mocked = false) {
       1,
     );
   }
-  await page.locator("nav button").first().click();
+  await navigateTo(page, 0);
   console.log(
     mocked
       ? "PASS: barcode generator UI, customization/support action and search/connect/disconnect/test preview using substituted printer transport; physical hardware pending."

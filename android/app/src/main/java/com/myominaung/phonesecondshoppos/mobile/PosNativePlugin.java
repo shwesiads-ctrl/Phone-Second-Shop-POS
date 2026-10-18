@@ -58,7 +58,7 @@ public class PosNativePlugin extends Plugin {
  @PluginMethod public void preview(PluginCall call) {
   String html=call.getString("html","");if(html.length()>8_000_000){call.reject("Receipt is too large");return;}
   try {File f=new File(getContext().getCacheDir(),"receipt.html");try(FileOutputStream out=new FileOutputStream(f)){out.write(html.getBytes(StandardCharsets.UTF_8));}
-   Intent i=new Intent(getContext(),ReceiptActivity.class);i.putExtra("paper",call.getString("paper","80mm"));i.putExtra("preview",call.getBoolean("preview",true));getActivity().startActivity(i);call.resolve();
+   Intent i=new Intent(getContext(),ReceiptActivity.class);i.putExtra("paper",call.getString("paper","80mm"));i.putExtra("preview",call.getBoolean("preview",true));String language=call.getString("language","my-MM");if(!java.util.Arrays.asList("my-MM","en-US","th-TH").contains(language))language="my-MM";i.putExtra("language",language);getActivity().startActivity(i);call.resolve();
   }catch(Exception e){call.reject("Could not open receipt preview");}
  }
  @PluginMethod public void copy(PluginCall call) {ClipboardManager clipboard=(ClipboardManager)getContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE);clipboard.setPrimaryClip(ClipData.newPlainText("POS",call.getString("text","")));call.resolve();}

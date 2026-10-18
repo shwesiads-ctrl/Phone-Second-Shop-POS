@@ -1,5 +1,8 @@
 export type Language = "my-MM" | "th-TH" | "en-US";
 const words: Record<string, [string, string, string]> = {
+  openMenu: ["Open menu", "မီနူးဖွင့်ရန်", "เปิดเมนู"],
+  closeMenu: ["Close menu", "မီနူးပိတ်ရန်", "ปิดเมนู"],
+  navigation: ["Navigation menu", "သွားလာရန် မီနူး", "เมนูนำทาง"],
   generateBarcode: [
     "Generate barcode",
     "Barcode အလိုအလျောက်ထုတ်ရန်",

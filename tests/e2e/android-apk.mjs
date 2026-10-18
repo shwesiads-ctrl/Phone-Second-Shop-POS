@@ -1,3 +1,4 @@
+import { navigateTo, openNavigation, closeNavigation } from "./navigation.mjs";
 import { verifyMobileAdditions } from "./mobile-additions.mjs";
 import { verifyOwnerRecovery } from "./owner-recovery.mjs";
 import { verifyMobileLayout } from "./mobile-layout.mjs";
@@ -119,10 +120,12 @@ try {
   await verifyMobileAdditions(page, false);
   results.mobileAdditions = true;
   results.ownerRecovery = true;
+  await openNavigation(page);
   await expect(page.locator(".brand strong")).toHaveText("Fixer Tools");
   await expect(
     page.locator(".brand svg[aria-label='Fixer Tools icon']"),
   ).toBeVisible();
+  await closeNavigation(page);
   results.fixerBranding = true;
   results.firstRunSetup = true;
   await call("rate", {
@@ -158,7 +161,7 @@ try {
     .getByLabel("Password (10+ characters)", { exact: true })
     .fill("synthetic apk password");
   await page.getByRole("button", { name: "Log in", exact: true }).click();
-  await page.getByRole("button", { name: "Checkout", exact: true }).click();
+  await navigateTo(page, "Checkout");
   await page.getByRole("button", { name: /Mobile မြန်မာ ไทย/ }).click();
   await page.getByLabel("Tender currency", { exact: true }).selectOption("USD");
   await page
@@ -197,7 +200,13 @@ try {
   const screen = await device.screenshot();
   await writeFile("test-results/android/receipt-native.png", screen);
   results.nativeReceiptPreview = true;
-  await nativeDialogButton("Save JPEG");
+  adb("shell", "uiautomator", "dump", "/sdcard/pos-ui.xml");
+  const receiptControls = adb("shell", "cat", "/sdcard/pos-ui.xml");
+  expect(receiptControls).toContain("JPEG သိမ်းရန်");
+  expect(receiptControls).not.toContain("Save JPEG");
+  expect(receiptControls).not.toContain("บันทึก JPEG");
+  results.receiptLanguage = true;
+  await nativeDialogButton("JPEG သိမ်းရန်");
   let savedName;
   for (let attempt = 0; attempt < 30; attempt++) {
     try {
@@ -218,7 +227,7 @@ try {
   expect(savedJpeg.subarray(-2).toString("hex")).toBe("ffd9");
   await writeFile("test-results/android/receipt-export.jpg", savedJpeg);
   results.receiptJpegSave = true;
-  await nativeDialogButton("Share JPEG");
+  await nativeDialogButton("JPEG မျှဝေရန်");
   for (let attempt = 0; attempt < 30; attempt++) {
     const resumed = adb("shell", "dumpsys", "activity", "activities")
       .split("\n")
@@ -264,6 +273,13 @@ try {
   await expect(
     page.getByRole("heading", { name: "ประวัติการขาย", exact: true }).first(),
   ).toBeVisible();
+  await openNavigation(page);
+  adb("shell", "input", "keyevent", "4");
+  await expect(page.getByTestId("menu-toggle")).toHaveAttribute(
+    "aria-expanded",
+    "false",
+  );
+  results.drawerNavigation = true;
   adb("shell", "input", "keyevent", "4");
   await nativeDialogButton("Stay");
   expect((await call("snapshot")).sales).toHaveLength(1);
