@@ -1,10 +1,12 @@
 # Phone Second Shop POS — Android test APK
 
+Published UI-fix APK: [android-v0.2.0-test.3](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.3), source `b13247a`, [actual APK/emulator workflow](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39107342666). Build, installed WebView layout checks in all three languages, offline checkout, native receipt preview, persistence, same-APK reinstall and package verification passed. Full public download returned HTTP 200, 10,689,202 bytes; SHA256 `ab23b9a25f8dac17692c482643396548e23c3e3f4b594d45cf45a6495da3eb34` matched checksum and verification JSON. Physical device/printer acceptance and stable production signing remain pending.
+
 ## Android UI correction (0.2.0-android.2)
 
 The mobile header now grows with its title and account controls, preventing the language/logout row from overlapping search and date filters. Search occupies a full row, dates use two equal columns, and refresh moves below them. Tables remain horizontally scrollable inside their panels. Touch table text is enlarged. No database migration is required.
 
-Local validation: 49 shared tests passed, typecheck and Android asset sync passed, and the Android-browser workflow passed including all 27 language/page/width layout combinations. Native APK verification for this correction is gated by the release workflow.
+Local validation: 49 shared tests passed, typecheck and Android asset sync passed, and the Android-browser workflow passed including all 27 language/page/width layout combinations. Native APK verification also passed in the linked release workflow.
 
 Regression checks exercise actual rendered header/control bounds and page overflow on Dashboard, Checkout and Inventory in Burmese, Thai and English. The browser suite covers 360, 420 and 760 CSS pixels; the release pipeline also runs these checks in the installed Android WebView before publishing. The attached verification and workflow determine whether the new APK passed.
 
