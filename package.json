@@ -1,0 +1,86 @@
+{
+  "name": "phone-second-shop-pos",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Offline desktop POS for second-hand phone shops",
+  "author": "Myominaung",
+  "license": "AGPL-3.0-only",
+  "main": "dist-electron/main.cjs",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "build": "npm run typecheck && vite build && node scripts/build.mjs",
+    "start": "electron .",
+    "dist:win": "npm test && npm run test:desktop && electron-builder --win nsis --x64",
+    "pack:linux": "npm test && npm run build && electron-builder --linux dir --x64",
+    "test:desktop": "npm run build && node tests/e2e/desktop.mjs",
+    "test:print": "npm run build && node tests/e2e/currency-print.mjs"
+  },
+  "dependencies": {
+    "@fontsource/noto-sans-myanmar": "5.3.0",
+    "@fontsource/noto-sans-thai": "5.3.0",
+    "bwip-js": "4.11.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "electron": "44.9.0",
+    "electron-builder": "26.15.3",
+    "esbuild": "0.28.2",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vite": "8.3.4"
+  },
+  "build": {
+    "appId": "com.myominaung.phonesecondshoppos",
+    "productName": "Phone Second Shop POS",
+    "asar": true,
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json",
+      "LICENSE",
+      "docs/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "script": "build/installer.nsi",
+      "packElevateHelper": false
+    },
+    "linux": {
+      "target": "dir",
+      "category": "Office"
+    },
+    "afterPack": "scripts/after-pack.cjs"
+  },
+  "type": "module",
+  "productName": "Phone Second Shop POS"
+}

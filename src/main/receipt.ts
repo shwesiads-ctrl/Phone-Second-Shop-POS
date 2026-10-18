@@ -1,0 +1,20 @@
+import { money, type Currency } from "../shared/contracts";
+const escape = (s: unknown) =>
+  String(s ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ]!,
+  );
+export function receiptHTML(invoice: any, labels: Record<string, string> = {}) {
+  const s = invoice.settings;
+  const locale = s.language || "my-MM";
+  const currency = invoice.currency as Currency;
+  const f = (n: number) => escape(money(n, currency, locale));
+  const l = (k: string) => escape(labels[k] || k);
+  return `<!doctype html><html lang="${escape(locale)}"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src file:; img-src data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'"><title>${escape(invoice.invoice)}</title><style>
+  @font-face{font-family:Myanmar;src:url('../dist/assets/receipt-myanmar.woff2')}@font-face{font-family:Thai;src:url('../dist/assets/receipt-thai.woff2')}
+  *{box-sizing:border-box}body{width:100%;font-family:Myanmar,Thai,sans-serif;font-size:${s.receipt === "58mm" ? "10px" : "12px"};line-height:1.5;max-width:${s.receipt === "A4" ? "190mm" : s.receipt === "58mm" ? "48mm" : "70mm"};margin:15px auto;padding:0;color:#111}h1{font-size:18px}table{table-layout:fixed;width:100%;border-collapse:collapse}td,th{overflow-wrap:anywhere;border-bottom:1px solid #ddd;text-align:left;padding:6px 2px}p{white-space:pre-wrap;overflow-wrap:anywhere}th:nth-child(2){width:12%}th:last-child{width:40%}td:last-child{font-size:9px;white-space:nowrap}tr{break-inside:avoid}button{padding:8px}@media print{button{display:none}@page{margin:5mm;size:${s.receipt === "A4" ? "A4" : s.receipt === "58mm" ? "58mm 250mm" : "80mm 250mm"}}}
+  </style></head><body>${s.logo ? `<img alt="" style="max-width:80px;max-height:80px" src="${escape(s.logo)}">` : ""}<h1>${escape(s.store || "Phone Second Shop POS")}</h1><p>${escape(s.address)}\n${escape(s.phone)}</p><h2>${invoice.typeKey ? l(invoice.typeKey) + " · " : ""}${escape(invoice.invoice)}</h2><p>${escape(new Intl.DateTimeFormat(locale, { dateStyle: s.dateFormat || "medium", timeStyle: "short", timeZone: s.timezone || "Asia/Yangon", hour12: s.timeFormat === "12" }).format(new Date(invoice.created)))}\n${l("cashier")}: ${escape(invoice.cashier_name)}\n${escape(invoice.customer)}</p><table><thead><tr><th>${l("item")}</th><th>${l("qty")}</th><th>${l("total")} (${escape(currency)})</th></tr></thead><tbody>${invoice.items.map((i: any) => `<tr><td>${i.nameKey ? l(i.nameKey) : escape(i.name)}<br>${escape(i.identifier)}<br>${l("warrantyType")}: ${l(i.warranty_type || "none")} · ${l("warrantyDays")}: ${i.warranty_days}</td><td>${i.quantity}</td><td>${escape(new Intl.NumberFormat(locale, { minimumFractionDigits: currency === "MMK" ? 0 : 2, maximumFractionDigits: currency === "MMK" ? 0 : 2 }).format((i.price * i.quantity) / (currency === "MMK" ? 1 : 100)))}</td></tr>`).join("")}</tbody></table><p>${l("discount")}: ${f(invoice.discount)}\n${l("total")}: ${f(invoice.total)}\n${l("returned")}: ${f(invoice.returnedTotal ?? 0)}\n${l("paid")}: ${f(invoice.paid)}\n${l("balance")}: ${f(["returned", "reversed", "Cancelled"].includes(invoice.status) ? 0 : invoice.total - invoice.paid - (invoice.returnedTotal ?? 0))}\n${l("status")}: ${l(invoice.status)}</p><p>${invoice.payments.map((p: any) => `${["Cash", "Bank transfer", "Other"].includes(p.method) ? l(p.method) : escape(p.method)} ${p.direction === "out" ? "-" : ""}${f(p.amount)}${p.original_currency && p.original_currency !== currency ? ` (${escape(money(p.original_amount, p.original_currency, locale))} · ${l("rateId")} #${JSON.parse(p.fx || "{}").rate?.id ?? ""})` : ""}${p.direction === "in" && p.method === "Cash" ? ` · ${l("cashReceived")}: ${escape(money(p.received_amount ?? p.original_amount ?? p.amount, p.original_currency || currency, locale))} · ${l("change")}: ${escape(money(p.change_amount ?? 0, p.original_currency || currency, locale))}` : ""}`).join("<br>")}</p><p>${escape(s.footer)}</p></body></html>`;
+}

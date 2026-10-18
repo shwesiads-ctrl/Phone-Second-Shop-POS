@@ -1,0 +1,83 @@
+name: Windows test release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Validate version tag
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?$' -or $env:RELEASE_TAG -ne "v$version") {
+            throw 'Run this workflow from the tag matching package.json.'
+          }
+      - run: npm ci --no-audit --no-fund
+      - run: node node_modules/electron/install.js
+      - name: Test, build and package Windows x64
+        run: npm run dist:win
+      - name: Verify packaged contents and generate checksum
+        shell: pwsh
+        run: node scripts/verify-windows.mjs 'C:\Program Files\7-Zip\7z.exe'
+      - name: Upload installer and verification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-test-release
+          if-no-files-found: error
+          path: |
+            release/*Setup*.exe
+            release/*.exe.sha256
+            test-results/windows-artifact.json
+      - name: Preserve desktop test screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-desktop-evidence
+          if-no-files-found: ignore
+          path: test-results/*.png
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-test-release
+          path: artifacts
+      - name: Publish unsigned prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -d '' assets < <(find artifacts -type f \( -name '*.exe' -o -name '*.sha256' -o -name 'windows-artifact.json' \) -print0)
+          test "${#assets[@]}" -ge 3
+          gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title "Phone Second Shop POS $RELEASE_TAG — unsigned test build" --notes-file docs/RELEASE_NOTES_0.2.0.md

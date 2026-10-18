@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dist-electron/
+release/
+*.sqlite*
+*.db*
+.env
+coverage/
+test-results/
+.npm-cache/
+build/uninstall-files.nsh
