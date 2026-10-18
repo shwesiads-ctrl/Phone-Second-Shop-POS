@@ -53,3 +53,7 @@ Status: **candidate built/tested in Linux cloud; not approved for a production W
 ## Android selected-language receipt and drawer update
 
 Android 0.2.0-android.6 / test.12 passed 68 shared tests, desktop and Android-browser workflows, and native API35 installation/drawer/receipt/JPEG/persistence verification. The published APK full download/hash matches metadata. See [exact evidence, failed-run fixes and remaining physical hardware/signing checks](RECEIPT_LANGUAGE_DRAWER.md). No new Windows installer or physical printer test is claimed.
+
+## Android demo inventory and pull-to-refresh
+
+Android 0.2.0-android.8 / test.16 is published and full download/checksum verified. 73 tests, desktop/browser workflows and actual installed API35 demo/refresh/currency/JPEG/reopening/same-APK reinstall checks passed. See [precise evidence and history-preserving cleanup rules](DEMO_REFRESH.md). No schema migration needed. Physical touch/ARM/printer tests, external share delivery, stable production signing and differently signed upgrades remain pending. No new Windows build/installation test is claimed.

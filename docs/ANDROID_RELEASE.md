@@ -1,6 +1,10 @@
 # Fixer Tools — Android test APK
 
-## Current: Android 0.2.0-android.6
+## Current: Android 0.2.0-android.8
+
+[Download verified test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.16/Fixer-Tools-Android-0.2.0-test.apk): pull-to-refresh and Owner-controlled add/remove of 100 tracked demo accessories, with atomic cleanup/history guards and non-reused inventory IDs. All 73 shared tests, desktop, Android-browser and full actual API35 APK workflow [39129197688](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39129197688) passed. Full downloaded APK/checksum and synthetic JPEG verified; [evidence and pending hardware/signing items](DEMO_REFRESH.md). Demo sales are real transactions; cleanup refuses used samples. Back up externally before upgrading; do not uninstall to bypass signature mismatch.
+
+## Previous: Android 0.2.0-android.6
 
 [Verified test release android-v0.2.0-test.12](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.12) adds selected-language receipt labels/native controls and a sliding mobile navigation drawer. All 68 shared tests, desktop/browser checks and actual installed API35 APK workflow [39124424300](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39124424300) passed. Full APK download/checksum and synthetic receipt JPEG were verified; see [results and pending hardware/signing items](RECEIPT_LANGUAGE_DRAWER.md). This remains a debug-signed test APK.
 
