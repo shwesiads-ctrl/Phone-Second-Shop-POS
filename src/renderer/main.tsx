@@ -1631,16 +1631,6 @@ function App() {
           </div>
           {page === "dashboard" && (
             <>
-              {!data.demoMode && user.role === "Owner" && (
-                <section className="panel sample-intro">
-                  <h2>{t("sampleTitle")}</h2>
-                  <p>{t("sampleNotice")}</p>
-                  {btn("sampleEnter", () => {
-                    setError("");
-                    setDemoAction("enter");
-                  })}
-                </section>
-              )}
               <div className="section-heading">
                 <h2>{t("dashboard")}</h2>
                 <span className="pill">{currency}</span>

@@ -1,3 +1,4 @@
+import { navigateTo } from "./navigation.mjs";
 import { expect } from "@playwright/test";
 export async function verifySampleShop(
   page,
@@ -19,8 +20,11 @@ export async function verifySampleShop(
     }
     throw new Error("Sample snapshot remained busy");
   };
+  await navigateTo(page, 0);
+  await expect(page.getByRole("button", { name: "Open sample shop", exact: true })).toHaveCount(0);
   const before = await read();
   const enter = async () => {
+    await navigateTo(page, "Settings");
     await page
       .getByRole("button", { name: "Open sample shop", exact: true })
       .click();
