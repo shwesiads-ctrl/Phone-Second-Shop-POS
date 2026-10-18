@@ -13,3 +13,19 @@ The release workflow must pass shared tests, Android build/signature checks and 
 Storage uses offline SQLite WASM with the exact same versioned schema. Desktop SQLite backups are interoperable at schema 8; older supported files migrate on a copy. Database size is capped at 32 MiB in this test version, photos at 5 MB each; larger shops require a scalable native SQLite storage implementation. Before restore, an external safety backup must be saved. Android automatic OS backup is disabled; make manual backups outside app storage. Records are not encrypted at rest by this application; protect the phone and exported backups.
 
 This is a separate test app ID (`com.myominaung.phonesecondshoppos.mobile`). No production account, cloud secret, advertising SDK or automatic business-data upload is included. The native bridge only accesses its fixed private database and files explicitly chosen through Android document pickers. Capacitor payload logging is disabled. The WebView uses only bundled assets; release credentials and physical device testing remain outstanding.
+
+## Verified publication
+
+[Android prerelease](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.2) published successfully through [Actions run 39098837448](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39098837448). The downloaded APK returned **HTTP 200** and its full downloaded bytes were hashed and matched both attached checksum and verification JSON.
+
+- Size: **10,688,918 bytes** (about 10.2 MiB).
+- SHA256: `28916ffb1cd8d6dc22b7faa65db800610da7a3b6156470fd4cc737ff35fe3123`.
+- Debug certificate verified by Android `apksigner`; installed successfully on Android API35 x86_64.
+- Actual APK tests passed: first Owner setup, offline UI checkout with Wi-Fi/mobile data disabled, USD original tender/change on MMK invoice, Burmese/Thai UI switching, native script-disabled receipt preview, force-stop/relaunch persistence and same-APK reinstall preserving the invoice.
+- The private SQLite file extracted from the test emulator passed desktop SQLite integrity/schema checks. APK assets contain required WASM/fonts and exclude test-only native substitutes. App/source and third-party license notices are bundled.
+- Shared desktop tests: **49 passed**. Existing real Electron workflow and the separate Android-browser bridge suite passed locally. The latter also verifies original-unit refund, storage-failure rollback, failed-login throttling, desktop-readable backup and genuine schema-7 restoration/password compatibility, with document dialogs/storage substituted.
+- Full npm audit after adding Android tooling: **11 moderate, zero high/critical**. The three additional entries are Capacitor CLI/xcode/uuid build tooling; they remain unresolved alongside the earlier Electron build-tool entries. This is not a production security certification.
+
+Still pending: physical ARM devices, native photo/document-picker end-to-end acceptance, print-service/PDF-driver and actual paper output, larger data-volume testing, encrypted storage and a stable production signing key. Native document picker and print-service code exists; those pending checks are not counted as passed. Desktop printer-name selection does not select an Android printer; use the native Print / PDF chooser.
+
+The Android SQLite engine/business service runs inside the trusted bundled WebView, with native private-file persistence. Role checks are local application controls, not a remote server boundary. The debug APK permits developer inspection; it is not intended as a hardened production distribution. No cloud-environment draft was published by this APK release.

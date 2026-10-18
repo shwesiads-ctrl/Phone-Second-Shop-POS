@@ -12,6 +12,12 @@ Installer ကို အပေါ်က link မှ download ဆွဲနို�
 
 The GitHub Windows build/test/package verification passed. This does not establish clean installation, upgrade/uninstall or physical printer acceptance. Back up real shop data before testing.
 
+## Android APK download
+
+[Download Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.2/Phone-Second-Shop-POS-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.2)
+
+Android 10+ and an updated Android System WebView are required. This is a debug-signed test build, tested by actual APK installation and workflows on an API35 emulator. Windows and Android keep separate offline databases; no automatic synchronization. Android uninstall deletes app data, so export a verified backup before uninstalling or changing signing keys. Physical phones/printers and native document-picker acceptance remain pending. See [Android scope and limits](docs/ANDROID_RELEASE.md).
+
 ## Development
 
 Requires Node.js 24+, npm and Git. Electron 44 embeds Node 24 with `node:sqlite`; no native SQLite driver rebuild is required. Dependencies are pinned in `package.json` and `package-lock.json`.
