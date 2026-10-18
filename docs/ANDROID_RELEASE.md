@@ -1,6 +1,10 @@
 # Fixer Tools — Android test APK
 
-## Current: Android 0.2.0-android.9
+## Current: Android 0.2.0-android.10
+
+[Download verified APK test.18](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.18/Fixer-Tools-Android-0.2.0-test.apk). Adds a saved sun/moon day/night toggle on login and in the header, themed controls/dialogs/tables and a consistent SVG search icon with a 44px touch target. All 73 tests, desktop/browser and complete API35 APK workflow 39137451289 passed. Full download/checksum verified; [exact evidence and remaining signing/hardware checks](DAY_NIGHT_SEARCH.md).
+
+## Previous: Android 0.2.0-android.9
 
 [Download verified APK test.17](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.17/Fixer-Tools-Android-0.2.0-test.apk). Successful demo addition now opens Accessories, clears old search/date filters and resets to the first page; Settings shows the tracked demo count. Confirmation uses the actual in-app dialog. UI bundles Myanmar/Thai 400/600/700 fonts with corrected complex-script spacing. All 73 tests, desktop/browser checks and complete API35 native workflow 39136328550 passed; full download/checksum verified. See [exact results and remaining hardware/signing limitations](DEMO_VISIBILITY_FONTS.md).
 

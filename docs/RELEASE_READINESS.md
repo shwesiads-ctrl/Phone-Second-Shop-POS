@@ -61,3 +61,7 @@ Android 0.2.0-android.8 / test.16 is published and full download/checksum verifi
 ## Android demo visibility and typeface fix
 
 Android 0.2.0-android.9 / test.17 is published, full APK download/hash verified. 73 shared tests, desktop, full browser and actual API35 APK checks passed: real demo dialog cancellation/confirmation, auto-navigation/filter clearing, font loading/layout, currency/receipt and reinstall/persistence. See [evidence and physical device/native picker/printer/signing limits](DEMO_VISIBILITY_FONTS.md). No schema migration or new Windows installation test.
+
+## Android day/night and search icon
+
+Android 0.2.0-android.10 / test.18 is published and full download/hash verified. 73 shared tests, desktop/full browser and actual API35 theme/reload/search-icon/night-demo/receipt/reinstall checks passed; night dashboard/modal screenshots were inspected. [Evidence and remaining physical device/system-picker/printer/signing limitations](DAY_NIGHT_SEARCH.md). No database migration or new Windows installation test.
