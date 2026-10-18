@@ -21,7 +21,10 @@ test("100 demo items are unique, idempotent, removable after reopen and preserve
     method: "Cash",
   });
   const before = s.rows("SELECT * FROM payments");
-  assert.equal(s.invoke("demoInventory", { action: "add" }).count, 100);
+  assert.equal(
+    s.invoke("demoInventory", { action: "add", uiLanguage: "en-US" }).count,
+    100,
+  );
   assert.equal(s.invoke("demoInventory", { action: "add" }).count, 100);
   assert.equal(s.row("SELECT count(*) n FROM accessories")!.n, 101);
   assert.equal(

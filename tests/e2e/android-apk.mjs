@@ -116,7 +116,13 @@ try {
   await expect(
     page.getByRole("heading", { name: "Dashboard", exact: true }).first(),
   ).toBeVisible();
-  await verifyMobileLayout(page, "test-results/android/layout");
+  // Repeated full-page CDP captures can detach the Android WebView. Geometry
+  // assertions still cover every page/language; capture the real display once.
+  await verifyMobileLayout(page, null);
+  await writeFile(
+    "test-results/android/layout-native.png",
+    await device.screenshot(),
+  );
   await verifyOwnerRecovery(page, "apk-owner", "synthetic apk password");
   await verifyMobileAdditions(page, false);
   await verifyDemoRefresh(page);

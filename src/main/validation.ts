@@ -30,7 +30,12 @@ const inspectionFields = {
   included: z.string().max(1000).default(""),
 };
 export const schemas = {
-  demoInventory: z.object({ action: z.enum(["add", "remove"]) }).strict(),
+  demoInventory: z
+    .object({
+      action: z.enum(["add", "remove"]),
+      uiLanguage: z.enum(["my-MM", "th-TH", "en-US"]).optional(),
+    })
+    .strict(),
   wholesale: z.object({}),
   paymentMethod: z.object({ name: text, active: z.boolean() }),
   inspectionUpdate: z.object({
