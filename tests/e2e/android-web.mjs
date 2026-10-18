@@ -125,6 +125,13 @@ try {
     await page.evaluate(() => window.androidHarness.previews.at(-1).html),
   ).toContain("file:///android_asset/public/assets/receipt-myanmar.woff2");
   await call("label", { kind: "accessory", id: stockId });
+  const productLabel = await page.evaluate(() => window.androidHarness.previews.at(-1).html);
+  expect((productLabel.match(/<img /g) || []).length).toBe(1);
+  expect(productLabel).toContain("Cable မြန်မာ ไทย");
+  expect(productLabel).toContain("3,000");
+  expect(productLabel).toContain("MMK");
+  expect(productLabel).not.toContain("QR");
+  expect(productLabel).toContain("file:///android_asset/public/assets/receipt-myanmar.woff2");
   await call("backup");
   const encoded = await page.evaluate(
     () => window.androidHarness.exports.at(-1).data,

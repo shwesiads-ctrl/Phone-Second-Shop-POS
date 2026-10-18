@@ -1,3 +1,4 @@
+import { productLabelQuery, productLabelHTML } from "../shared/product-label";
 import { DemoWorkspace } from "./demo-workspace";
 import {
   app,
@@ -92,18 +93,8 @@ async function desktop(operation: Operation, raw: unknown) {
     return true;
   }
   if (operation === "label") {
-    const record = service.row(
-      input.kind === "phone"
-        ? "SELECT COALESCE(imei1,alternate,imei2) identifier FROM phones WHERE id=?"
-        : "SELECT COALESCE(NULLIF(barcode,''),sku) identifier FROM accessories WHERE id=?",
-      input.id,
-    );
+    const record = service.row(productLabelQuery(input.kind), input.id);
     if (!record) throw new DomainError("NOT_FOUND");
-    const qr = bwipjs.toSVG({
-      bcid: "qrcode",
-      text: record.identifier,
-      scale: 3,
-    });
     const barcode = bwipjs.toSVG({
       bcid: "code128",
       text: record.identifier,
@@ -121,12 +112,21 @@ async function desktop(operation: Operation, raw: unknown) {
         nodeIntegration: false,
       },
     });
-    await label.loadURL(
-      "data:text/html;charset=utf-8," +
-        encodeURIComponent(
-          `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'"><title>Barcode / QR</title><style>body{text-align:center;padding:30px}img{max-width:100%;display:block;margin:25px auto}</style></head><body><img alt="QR" src="data:image/svg+xml;base64,${Buffer.from(qr).toString("base64")}"><img alt="Barcode" src="data:image/svg+xml;base64,${Buffer.from(barcode).toString("base64")}"></body></html>`,
-        ),
+    label.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+    const directory = join(app.getPath("userData"), "print");
+    mkdirSync(directory, { recursive: true });
+    const file = join(directory, `label-${randomUUID()}.html`);
+    const html = productLabelHTML(
+      record as any,
+      `data:image/svg+xml;base64,${Buffer.from(barcode).toString("base64")}`,
+      locale,
+    ).replaceAll(
+      "../dist/assets/",
+      pathToFileURL(join(__dirname, "../dist/assets/") + "/").href,
     );
+    writeFileSync(file, html);
+    label.once("closed", () => rmSync(file, { force: true }));
+    await label.loadFile(file);
     return true;
   }
   if (operation === "backup") {

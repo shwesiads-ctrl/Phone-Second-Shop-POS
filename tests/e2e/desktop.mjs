@@ -113,7 +113,7 @@ try {
   const label = await labelWindow;
   await label.setViewportSize({ width: 600, height: 500 });
   await label.waitForLoadState();
-  expect(await label.locator("img").count()).toBe(2);
+  expect(await label.locator("img").count()).toBe(1);
   await expect
     .poll(() =>
       label
@@ -123,6 +123,8 @@ try {
         ),
     )
     .toBe(true);
+  await expect(label.locator(".product-name")).not.toBeEmpty();
+  await expect(label.locator(".price")).toContainText("MMK");
   await label.close();
   const backupPath = join(directory, "checked-backup.sqlite");
   await application.evaluate(({ dialog }, filePath) => {
@@ -221,7 +223,7 @@ try {
     ),
   ).toBe(true);
   console.log(
-    "PASS: Electron owner setup → supplier → phone purchase → paid sale → receipt preview; Myanmar/Thai switching; bundled Unicode fonts; barcode/QR; backup/restore; redacted bug export; language persistence; isolated preload.",
+    "PASS: Electron owner setup → supplier → phone purchase → paid sale → receipt preview; Myanmar/Thai switching; bundled Unicode fonts; product barcode/name/price; backup/restore; redacted bug export; language persistence; isolated preload.",
   );
   completed = true;
 } catch (error) {

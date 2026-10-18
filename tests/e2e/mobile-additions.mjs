@@ -5,6 +5,7 @@ export async function verifyMobileAdditions(page, mocked = false) {
   await page.getByRole("button", { name: "Add", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("SKU", { exact: true }).fill("UNCHANGED-SKU");
+  await expect(dialog.getByRole("button", {name: "Generate barcode", exact: true})).toHaveCount(1);
   const barcode = dialog.getByLabel("Barcode", { exact: true });
   await barcode
     .locator("..")

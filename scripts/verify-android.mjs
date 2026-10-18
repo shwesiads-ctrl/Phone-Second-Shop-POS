@@ -82,7 +82,7 @@ const badging = execFileSync(
   { encoding: "utf8" },
 );
 assert.match(badging, /application-label:'Fixer Tools'/);
-assert.match(badging, /versionName='0.2.0-android.11'/);
+assert.match(badging, /versionName='0.2.0-android.12'/);
 assert.match(
   badging,
   /package: name='com.myominaung.phonesecondshoppos.mobile'/,
@@ -120,7 +120,7 @@ writeFileSync(
   "test-results/android/apk-verification.json",
   JSON.stringify(
     {
-      version: "0.2.0-android.11",
+      version: "0.2.0-android.12",
       appName: "Fixer Tools",
       jpegExport: {
         ...dimensions,

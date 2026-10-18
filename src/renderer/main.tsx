@@ -348,7 +348,7 @@ function Form({
                     maxLength={f.type === "password" ? 128 : 200}
                   />
                 )}
-                {["barcode", "sku", "alternate"].includes(f.key) &&
+                {["barcode", "alternate"].includes(f.key) &&
                   !config.readonly && (
                     <button
                       type="button"

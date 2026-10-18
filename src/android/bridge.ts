@@ -1,3 +1,4 @@
+import { productLabelQuery, productLabelHTML } from "../shared/product-label";
 import { DemoWorkspace } from "../main/demo-workspace";
 import { printerTestHTML } from "../shared/printer-test";
 import { registerPlugin } from "@capacitor/core";
@@ -264,18 +265,13 @@ export async function createAndroidBridge(
       return true;
     }
     if (operation === "label") {
-      const item = service.row(
-        input.kind === "phone"
-          ? "SELECT COALESCE(imei1,alternate,imei2) identifier FROM phones WHERE id=?"
-          : "SELECT COALESCE(NULLIF(barcode,''),sku) identifier FROM accessories WHERE id=?",
-        input.id,
-      );
+      const item = service.row(productLabelQuery(input.kind), input.id);
       if (!item) throw new DomainError("NOT_FOUND");
-      const img = (bcid: string) =>
+      const img = () =>
         "data:image/svg+xml;base64," +
         Buffer.from(
           bwipjs.toSVG({
-            bcid,
+            bcid: "code128",
             text: item.identifier,
             scale: 3,
             height: 12,
@@ -283,7 +279,10 @@ export async function createAndroidBridge(
           }),
         ).toString("base64");
       await native.preview({
-        html: `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'"><style>img{display:block;max-width:100%;margin:12px auto}</style></head><body><img src="${img("qrcode")}"><img src="${img("code128")}"></body></html>`,
+        html: productLabelHTML(item as any, img(), language).replaceAll(
+          "../dist/assets/",
+          "file:///android_asset/public/assets/",
+        ),
         paper: "80mm",
         language,
         preview: true,
