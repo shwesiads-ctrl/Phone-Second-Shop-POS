@@ -7,7 +7,7 @@ import {
   rmSync,
   readdirSync,
 } from "node:fs";
-import { join, resolve, relative, basename } from "node:path";
+import { join, resolve, relative, basename, normalize } from "node:path";
 import { tmpdir } from "node:os";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
@@ -55,7 +55,7 @@ try {
   ];
   for (const f of expected)
     assert.equal(
-      hash(extractFile(asar, f)),
+      hash(extractFile(asar, normalize(f))),
       hash(readFileSync(f)),
       `packaged file differs: ${f}`,
     );
