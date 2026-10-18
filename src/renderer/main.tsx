@@ -3,7 +3,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "@fontsource/noto-sans-myanmar/400.css";
 import "@fontsource/noto-sans-myanmar/600.css";
+import "@fontsource/noto-sans-myanmar/700.css";
 import "@fontsource/noto-sans-thai/400.css";
+import "@fontsource/noto-sans-thai/600.css";
+import "@fontsource/noto-sans-thai/700.css";
 import "./style.css";
 import {
   currencies,
@@ -341,12 +344,71 @@ function Form({
   );
 }
 
+function DemoConfirmation({
+  action,
+  busy,
+  error,
+  t,
+  onCancel,
+  onConfirm,
+}: {
+  action: "add" | "remove";
+  busy: boolean;
+  error: string;
+  t: (key: string) => string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const node = dialog.current!;
+    node.showModal();
+    return () => node.close();
+  }, []);
+  return (
+    <dialog
+      ref={dialog}
+      className="dialog demo-confirmation"
+      aria-labelledby="demo-dialog-title"
+      aria-describedby="demo-dialog-description"
+      onCancel={(event) => {
+        event.preventDefault();
+        if (!busy) onCancel();
+      }}
+    >
+      <h2 id="demo-dialog-title">
+        {t(action === "add" ? "demoAdd" : "demoRemove")}
+      </h2>
+      <p id="demo-dialog-description">{t("demoNotice")}</p>
+      {error && (
+        <p className="error" role="alert">
+          {t(error)}
+        </p>
+      )}
+      <div className="export-actions">
+        <button
+          type="button"
+          className="secondary"
+          autoFocus
+          disabled={busy}
+          onClick={onCancel}
+        >
+          {t("cancel")}
+        </button>
+        <button type="button" disabled={busy} onClick={onConfirm}>
+          {t(action === "add" ? "demoAdd" : "demoRemove")}
+        </button>
+      </div>
+    </dialog>
+  );
+}
 function App() {
   const [language, setLanguage] = useState<Language>(
     (localStorage.getItem("pos.language") as Language) || "my-MM",
   );
   const t = (key: string) => translate(language, key);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [demoAction, setDemoAction] = useState<"add" | "remove" | null>(null);
   const [pullDistance, setPullDistance] = useState(0);
   const pullStart = useRef<{ x: number; y: number } | null>(null);
   const [narrow, setNarrow] = useState(
@@ -416,6 +478,7 @@ function App() {
   }, []);
   useEffect(() => {
     setMenuOpen(false);
+    setDemoAction(null);
   }, [user?.id]);
   useEffect(() => {
     if (!drawer || !menuOpen) return;
@@ -533,6 +596,29 @@ function App() {
     document.addEventListener("visibilitychange", clear);
     return () => document.removeEventListener("visibilitychange", clear);
   }, []);
+  async function applyDemo() {
+    if (!demoAction) return;
+    const action = demoAction;
+    const result = await run(async () => {
+      await call("demoInventory", { action });
+      if (action === "add") {
+        // Show the actual destination with a clean first page, even if old filters hid it.
+        const snapshot = await call("snapshot", { search: "", page: 0 });
+        setQuery("");
+        setSearch("");
+        setFrom("");
+        setTo("");
+        setPagination(0);
+        setData(snapshot);
+        setPage("accessories");
+        window.scrollTo(0, 0);
+      } else await load();
+      setDemoAction(null);
+      return true;
+    }, false);
+    if (result === true)
+      setMessage(action === "add" ? "demoReady" : "demoRemoved");
+  }
   async function printerAction(action: string, address?: string) {
     await run(async () => {
       const result = await call("printer", {
@@ -1170,8 +1256,9 @@ function App() {
           window.scrollY <= 0 &&
           e.touches.length === 1 &&
           !editor &&
+          !demoAction &&
           !target.closest(
-            "input,select,textarea,button,.overlay,aside,.table-wrap",
+            "input,select,textarea,button,.overlay,dialog,aside,.table-wrap",
           ) &&
           !nestedScroll &&
           p
@@ -2795,15 +2882,18 @@ function App() {
             <>
               {user.role === "Owner" && (
                 <section className="panel">
-                  <h2>{t("demoTitle")}</h2>
+                  <h2>
+                    {t("demoTitle")}{" "}
+                    <span className="badge" data-testid="demo-count">
+                      {data.settings.demoInventory?.length || 0}
+                    </span>
+                  </h2>
+                  <p className="muted">{t("demoLocation")}</p>
                   <p className="info">{t("demoNotice")}</p>
                   <div className="export-actions">
                     {btn("demoAdd", () => {
-                      if (window.confirm(t("demoNotice")))
-                        void run(async () => {
-                          await call("demoInventory", { action: "add" });
-                          setPagination(1);
-                        });
+                      setError("");
+                      setDemoAction("add");
                     })}
                     {btn("demoRemove", () => {
                       if (
@@ -2818,11 +2908,8 @@ function App() {
                         setError("DEMO_IN_USE");
                         return;
                       }
-                      if (window.confirm(t("confirm")))
-                        void run(async () => {
-                          await call("demoInventory", { action: "remove" });
-                          setPagination(1);
-                        });
+                      setError("");
+                      setDemoAction("remove");
                     })}
                   </div>
                 </section>
@@ -3346,6 +3433,19 @@ function App() {
           </footer>
         </main>
       </div>
+      {demoAction && (
+        <DemoConfirmation
+          action={demoAction}
+          busy={busy}
+          error={error}
+          t={t}
+          onCancel={() => {
+            setDemoAction(null);
+            setError("");
+          }}
+          onConfirm={() => void applyDemo()}
+        />
+      )}
       {editor && (
         <Form
           config={editor}

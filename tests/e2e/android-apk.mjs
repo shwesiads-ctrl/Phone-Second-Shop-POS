@@ -141,7 +141,9 @@ try {
   );
   await verifyOwnerRecovery(page, "apk-owner", "synthetic apk password");
   await verifyMobileAdditions(page, false);
-  await verifyDemoRefresh(page);
+  await verifyDemoRefresh(page, async () => {
+    adb("shell", "input", "keyevent", "4");
+  });
   results.demoInventory = true;
   results.pullRefresh = true;
   results.mobileAdditions = true;

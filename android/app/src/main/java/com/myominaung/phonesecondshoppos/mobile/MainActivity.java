@@ -16,7 +16,7 @@ public class MainActivity extends BridgeActivity {
   android.webkit.WebView.enableSlowWholeDocumentDraw();registerPlugin(PosNativePlugin.class);registerPlugin(BluetoothPrinterPlugin.class);super.onCreate(state);
   getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true){@Override public void handleOnBackPressed(){
    if(exitDialog!=null&&exitDialog.isShowing())return;
-   try{getBridge().getWebView().evaluateJavascript("(()=>{if(document.querySelector('aside.mobile-drawer.is-open')){window.dispatchEvent(new Event('fixer-close-menu'));return true;}return false;})()",result->{if(!"true".equals(result))confirmExit();});}catch(Exception e){confirmExit();}
+   try{getBridge().getWebView().evaluateJavascript("(()=>{const dialog=document.querySelector('dialog[open]');if(dialog){const event=new Event('cancel',{cancelable:true});if(dialog.dispatchEvent(event))dialog.close();return true;}if(document.querySelector('aside.mobile-drawer.is-open')){window.dispatchEvent(new Event('fixer-close-menu'));return true;}return false;})()",result->{if(!"true".equals(result))confirmExit();});}catch(Exception e){confirmExit();}
   }});
  }
 }

@@ -5,6 +5,21 @@ const words: Record<string, [string, string, string]> = {
     "အောက်ကိုဆွဲချ၍ ပြန်ဖွင့်ရန်",
     "ดึงลงเพื่อรีเฟรช",
   ],
+  demoLocation: [
+    "Demo items are accessories. Adding opens Accessories and clears search/date filters.",
+    "Demo ပစ္စည်းများကို အပိုပစ္စည်းစာရင်းတွင် ထည့်ပါသည်။ ထည့်ပြီးလျှင် ရှာဖွေမှု/ရက်စွဲ filter ရှင်းပြီး စာရင်းကို ပြပါမည်။",
+    "สินค้าทดลองอยู่ในอุปกรณ์เสริม เมื่อเพิ่มจะเปิดรายการและล้างตัวกรองค้นหา/วันที่",
+  ],
+  demoReady: [
+    "100 demo accessories are ready below.",
+    "အောက်တွင် Demo အပိုပစ္စည်း ၁၀၀ ကို ကြည့်နိုင်ပါပြီ။",
+    "สินค้าทดลอง 100 รายการพร้อมในรายการด้านล่าง",
+  ],
+  demoRemoved: [
+    "Unused demo accessories removed. Your own items are kept.",
+    "မသုံးရသေးသော Demo အပိုပစ္စည်းများ ဖယ်ပြီးပါပြီ။ ကိုယ်ပိုင်ပစ္စည်းများ မပျက်ပါ။",
+    "ลบสินค้าทดลองที่ยังไม่ใช้แล้ว สินค้าของคุณยังคงอยู่",
+  ],
   demoTitle: ["Demo inventory", "စမ်းသပ်ပစ္စည်းများ", "สินค้าทดลอง"],
   demoAdd: [
     "Add 100 demo items",

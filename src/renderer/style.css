@@ -88,7 +88,7 @@ p {
 }
 h1 {
   font-size: 24px;
-  letter-spacing: -0.5px;
+  letter-spacing: normal;
   margin-bottom: 0;
 }
 h2 {
@@ -662,4 +662,48 @@ figure {
 figcaption {
   color: #7d8c9d;
   font-size: 11px;
+}
+
+/* Keep complex-script shaping and real bundled weights consistent across controls. */
+:root:lang(th) {
+  font-family: "Noto Sans Thai", "Noto Sans Myanmar", sans-serif;
+}
+:root:lang(en) {
+  font-family: "Noto Sans Thai", "Noto Sans Myanmar", sans-serif;
+}
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  line-height: 1.65;
+}
+:lang(my) h1,
+:lang(my) h2,
+:lang(my) h3,
+:lang(my) button,
+:lang(my) label {
+  letter-spacing: normal;
+}
+:lang(th) h1,
+:lang(th) h2,
+:lang(th) h3,
+:lang(th) button,
+:lang(th) label {
+  letter-spacing: normal;
+}
+th {
+  font-weight: 600;
+}
+dialog.demo-confirmation {
+  border: 1px solid #dbe2e9;
+  color: inherit;
+  max-width: calc(100vw - 24px);
+}
+dialog.demo-confirmation::backdrop {
+  background: #102b4677;
+}
+
+:lang(my) .brand small,
+:lang(th) .brand small {
+  letter-spacing: normal;
 }

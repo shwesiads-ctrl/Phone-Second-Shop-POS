@@ -10,11 +10,9 @@ export async function verifyMobileLayout(page, prefix) {
       "false",
     );
     await openNavigation(page);
-    await page
-      .locator(".drawer-backdrop")
-      .click({
-        position: { x: await page.evaluate(() => innerWidth - 10), y: 250 },
-      });
+    await page.locator(".drawer-backdrop").click({
+      position: { x: await page.evaluate(() => innerWidth - 10), y: 250 },
+    });
     await expect(page.getByTestId("menu-toggle")).toHaveAttribute(
       "aria-expanded",
       "false",
@@ -22,6 +20,14 @@ export async function verifyMobileLayout(page, prefix) {
   }
   for (const language of ["en-US", "my-MM", "th-TH"]) {
     await page.locator(".header-actions select").selectOption(language);
+    const fonts = await page.evaluate(async () => ({
+      my: (await document.fonts.load('700 16px "Noto Sans Myanmar"', "မြန်မာ"))
+        .length,
+      thai: (await document.fonts.load('600 16px "Noto Sans Thai"', "ไทย"))
+        .length,
+    }));
+    expect(fonts.my).toBeGreaterThan(0);
+    expect(fonts.thai).toBeGreaterThan(0);
     console.log(
       "Layout language",
       language,
