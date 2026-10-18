@@ -1,6 +1,10 @@
 # Fixer Tools — Android test APK
 
-## Fixer Tools · Android 0.2.0-android.5
+## Current: Android 0.2.0-android.6
+
+[Verified test release android-v0.2.0-test.12](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.12) adds selected-language receipt labels/native controls and a sliding mobile navigation drawer. All 68 shared tests, desktop/browser checks and actual installed API35 APK workflow [39124424300](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39124424300) passed. Full APK download/checksum and synthetic receipt JPEG were verified; see [results and pending hardware/signing items](RECEIPT_LANGUAGE_DRAWER.md). This remains a debug-signed test APK.
+
+## Previous: Fixer Tools · Android 0.2.0-android.5
 
 **Verified published APK:** [android-v0.2.0-test.9](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.9), source `6888779`, [successful native workflow 39122033913](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39122033913). Actual API35 APK passed Fixer Tools launcher/UI branding, native receipt Gallery JPEG save and share chooser, plus all existing workflow/persistence checks. All 62 shared tests, typecheck, desktop and Android-browser checks passed. The full downloaded APK returned HTTP 200, 10,727,914 bytes; SHA256 `6f4b8ecdfe2b2aa2a944cabb0702df09eba965c8016fc5a09f4d0cf502640ae1` matched both attached checksum and verification JSON. The 720×2384 exported synthetic JPEG was downloaded/hash-checked and visually inspected: Unicode, invoice details and payment/change are visible. External receiving-app delivery and physical hardware remain pending; see the linked JPEG validation details.
 

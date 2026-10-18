@@ -14,9 +14,9 @@ The GitHub Windows build/test/package verification passed. This does not establi
 
 ## Android APK download
 
-[Download Fixer Tools Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.9/Fixer-Tools-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.9)
+[Download Fixer Tools Android test APK](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/android-v0.2.0-test.12/Fixer-Tools-Android-0.2.0-test.apk) · [Android release notes/checksum](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/android-v0.2.0-test.12)
 
-Android app name/icon: **Fixer Tools** (0.2.0-android.5). Receipt preview includes **Save JPEG** to Pictures/FixerTools and **Share JPEG** via the Android chooser. See [JPEG details and verified sample](docs/FIXER_TOOLS_JPEG.md).
+Android app name/icon: **Fixer Tools** (0.2.0-android.6). Receipt preview includes **Save JPEG** to Pictures/FixerTools and **Share JPEG** via the Android chooser. Receipt labels and native controls use the selected language; narrow screens use a sliding side menu. See [current verification](docs/RECEIPT_LANGUAGE_DRAWER.md) and [JPEG details](docs/FIXER_TOOLS_JPEG.md).
 
 Android additions: Back/Exit confirmation, customization contact via Telegram @kominit, automatic barcodes, and Classic Bluetooth SPP / ESC-POS search/connect/test-preview/raster printing. **Physical printer acceptance is pending.** See [printer setup and limits](docs/ANDROID_PRINTER_FEATURES.md).
 

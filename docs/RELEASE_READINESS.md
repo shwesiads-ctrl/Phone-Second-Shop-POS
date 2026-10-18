@@ -49,3 +49,7 @@ Status: **candidate built/tested in Linux cloud; not approved for a production W
 - Linux-only `--no-sandbox --ozone-platform=headless --disable-gpu` restricted to cloud test/dev invocation; never Windows production launch.
 - Startup follows `docs/CLOUD.md`; tests use isolated synthetic databases. No production data in install folders or test seeds.
 - Configuration save/read-back and publication status are separately recorded in VALIDATION.md.
+
+## Android selected-language receipt and drawer update
+
+Android 0.2.0-android.6 / test.12 passed 68 shared tests, desktop and Android-browser workflows, and native API35 installation/drawer/receipt/JPEG/persistence verification. The published APK full download/hash matches metadata. See [exact evidence, failed-run fixes and remaining physical hardware/signing checks](RECEIPT_LANGUAGE_DRAWER.md). No new Windows installer or physical printer test is claimed.
