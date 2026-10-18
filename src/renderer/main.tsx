@@ -2806,6 +2806,18 @@ function App() {
                         });
                     })}
                     {btn("demoRemove", () => {
+                      if (
+                        cart.some(
+                          (item) =>
+                            item.kind === "accessory" &&
+                            data.settings.demoInventory?.some(
+                              (demo: Row) => demo.id === item.id,
+                            ),
+                        )
+                      ) {
+                        setError("DEMO_IN_USE");
+                        return;
+                      }
                       if (window.confirm(t("confirm")))
                         void run(async () => {
                           await call("demoInventory", { action: "remove" });

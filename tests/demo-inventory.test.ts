@@ -119,3 +119,25 @@ test("demo cleanup audit failure rolls back deletions and a custom permission ca
   );
   s.db.close();
 });
+
+test("removed demo IDs are never reassigned to real inventory or another demo batch", () => {
+  const s = shop();
+  s.invoke("demoInventory", { action: "add" });
+  const previous = s.settings().demoInventory.map((v: any) => v.id);
+  s.invoke("demoInventory", { action: "remove" });
+  const id = s.invoke("accessory", {
+    sku: "AFTER",
+    name: "Real item",
+    category: "Cable",
+    cost: 100,
+    price: 200,
+    currency: "MMK",
+    quantity: 2,
+    reorder: 0,
+    method: "Cash",
+  });
+  assert.ok(id > Math.max(...previous));
+  s.invoke("demoInventory", { action: "add" });
+  assert.ok(s.settings().demoInventory.every((v: any) => v.id > id));
+  s.db.close();
+});

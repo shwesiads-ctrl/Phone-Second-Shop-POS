@@ -128,6 +128,19 @@ export class ShopService {
     }
     return this.session;
   }
+  private nextAccessoryId(): number {
+    const current = Number(
+      this.row("SELECT COALESCE(MAX(id),0) id FROM accessories")!.id,
+    );
+    const reserved = Number(this.settings().accessorySequence || 0);
+    const id = Math.max(current, reserved) + 1;
+    assert(Number.isSafeInteger(id), "CONFLICT");
+    this.run(
+      "INSERT INTO settings(key,value) VALUES('accessorySequence',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+      JSON.stringify(id),
+    );
+    return id;
+  }
   private newBarcode(): string {
     for (let i = 0; i < 5; i++) {
       const barcode = barcodeCandidate(randomUUID());
@@ -884,7 +897,8 @@ export class ShopService {
             const sku = `DEMO-${batch}-${i}`;
             const barcode = this.newBarcode();
             const r = this.run(
-              "INSERT INTO accessories(sku,barcode,name,category,cost,price,currency,quantity,reorder) VALUES(?,?,?,?,?,?,?,?,?)",
+              "INSERT INTO accessories(id,sku,barcode,name,category,cost,price,currency,quantity,reorder) VALUES(?,?,?,?,?,?,?,?,?,?)",
+              this.nextAccessoryId(),
               sku,
               barcode,
               `[DEMO] ${names[(i - 1) % names.length]} ${String(i).padStart(3, "0")}`,
@@ -985,7 +999,8 @@ export class ShopService {
           "CONFLICT",
         );
         const r = this.run(
-          "INSERT INTO accessories(sku,barcode,name,category,cost,price,currency,quantity,reorder) VALUES(?,?,?,?,?,?,?,?,?)",
+          "INSERT INTO accessories(id,sku,barcode,name,category,cost,price,currency,quantity,reorder) VALUES(?,?,?,?,?,?,?,?,?,?)",
+          this.nextAccessoryId(),
           input.sku,
           barcode,
           input.name,
