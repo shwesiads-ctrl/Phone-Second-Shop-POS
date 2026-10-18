@@ -52,6 +52,9 @@ async function connect() {
       const p = await view.page();
       p.setDefaultTimeout(30000);
       await p.waitForFunction(() => !!window.pos, {}, { timeout: 60000 });
+      // A force-stop can happen before WebView flushes the selected locale.
+      // Choose the test locale on each new login screen before English selectors.
+      await p.getByRole("combobox").first().selectOption("en-US");
       return p;
     } catch (error) {
       if (
@@ -308,6 +311,9 @@ try {
   expect((await call("snapshot")).sales).toHaveLength(1);
   results.backExitConfirmation = true;
   adb("shell", "am", "force-stop", pkg);
+  await device.close();
+  device = (await android.devices({ omitDriverInstall: true }))[0];
+  expect(device).toBeTruthy();
   adb("shell", "am", "start", "-n", `${pkg}/.MainActivity`);
   page = await connect();
   await page.getByRole("combobox").first().selectOption("en-US");
@@ -319,6 +325,9 @@ try {
   expect((await call("snapshot")).sales).toHaveLength(1);
   results.privatePersistence = true;
   adb("shell", "am", "force-stop", pkg);
+  await device.close();
+  device = (await android.devices({ omitDriverInstall: true }))[0];
+  expect(device).toBeTruthy();
   adb("install", "-r", apk);
   adb("shell", "am", "start", "-n", `${pkg}/.MainActivity`);
   page = await connect();
