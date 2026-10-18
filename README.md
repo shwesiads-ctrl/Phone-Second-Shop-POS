@@ -6,7 +6,7 @@ This is version **0.2.0**, a test release for shop acceptance testing. Read [fea
 
 ## Windows download
 
-[Download Windows x64 installer](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/v0.2.0-ci.5/Phone.Second.Shop.POS.Setup.0.2.0.exe) · [Release notes and SHA256](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/v0.2.0-ci.5)
+[Download Windows x64 installer](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/v0.2.0-ci.6/Fixer-Tools-Windows-Setup-0.2.0.exe) · [Release notes and SHA256](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/tag/v0.2.0-ci.6)
 
 Installer ကို အပေါ်က link မှ download ဆွဲနိုင်ပါသည်။ Unsigned test build ဖြစ်သည်။ Windows clean installation/upgrade/uninstall နှင့် physical printing စမ်းသပ်မှုများ မပြီးသေးပါ။ Source-code ZIP သည် installer မဟုတ်ပါ။
 

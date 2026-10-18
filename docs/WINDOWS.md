@@ -1,5 +1,11 @@
 # Windows 10/11 x64 installation
 
+## Current separate Windows release
+
+[Download Fixer Tools Windows x64 installer](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/v0.2.0-ci.6/Fixer-Tools-Windows-Setup-0.2.0.exe), tag `v0.2.0-ci.6`, source `bbc4ca6`. [Windows Actions run 39148699110](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39148699110) passed in 2m31s: shared tests, native Windows source-app Electron workflow, NSIS packaging, archive integrity and 46 packaged-file comparisons. The full public download returned HTTP200, 116,829,320 bytes. SHA256 `d2313997ceac16c12536e2df85bcff6607cbc192de7a0576ad8daf0ef4c75003` matches the checksum and verification JSON. Both installer/application are unsigned.
+
+Packaged executable launch, clean installation, upgrade/uninstall preservation, SmartScreen observation and physical printing remain pending. A successful build is not installer acceptance. Windows and Android use separate offline databases without automatic sync. Existing internal Windows executable name, app ID and data path remain unchanged.
+
 ## Build from source on Windows
 
 Install Node.js 24+ x64 and Git. Use PowerShell in the project folder:
@@ -11,10 +17,10 @@ npm test
 npm run test:desktop
 npm run dist:win
 Get-ChildItem .\release\*.exe
-Get-FileHash '.\release\Phone Second Shop POS Setup 0.2.0.exe' -Algorithm SHA256
+Get-FileHash '.\release\Fixer-Tools-Windows-Setup-0.2.0.exe' -Algorithm SHA256
 ```
 
-`dist:win` runs tests and builds before invoking Electron Builder. The expected NSIS output is `release\Phone Second Shop POS Setup 0.2.0.exe`; only a successful command plus an actual nonempty artifact establishes that it was created. `release\win-unpacked` is the unpacked application, not the installer. No portable target is enabled in this release.
+`dist:win` runs tests and builds before invoking Electron Builder. The expected NSIS output is `release\Fixer-Tools-Windows-Setup-0.2.0.exe`; only a successful command plus an actual nonempty artifact establishes that it was created. `release\win-unpacked` is the unpacked application, not the installer. No portable target is enabled in this release.
 
 An application icon, product name/version and per-user assisted custom NSIS installer are configured. The build hook generates an exact uninstall file manifest. Uninstall removes packaged files and empty app directories only; it never recursively removes user-added files. The installer allows choosing an installation directory and creates standard shortcuts. No code-signing certificate is configured: do not describe an unsigned build as verified by Microsoft or a trusted publisher. Use your organization's signing configuration for a distributed production release; never put signing secrets into source control.
 
