@@ -7,3 +7,5 @@ This batch is separate from Add 100 demo items and the temporary Full sample sho
 No schema migration is required: ownership and original snapshots use existing settings storage. The default legacy demo API still creates 100 items; preset named10 selects the new batch.
 
 Shared automated tests: 80 passed, including idempotence, persisted tracking/reopen, positive selling prices, distinct barcodes, preservation of real contacts/stock/payments, atomic refusal after use or editing, and foreign-key integrity. Typecheck and desktop workflow passed. Android browser Settings add/remove and both list destinations are verified separately. Physical devices/printers and installed Windows acceptance remain pending.
+
+Windows release v0.2.0-ci.7, source 54b0019: Actions run 39150492201 passed in 2m20s. Full public installer download HTTP200, 116,831,974 bytes; SHA256 c917d3ba25344a7da2b247a526fa11c77b343b08c3425a0a9c0058298a9d3388 matches checksum/verification JSON. Installer remains unsigned; clean install/upgrade/uninstall are pending. No Android APK containing this feature has been built or published.

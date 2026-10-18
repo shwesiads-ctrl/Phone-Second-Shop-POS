@@ -2,7 +2,7 @@
 
 ## Current separate Windows release
 
-[Download Fixer Tools Windows x64 installer](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/v0.2.0-ci.6/Fixer-Tools-Windows-Setup-0.2.0.exe), tag `v0.2.0-ci.6`, source `bbc4ca6`. [Windows Actions run 39148699110](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39148699110) passed in 2m31s: shared tests, native Windows source-app Electron workflow, NSIS packaging, archive integrity and 46 packaged-file comparisons. The full public download returned HTTP200, 116,829,320 bytes. SHA256 `d2313997ceac16c12536e2df85bcff6607cbc192de7a0576ad8daf0ef4c75003` matches the checksum and verification JSON. Both installer/application are unsigned.
+[Download Fixer Tools Windows x64 installer](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/releases/download/v0.2.0-ci.7/Fixer-Tools-Windows-Setup-0.2.0.exe), tag `v0.2.0-ci.7`, source `54b0019`. [Windows Actions run 39150492201](https://github.com/shwesiads-ctrl/Phone-Second-Shop-POS/actions/runs/39150492201) passed in 2m20s: shared tests, native Windows source-app Electron workflow, NSIS packaging, archive integrity and 46 packaged-file comparisons. The full public download returned HTTP200, 116,831,974 bytes. SHA256 `c917d3ba25344a7da2b247a526fa11c77b343b08c3425a0a9c0058298a9d3388` matches the checksum and verification JSON. Both installer/application are unsigned.
 
 Packaged executable launch, clean installation, upgrade/uninstall preservation, SmartScreen observation and physical printing remain pending. A successful build is not installer acceptance. Windows and Android use separate offline databases without automatic sync. Existing internal Windows executable name, app ID and data path remain unchanged.
 
