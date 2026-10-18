@@ -1,5 +1,6 @@
 // Actual installed debug APK, Android WebView and private native storage; no mock bridge.
-import { _android as android, expect } from "playwright";
+import { _android as android } from "playwright";
+import { expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 const pkg = "com.myominaung.phonesecondshoppos.mobile";
@@ -30,12 +31,26 @@ const results = {
 };
 let page;
 async function connect() {
-  const view = await device.webView({ pkg }, { timeout: 45000 });
-  const p = await view.page();
-  p.setDefaultTimeout(30000);
-  await p.waitForFunction(() => !!window.pos, {}, { timeout: 60000 });
-  return p;
+  await new Promise((r) => setTimeout(r, 1000));
+  for (let attempt = 0; attempt < 8; attempt++) {
+    try {
+      const view = await device.webView({ pkg }, { timeout: 45000 });
+      const p = await view.page();
+      p.setDefaultTimeout(30000);
+      await p.waitForFunction(() => !!window.pos, {}, { timeout: 60000 });
+      return p;
+    } catch (error) {
+      if (
+        attempt === 7 ||
+        !/closed|socket|ECONNREFUSED|not found/i.test(String(error))
+      )
+        throw error;
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+  throw new Error("Android WebView unavailable");
 }
+
 async function call(op, input = {}) {
   const r = await page.evaluate(({ op, input }) => window.pos.call(op, input), {
     op,
