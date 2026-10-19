@@ -104,7 +104,164 @@ try {
     path: "test-results/receipt.png",
     fullPage: true,
   });
+  const jpegPath = join(directory, "receipt-export.jpg");
+  await application.evaluate(({ dialog }, filePath) => {
+    dialog.showSaveDialog = async () => ({ canceled: false, filePath });
+  }, jpegPath);
+  await receipt.getByRole("button", { name: "Save JPEG", exact: true }).click();
+  await expect(receipt.getByRole("status")).toContainText("Saved");
+  const jpeg = await readFile(jpegPath);
+  expect(jpeg.subarray(0, 3).toString("hex")).toBe("ffd8ff");
+  const imageSize = await application.evaluate(
+    ({ nativeImage }, path) => nativeImage.createFromPath(path).getSize(),
+    jpegPath,
+  );
+  expect(imageSize.width).toBeGreaterThanOrEqual(480);
+  expect(imageSize.height).toBeGreaterThan(400);
+  const receiptHeight = await receipt
+    .locator("#receipt")
+    .evaluate((e) => e.getBoundingClientRect().height);
+  expect(imageSize.height).toBeLessThan(receiptHeight + 300);
+  await writeFile("test-results/receipt-export.jpg", jpeg);
   await receipt.close();
+  const longSale = await page.evaluate(async () => {
+    const items = [];
+    for (let n = 0; n < 15; n++) {
+      const product = await window.pos.call("accessory", {
+        sku: "JPEG-LONG-" + n,
+        name: "USB-C Charger မြန်မာ ไทย " + n,
+        category: "Test",
+        cost: 0,
+        price: 1000,
+        currency: "MMK",
+        quantity: 2,
+        reorder: 0,
+        method: "Cash",
+      });
+      if (!product.ok) throw new Error(product.error);
+      items.push({
+        kind: "accessory",
+        id: product.data,
+        quantity: 1,
+        price: 1000,
+      });
+    }
+    const sale = await window.pos.call("sale", {
+      request: crypto.randomUUID(),
+      currency: "MMK",
+      items,
+      payments: [{ method: "Cash", amount: 15000 }],
+    });
+    if (!sale.ok) throw new Error(sale.error);
+    return sale.data;
+  });
+  const longPopup = page.context().waitForEvent("page");
+  await page.evaluate(
+    (id) =>
+      window.pos.call("receipt", { id, language: "en-US", preview: true }),
+    longSale,
+  );
+  const longReceipt = await longPopup;
+  await longReceipt.setViewportSize({ width: 600, height: 850 });
+  await longReceipt.waitForLoadState();
+  await longReceipt
+    .getByRole("button", { name: "Save JPEG", exact: true })
+    .click();
+  await expect(longReceipt.getByRole("status")).toContainText("Saved");
+  const longSize = await application.evaluate(
+    ({ nativeImage }, path) => nativeImage.createFromPath(path).getSize(),
+    jpegPath,
+  );
+  expect(longSize.height).toBeGreaterThan(900);
+  const longHeight = await longReceipt
+    .locator("#receipt")
+    .evaluate((e) => e.getBoundingClientRect().height);
+  expect(Math.abs(longSize.height - longHeight)).toBeLessThan(300);
+  await writeFile(
+    "test-results/receipt-long-export.jpg",
+    await readFile(jpegPath),
+  );
+  await longReceipt.close();
+
+  const repairId = await page.evaluate(async () => {
+    const call = async (op, input) => {
+      const r = await window.pos.call(op, input);
+      if (!r.ok) throw new Error(r.error);
+      return r.data;
+    };
+    const customer = await call("contact", {
+      name: "Customer မြန်မာ ไทย",
+      phone: "DEMO-PHONE",
+      kind: "customer",
+    });
+    const repair = await call("repair", {
+      contactId: customer,
+      device: "OPPO Reno 11",
+      identifier: "DEMO-REPAIR-01",
+      problem: "No power",
+      inspection: "Sample intake",
+      estimate: 85000,
+      currency: "MMK",
+    });
+    await call("repairUpdate", {
+      id: repair,
+      status: "Diagnosing",
+      diagnosis: "Power circuit inspection completed",
+      approved: false,
+      final: 0,
+      warrantyDays: 30,
+      reason: "",
+    });
+    await call("payment", {
+      request: crypto.randomUUID(),
+      target: "repair",
+      id: repair,
+      amount: 20000,
+      currency: "MMK",
+      method: "Cash",
+    });
+    return repair;
+  });
+  const repairPopup = page.context().waitForEvent("page");
+  await page.evaluate(
+    (id) =>
+      window.pos.call("receipt", {
+        id,
+        kind: "repair",
+        language: "en-US",
+        preview: true,
+      }),
+    repairId,
+  );
+  const repairReceipt = await repairPopup;
+  await repairReceipt.setViewportSize({ width: 600, height: 850 });
+  await repairReceipt.waitForLoadState();
+  await expect(repairReceipt.locator("#receipt")).toContainText("OPPO Reno 11");
+  await expect(repairReceipt.locator("#receipt")).toContainText(
+    "Power circuit inspection completed",
+  );
+  await expect(repairReceipt.locator(".balance")).toContainText("65,000");
+  await repairReceipt
+    .getByRole("button", { name: "Save JPEG", exact: true })
+    .click();
+  await expect(repairReceipt.getByRole("status")).toContainText("Saved");
+  await writeFile(
+    "test-results/receipt-repair-export.jpg",
+    await readFile(jpegPath),
+  );
+  await application.evaluate(({ dialog }) => {
+    dialog.showSaveDialog = async () => ({ canceled: true });
+  });
+  await repairReceipt
+    .getByRole("button", { name: "Save JPEG", exact: true })
+    .click();
+  await expect(
+    repairReceipt.getByRole("button", { name: "Save JPEG", exact: true }),
+  ).toBeEnabled();
+  await expect(repairReceipt.getByRole("status")).toBeEmpty();
+  await repairReceipt
+    .getByRole("button", { name: "Close", exact: true })
+    .click();
   const labelWindow = page.context().waitForEvent("page");
   const labelResult = await page.evaluate(() =>
     window.pos.call("label", { kind: "phone", id: 1 }),
@@ -164,7 +321,7 @@ try {
   expect(
     restored.data.contacts.some((c) => c.name === "Temporary contact"),
   ).toBe(false);
-  expect(restored.data.sales).toHaveLength(1);
+  expect(restored.data.sales).toHaveLength(2);
   const bugPath = join(directory, "report.txt");
   await application.evaluate(({ dialog }, filePath) => {
     dialog.showSaveDialog = async () => ({ canceled: false, filePath });

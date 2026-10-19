@@ -67,13 +67,17 @@ jobs:
             release/*Setup*.exe
             release/*.exe.sha256
             test-results/windows-artifact.json
+            test-results/receipt-export.jpg
+            test-results/receipt-repair-export.jpg
       - name: Preserve desktop test screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: windows-desktop-evidence
           if-no-files-found: ignore
-          path: test-results/*.png
+          path: |
+            test-results/*.png
+            test-results/*.jpg
 
   publish:
     needs: build
@@ -96,7 +100,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -d '' assets < <(find artifacts -type f \( -name '*.exe' -o -name '*.sha256' -o -name 'windows-artifact.json' \) -print0)
+          mapfile -d '' assets < <(find artifacts -type f \( -name '*.exe' -o -name '*.sha256' -o -name 'windows-artifact.json' -o -name '*.jpg' \) -print0)
           test "${#assets[@]}" -ge 3
           gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --prerelease --title "Fixer Tools Windows x64 $RELEASE_TAG — unsigned test build" --notes-file docs/RELEASE_NOTES_0.2.0.md
 

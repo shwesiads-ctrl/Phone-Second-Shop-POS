@@ -1,3 +1,4 @@
+import { openReceipt } from "./receipt-window";
 import { productLabelQuery, productLabelHTML } from "../shared/product-label";
 import { DemoWorkspace } from "./demo-workspace";
 import {
@@ -28,7 +29,6 @@ import { openDatabase } from "./database";
 import { DomainError, ShopService } from "./service";
 import { operations, type Operation } from "../shared/contracts";
 import { schemas } from "./validation";
-import { receiptHTML } from "./receipt";
 import { dictionaries } from "../renderer/i18n";
 if (!app.isPackaged && process.env.POS_TEST_DATA_DIR)
   app.setPath("userData", resolve(process.env.POS_TEST_DATA_DIR));
@@ -200,58 +200,13 @@ async function desktop(operation: Operation, raw: unknown) {
       language: receiptLocale,
       receipt: input.paper || invoice.settings.receipt,
     };
-    const print = new BrowserWindow({
-      width: 600,
-      height: 850,
-      parent: window,
-      webPreferences: {
-        sandbox: true,
-        contextIsolation: true,
-        nodeIntegration: false,
-      },
-    });
-    print.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
-    // A temporary local HTML file keeps offline bundled fonts usable in preview and print.
-    const directory = join(app.getPath("userData"), "print");
-    mkdirSync(directory, { recursive: true });
-    const html = receiptHTML(
+    return openReceipt(
+      window,
       invoice,
       dictionaries[receiptLocale as keyof typeof dictionaries],
+      input.preview,
+      () => service.require("receipt"),
     );
-    const fonts = join(__dirname, "../dist/assets");
-    const adjusted = html.replaceAll(
-      "../dist/assets/",
-      pathToFileURL(fonts + "/").href,
-    );
-    const file = join(directory, "receipt.html");
-    writeFileSync(file, adjusted);
-    await print.loadFile(file);
-    if (!input.preview && invoice.settings.printer) {
-      const printers = await print.webContents.getPrintersAsync();
-      if (!printers.some((p) => p.name === invoice.settings.printer)) {
-        print.close();
-        throw new DomainError("PRINTER_UNAVAILABLE");
-      }
-    }
-    if (!input.preview)
-      await new Promise<void>((res, rej) =>
-        print.webContents.print(
-          {
-            silent: false,
-            pageSize:
-              invoice.settings.receipt === "A4"
-                ? "A4"
-                : {
-                    width: invoice.settings.receipt === "58mm" ? 58000 : 80000,
-                    height: 250000,
-                  },
-            deviceName: invoice.settings.printer || undefined,
-            printBackground: true,
-          },
-          (success, reason) => (success ? res() : rej(new Error(reason))),
-        ),
-      );
-    return true;
   }
   if (operation === "bugExport") {
     const report = [

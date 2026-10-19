@@ -2146,7 +2146,7 @@ export class ShopService {
       );
       assert(entity, "NOT_FOUND");
       const contact = this.row(
-        "SELECT name FROM contacts WHERE id=?",
+        "SELECT name,phone FROM contacts WHERE id=?",
         entity.contact_id,
       );
       const original = this.row(
@@ -2214,6 +2214,19 @@ export class ShopService {
             ? `PUR-${String(id).padStart(6, "0")}`
             : entity.ticket,
         customer: contact?.name || "",
+        customer_phone: contact?.phone || "",
+        ...(kind === "repair"
+          ? {
+              device: entity.device,
+              device_identifier: entity.identifier,
+              problem: entity.problem,
+              diagnosis: entity.diagnosis,
+              parts: this.rows(
+                "SELECT a.name,p.quantity FROM repair_parts p JOIN accessories a ON a.id=p.accessory_id WHERE p.repair_id=?",
+                id,
+              ),
+            }
+          : {}),
         cashier_name: original?.username || "",
         items,
         payments: this.rows(
@@ -2227,7 +2240,7 @@ export class ShopService {
 
     this.require("receipt");
     const sale = this.row(
-      "SELECT s.*,u.username AS cashier_name,c.name AS customer FROM sales s JOIN users u ON u.id=s.cashier LEFT JOIN contacts c ON c.id=s.contact_id WHERE s.id=?",
+      "SELECT s.*,u.username AS cashier_name,c.name AS customer,c.phone AS customer_phone FROM sales s JOIN users u ON u.id=s.cashier LEFT JOIN contacts c ON c.id=s.contact_id WHERE s.id=?",
       id,
     );
     assert(sale, "NOT_FOUND");

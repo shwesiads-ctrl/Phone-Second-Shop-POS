@@ -17,6 +17,15 @@ await build({
   external: ["electron"],
   target: "node24",
 });
+await build({
+  entryPoints: ["src/main/receipt-preload.ts"],
+  bundle: true,
+  platform: "node",
+  format: "cjs",
+  outfile: "dist-electron/receipt-preload.cjs",
+  external: ["electron"],
+  target: "node24",
+});
 import { copyFile, mkdir } from "node:fs/promises";
 await mkdir("dist/assets", { recursive: true });
 await copyFile(

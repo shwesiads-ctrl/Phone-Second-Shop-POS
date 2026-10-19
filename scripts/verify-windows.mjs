@@ -51,6 +51,7 @@ try {
   const expected = [
     "dist-electron/main.cjs",
     "dist-electron/preload.cjs",
+    "dist-electron/receipt-preload.cjs",
     ...walk("dist").map((f) => relative(".", f).replaceAll("\\", "/")),
   ];
   for (const f of expected)
@@ -76,10 +77,20 @@ try {
     sha256,
     installerPE: pe(installer),
     applicationPE: pe(join(appdir, "Phone Second Shop POS.exe")),
+    jpegExamples: ["receipt-export.jpg", "receipt-repair-export.jpg"].map(
+      (name) => {
+        const bytes = readFileSync(join("test-results", name));
+        assert.equal(bytes.subarray(0, 3).toString("hex"), "ffd8ff");
+        return { name, bytes: bytes.length, sha256: hash(bytes) };
+      },
+    ),
     archiveIntegrity: "PASS",
     packagedFilesCompared: expected.length,
     productionContents: "PASS",
-    sourceAppWindowsWorkflow: process.platform === "win32" ? "PASS: preceding source-app Electron workflow" : "NOT RUN HERE",
+    sourceAppWindowsWorkflow:
+      process.platform === "win32"
+        ? "PASS: preceding source-app Electron workflow"
+        : "NOT RUN HERE",
     nativeWindowsExecution: "PENDING: packaged executable",
     cleanInstall: "PENDING",
     upgrade: "PENDING",
